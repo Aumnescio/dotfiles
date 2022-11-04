@@ -494,4 +494,4 @@ set_hl(ns_id, "@spell",                 {})  -- Had some issue with this overwri
 set_hl(ns_id, "Todo",                   { bg = colors.yellow, fg = colors.night })
 set_hl(ns_id, "helpNote",               { bg = colors.yellow, fg = colors.night })
 
--- |> Aumneccino Theme  --=>><⚡END⚡>]
+-- |> AumneChroma.nvim Theme  --=>><⚡END⚡>]
