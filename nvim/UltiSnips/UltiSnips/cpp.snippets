@@ -1,0 +1,425 @@
+global !p
+def create_constructor(tabstop_value):
+	tabstop_value = tabstop_value.replace(';', '')
+	tabstop_value = tabstop_value.replace('\n    ', ', ')
+	return tabstop_value
+
+def create_init_list(tabstop_value):
+	# ex. input: 'int number1;    \nint number2;'
+
+	# into: ( 'int number1;',
+    #         'int number2;' )
+
+	# Then into: 'varname1(varname1), varname2(varname2), varname3(varname3)'.
+
+	# Remove indent whitespace and split on newlines.
+	strings = tabstop_value.replace('    ', '').split('\n')
+
+	result = "";			 # For final result
+	form = "{var}({var}), "  # Format string base.
+
+	for string in strings:
+
+		string = string.replace(';', '')        # Remove semicolons.
+		string = re.sub(r'^.* ', '' , string)  # Remove type.
+		# Here `string` = `varname`
+
+		result += form.format(var = string)     # Add 'var(var), ' to result.
+	
+	result = result[:len(result) - 2]           # Remove trailing whitespace and comma.
+
+	return result
+endglobal
+
+snippet !init "Snippet for: Base cpp template." b
+#include <iostream>
+
+int main() {
+	$0
+	return 0;
+}
+endsnippet
+
+snippet #pragma "Snippet for: Base hpp template." b
+#pragma once
+endsnippet
+
+snippet main "Snippet for: main." b
+int main(int argc, char **argv) {
+	$0
+	return 0;
+}
+endsnippet
+
+snippet using_std "Snippet for: using namespace std." b
+using namespace std;
+endsnippet
+
+snippet include_std "Snippet for: #include <." b
+#include <$0
+endsnippet
+
+snippet include_local "Snippet for: #include." b
+#include "$0
+endsnippet
+
+snippet fn "Snippet for: Generic function."
+$1($2) {
+	$0
+}
+endsnippet
+
+snippet fn_void "Snippet for: Void function."
+void $1($2) {
+	$0
+}
+endsnippet
+
+snippet fn_int "Snippet for: int function."
+int $1($2) {
+	$0
+}
+endsnippet
+
+snippet fn_double "Snippet for: double function."
+double $1($2) {
+	$0
+}
+endsnippet
+
+snippet virtual "Snippet for: virtual."
+virtual
+endsnippet
+
+snippet class "Classes are user-defined types."
+class $1 {
+  public:
+	$2
+
+	// Constructors
+	$1() {}
+	$1(`!p snip.rv = create_constructor(t[2])`) : `!p snip.rv = create_init_list(t[2])` {}
+
+	// Destructor
+	virtual ~$1() {}
+};
+endsnippet
+
+snippet struct "Snippet for: struct."
+struct $1 {
+	$2
+
+	// Constructors
+	$1() {}
+	$1(`!p snip.rv = create_constructor(t[2])`) : `!p snip.rv = create_init_list(t[2])` {}
+
+	// Destructor
+	virtual ~$1() {}
+};
+endsnippet
+
+snippet pure_method "Snippet for: pure virtual class function."
+virtual $1($2) = 0;
+endsnippet
+
+snippet new "Snippet for: new."
+new$0
+endsnippet
+
+snippet delete "Snippet for: delete."
+delete$0
+endsnippet
+
+snippet return "Snippet for: return."
+return $0;
+endsnippet
+
+snippet const "Snippet for: const."
+const$0
+endsnippet
+
+snippet var_uniq "Snippet for: `unique_pointer` variable."
+auto $1 = std::make_unique<$2>($0);
+endsnippet
+
+snippet var_shared "Snippet for: `shared_pointer` variable."
+auto $1 = std::make_shared<$2>($0);
+endsnippet
+
+snippet bool "Keyword for boolean type. (true/false)"
+bool $0
+endsnippet
+
+snippet true "Snippet for: true."
+true$0
+endsnippet
+
+snippet false "Snippet for: false."
+false$0
+endsnippet
+
+snippet int "Basic integer type. (i16 minimum, but most likely i32)"
+int $0
+endsnippet
+
+snippet long "At least 32 bit integer. (i32)"
+long $0
+endsnippet
+
+snippet long_long "At least 64 bit integer. (i64)"
+long long $0
+endsnippet
+
+snippet char "Type for character representation."
+char $0
+endsnippet
+
+snippet float "Snippet for: float."
+float $0
+endsnippet
+
+snippet double "Snippet for: double."
+double $0
+endsnippet
+
+snippet and "'and' is an alternative to && (Logical AND operator)"
+and $0
+endsnippet
+
+snippet or "'or' is an alternative to || (Logical OR operator)"
+or $0
+endsnippet
+
+snippet not "Snippet for: not."
+not $0
+endsnippet
+
+snippet void "Snippet for: void."
+void $0
+endsnippet
+
+snippet static "Snippet for: static."
+static $0
+endsnippet
+
+snippet auto "Automatically infer type."
+auto $0
+endsnippet
+
+snippet while "Snippet for: while loop."
+while ($1) {
+	$0
+}
+endsnippet
+
+snippet do_while "Snippet for: do-while loop."
+do {
+	$1
+} while ($0);
+endsnippet
+
+snippet for "Snippet for: Basic for loop."
+for ($1; $2; $3) {
+	$0
+}
+endsnippet
+
+snippet for_each "Snippet for: For each loop."
+for ($1 : $2) {
+	$0
+}
+endsnippet
+
+snippet for_each_auto "Snippet for: For each loop."
+for (auto& $1 : $2) {
+	$0
+}
+endsnippet
+
+snippet if "Snippet for: if."
+if ($1) {$0}
+endsnippet
+
+snippet else "Snippet for: else."
+else {$0}
+endsnippet
+
+snippet else_if "Snippet for: else if."
+else if ($1) {$0}
+endsnippet
+
+snippet switch "Transfers control to one of several statements, depending on the value of a condition."
+switch($1) {
+	case $2:
+		$3
+		break;
+	default:
+		$0
+}
+endsnippet
+
+snippet case "case <constant-expression> : <statement>"
+case $1:
+	$0
+	break;
+endsnippet
+
+snippet default "default : <statement>"
+default:$0
+endsnippet
+
+snippet break "Causes the enclosing for, range-for, while or do-while loop or switch statement to terminate."
+break$0
+endsnippet
+
+snippet continue "Snippet for: continue."
+continue$0
+endsnippet
+
+snippet try "Snippet for: try."
+try {$0}
+endsnippet
+
+snippet catch "Snippet for: catch."
+catch ($1) {$0}
+endsnippet
+
+snippet throw "Snippet for: throw."
+throw$0
+endsnippet
+
+snippet enum "Snippet for: enum."
+enum $1 {$0};
+endsnippet
+
+snippet namespace "Snippet for: namespace."
+namespace$0
+endsnippet
+
+snippet cout "Snippet for: cout."
+std::cout << "$0\n";
+endsnippet
+
+snippet cout_variable "Snippet for: cout."
+std::cout << $0 << "\n";
+endsnippet
+
+snippet cout_end "Snippet for: cout endl."
+std::cout << std::endl;
+endsnippet
+
+snippet cout_info "Snippet for: cout info."
+std::cout << "|> INFO: $0\n";
+endsnippet
+
+snippet cout_debug "Snippet for: cout debug."
+std::cout << "|> DEBUG: $0\n";
+endsnippet
+
+snippet cout_error "Snippet for: cout error."
+std::cout << "|> ERROR: $0\n";
+endsnippet
+
+snippet cin_simple "Snippet for: cin."
+std::cin >> $0;
+endsnippet
+
+snippet stdvec "Snippet for: std::vector." iA
+std::vector<$0> 
+endsnippet
+
+snippet stdstr "Snippet for: std::string." iA
+std::string$0
+endsnippet
+
+snippet stdif "Snippet for: std::ifstream." iA
+std::ifstream $0
+endsnippet
+
+snippet stdof "Snippet for: std::ofstream." iA
+std::ofstream $0
+endsnippet
+
+snippet vector_std "Snippet for: std::vector." i
+std::vector<$0>
+endsnippet
+
+snippet reverse_std "Reverse a sequence in place." i
+std::reverse($1.begin(), $1.end());
+endsnippet
+
+snippet stdrev "Reverse a sequence in place." iA
+std::reverse($1.begin(), $1.end());
+endsnippet
+
+snippet op<< "Snippet for: '<<' operator overloading function."
+friend std::ostream& operator<<(std::ostream& os, const $1& $2) {
+	os << $0;
+	return os;
+}
+endsnippet
+
+snippet write_file_aum_func "Snippet for: Function for writing a string to a file."
+// Write string to file. (Clears previous file contents)
+bool writeToFile(std::string file_name, std::string text_to_write) {
+
+	// File
+	std::ofstream file(file_name, std::ios::trunc);
+
+	// Early exit if can't open.
+	if (!file.is_open()) {
+		return false;
+	}
+
+	// Write to file.
+	file << text_to_write;
+
+	// Print action message.
+	std::cout << "Wrote to: " << file_name << std::endl;
+
+	// Return without errors.
+	return true;
+}
+endsnippet
+
+snippet read_file_aum_func "Snippet for: Function for reading a file into a string."
+// Read file contents into string.
+std::string readFile(std::string file_name) {
+
+	// Input file.
+	std::ifstream file(file_name);
+
+	// Print error, return empty string.
+	if (!file.is_open()) {
+		printf("Unable to read file: No such file or directory. (File: %s, "
+			   "Line: %d)",
+			   __FILE__, __LINE__);
+		return "";
+	}
+
+	std::string file_contents;
+	std::string line;
+
+	auto process = [&](std::string line) {
+		file_contents += line;
+		file_contents.push_back('\n');
+	};
+
+	while (std::getline(file, line)) {
+		process(line);
+
+		if (file.fail()) {
+			printf("Error reading file contents. (File: %s, "
+				   "Line: %d)",
+				   __FILE__, __LINE__);
+			return "";
+		}
+	}
+
+	std::cout << "File"
+			  << "'" << file_name << "'"
+			  << "read successfully." << std::endl;
+
+	return file_contents;
+}
+endsnippet

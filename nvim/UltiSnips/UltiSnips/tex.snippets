@@ -1,0 +1,138 @@
+snippet !latexbase "Snippet for: (Lua)Latex base template." b
+\RequirePackage{fix-cm}
+\documentclass[12pt]{article}
+
+% Packages
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{verbatim}
+
+% Settings
+\setmainfont{JetBrains Mono Regular Nerd Font Complete}  % This works as a font, but is telling me the unicode characters are missing.
+\setmonofont{JetBrains Mono Regular Nerd Font Complete}
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.5em}
+\setcounter{secnumdepth}{3}
+\textwidth 6.5in
+\textheight 9.in
+\oddsidemargin 0in
+\headheight 0in
+\doublespacing
+
+\newfontface\Symbola{Symbola}
+{\Symbola\global\expandafter\let\expandafter\fallbackfont\the\font}
+\usepackage{luacode}
+\begin{luacode}
+
+local fontcharacters = { }
+local nullfont       = 0
+local glyph_t        = nodes.nodecodes.glyph
+local fallbackfont   = font.id("fallbackfont")
+
+table.setmetatableindex(fontcharacters, function (t, k)
+	if k == true then
+		return fontcharacters[currentfont()]
+	else
+		local tfmdata = fonts.hashes.identifiers[k]
+
+		if not tfmdata then
+			tfmdata = font.fonts[k]
+			if not (tfmdata and type (tfmdata) == "table") then
+				return false
+			end
+		end
+
+		local characters = tfmdata.characters
+		t[k] = characters
+		return characters
+	end
+end)
+
+local nodeprocessor = function (head)
+	local lastfont, characters = nil, nil
+	for n in node.traverse_id(glyph_t, head) do
+		local currfont = n.font
+		local char = n.char
+
+		if currfont ~= lastfont and currfont ~= nullfont then
+			characters = fontcharacters[currfont]
+		end
+
+		if characters ~= false then
+			lastfont = currfont
+			if not characters[char] then
+				n.font = fallbackfont
+				if fontcharacters[fallbackfont][char] then
+					node.remove(head,node.next(n)) -- remove .notdef char (new in luaotfload 2.98)
+				end
+			end
+		end
+	end
+	return head, false
+end
+luatexbase.add_to_callback("pre_linebreak_filter", nodeprocessor, "replace missing glyphs")
+\end{luacode}
+
+% Heading
+\author{Herbert Salin}
+\title{$1}
+\date{\today}
+
+% |> START -> Document <|
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{$2}
+
+\end{document}
+% |> END -> Document <|
+endsnippet
+
+snippet table "Snippet for: \begin{tabular}."
+\begin{center}
+\begin{tabular}{ |c|c| } 
+	\hline
+	Title & Title \\ 
+	thing & thing \\ 
+	thing & thing \\ 
+	thing & thing \\ 
+	\hline
+\end{tabular}
+\end{center}
+endsnippet
+
+snippet section "Snippet for: \section{}." b
+\section{$0}
+endsnippet
+
+snippet subsection "Snippet for: \subsection{}." b
+\subsection{$0}
+endsnippet
+
+snippet list_bullet "Snippet for: \begin{itemize} & \end{itemize}." b
+\begin{itemize}
+	$0
+\end{itemize}
+endsnippet
+
+snippet list_enum "Snippet for: \begin{enumerate} & \end{enumerate}." b
+\begin{enumerate}
+	$0
+\end{enumerate}
+endsnippet
+
+snippet item "Snippet for: \item."
+\item $0
+endsnippet
+
+
+snippet codeblock "Snippet for: codeblock."
+\begin(lstlisting)
+$0
+\end(lstlisting)
+endsnippet
