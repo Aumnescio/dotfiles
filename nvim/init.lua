@@ -1217,7 +1217,7 @@ local aum_handler_config = {
 --     -- |> Attach LSP keybindings & other crap.
 --     on_attach = aum_general_on_attach,
 --     -- |> Add nvim-cmp or snippet completion capabilities.
---     capabilites = completion_capabilities,
+--     capabilities = completion_capabilities,
 --     -- |> Activate custom handlers.
 --     handlers = aum_handler_config,
 -- })
@@ -1255,7 +1255,7 @@ require("ccls").setup({
             -- |> Attach LSP keybindings & other crap.
             on_attach = aum_general_on_attach,
             -- |> Add nvim-cmp or snippet completion capabilities.
-            capabilites = completion_capabilities,
+            capabilities = completion_capabilities,
             -- |> Activate custom handlers.
             handlers = aum_handler_config,
         },
@@ -1292,7 +1292,7 @@ require("ccls").setup({
 --     -- |> Attach LSP keybindings & other crap.
 --     on_attach = aum_general_on_attach,
 --     -- |> Add nvim-cmp or snippet completion capabilities.
---     capabilites = completion_capabilities,
+--     capabilities = completion_capabilities,
 --     -- |> Activate custom handlers.
 --     handlers = aum_handler_config,
 -- })
@@ -1459,7 +1459,7 @@ require("rust-tools").setup({
         on_attach = aum_general_on_attach,
 
         -- |> Add nvim-cmp or snippet completion capabilities.
-        capabilites = completion_capabilities,
+        capabilities = completion_capabilities,
 
         -- |> Activate custom handlers.
         handlers = aum_handler_config,
@@ -1525,7 +1525,7 @@ nvim_lsp.bashls.setup({
     -- |> Attach LSP keybindings & other crap.
     on_attach = aum_general_on_attach,
     -- |> Add nvim-cmp or snippet completion capabilities.
-    capabilites = completion_capabilities,
+    capabilities = completion_capabilities,
     -- |> Activate custom handlers.
     handlers = aum_handler_config,
 })
@@ -1546,7 +1546,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = ts_lsp_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1575,7 +1575,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1605,7 +1605,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1641,7 +1641,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1707,7 +1707,7 @@ nvim_lsp.bashls.setup({
 --     on_attach = aum_general_on_attach,
 
 --     |> Add nvim-cmp or snippet completion capabilities.
---     capabilites = completion_capabilities,
+--     capabilities = completion_capabilities,
 
 --     |> Activate custom handlers.
 --     handlers = aum_handler_config,
@@ -1769,7 +1769,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1792,7 +1792,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilites = completion_capabilities,
+    -- capabilities = completion_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
