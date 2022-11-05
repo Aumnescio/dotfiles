@@ -84,16 +84,13 @@ local opt           = vim.opt
 --
 -- | NOTE: I use a custom keyboard layout and very configured bindings.
 --
--- All binds can be seen in: "./lua/keybindings/good-binds.lua"
---
--- | |> - q, h, t, e    => h, j, k, l
--- | |> - o, n          => w, b
--- | |> - w             => i
--- | |> - s             => d
--- | |> - k             => c
--- | |> - r             => /
--- | |> - b             => n
--- | |> - B             => N
+-- | |> - h, j, k, l    => q, h, t, e
+-- | |> - w, b          => o, n
+-- | |> - i             => w
+-- | |> - d             => s
+-- | |> - c             => k
+-- | |> - /             => r
+-- | |> - n             => b
 -- | |> - l             => :
 --
 -- Stuff that is (at least mostly) default:
@@ -101,7 +98,6 @@ local opt           = vim.opt
 -- | |> - v, V
 -- | |> - a, A
 -- | |> - '.'
--- | |> - ';'
 --
 --  --=>><⚡END⚡>]
 
@@ -140,6 +136,9 @@ opt.mousehide = true                -- Hide mouse cursor/pointer when typing.
 opt.clipboard = "unnamedplus"       -- Enable System-clipboard functionality. (NOTE: Does not work on WSL.)
 opt.grepprg = "rg\\ --vimgrep\\ --noheading\\ --smart-case"     -- Use ripgrep.
 opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"                         -- Grep format.
+-- g.loaded_python_provider = 1     -- Unsure what this is. Supposed to speed something up.
+-- g.python_host_skip_check = 1     -- Unsure what this is. Supposed to speed something up.
+-- g.python3_host_skip_check = 1    -- Unsure what this is. Supposed to speed something up.
 g.python3_host_prog = "/usr/bin/python3"     -- Path to Python3.
 opt.shell = "/usr/bin/fish"         -- Set default shell to fish. (Might cause issues with some stuff so be a tad aware.)
 g.tex_flavor = "latex"              -- Set LaTeX flavor. (Changes syntax highlighting.)
@@ -232,6 +231,8 @@ opt.foldlevelstart = 99         -- Start unfolded => 99
 -- |> Scrolling settings.
 opt.scrolloff = 9       -- Vertical scroll offset. (0-12) (NOTE: Neovide --multigrid doesn't really behave great with scrolloffs)
 opt.sidescrolloff = 4   -- Horizontal scroll offset. (0-20)
+-- g.scrollfix = -1        -- Plugin setting. (-1 => Disable)
+-- g.scrollinfo = 0        -- Plugin setting. (0 => Disable)
 
 -- |> Split settings.
 opt.splitright = true   -- Split direction right instead of left.
@@ -357,6 +358,7 @@ require("packer").startup({function()
     use { "neovim/nvim-lspconfig" }                                     -- LSP                  (STATE: Good)
     use { "folke/trouble.nvim" }                                        -- DiagViewer           (STATE: Good)
     use { "simrat39/rust-tools.nvim" }                                  -- Rust-LS ++           (STATE: Good)
+    use { "ranjithshegde/ccls.nvim" }
     -- use { "jose-elias-alvarez/nvim-lsp-ts-utils" }                   -- TypeScript-LS ++     (STATE: Good)
     -- |> Debuggers:
     -- use { "mfussenegger/nvim-dap" }                                  -- Debugger             (STATE: Unknown)
@@ -471,7 +473,7 @@ require("nvim-treesitter.configs").setup({
         "css", "scss", "html", "javascript", "typescript", "vue", "svelte",
         "lua", "vim", "markdown", "toml", "yaml", "rst", "pug", "json",
         "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
-        "query", "commonlisp",
+        "query", "commonlisp", "v"
     },
 
     auto_install = true,
@@ -890,6 +892,22 @@ end
 --     end
 -- end)
 
+-- |> Configure custom mappings. (These mappings do work.)
+-- vim.cmd([[
+-- augroup dbui_mappings
+-- autocmd!
+    -- " Dadbod-Completion -> I would like to figure out how to get it to reset on. "
+    -- autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'ultisnips', priority = 50 }, { name = 'vim-dadbod-completion', priority = 20 }, { name = 'path' }} })
+    -- " Dadbod-Mappings "
+    -- autocmd FileType dbui nmap <buffer> <Enter> <Plug>(DBUI_SelectLine)
+    -- autocmd FileType dbui nmap <buffer> d <Plug>(DBUI_DeleteLine)
+    -- autocmd FileType dbui nmap <buffer> <S-r> <Plug>(DBUI_Redraw)
+    -- autocmd FileType dbui nmap <buffer> r <Plug>(DBUI_RenameLine)
+    -- autocmd FileType dbui nmap <buffer> q <Plug>(DBUI_Quit)
+    -- " Explore help and github more. "
+-- augroup END
+-- ]])
+
 -- Use buffer source for `/`. (Search)
 cmp.setup.cmdline('/', {
     completion = { autocomplete = false },
@@ -1177,30 +1195,95 @@ local aum_handler_config = {
 -- === START - LSP -> ClangD / CCLS / CPP / C++ - Setup - START === --|  --=>><⚡START⚡>[
 --==================================================================--+
 
-nvim_lsp.ccls.setup({
-    cmd = { "ccls-extra.sh" },
-    autostart = false,
+-- => NOTE: Non-'ccls.nvim' setup.  (Inactive)
+-- nvim_lsp.ccls.setup({
+--     cmd = { "ccls-extra.sh" },
+--     autostart = false,
+--
+--     init_options = {
+--         index = {
+--             threads = 0;
+--         };
+--         clang = {
+--             excludeArgs = { "-frounding-math" };
+--         };
+--     },
+--
+--     filetypes = { "c", "cpp", "objc", "objcpp" },
+--     single_file_support = false,
+--
+--     -- |> Fix diagnostics.
+--     flags = lsp_flags,
+--     -- |> Attach LSP keybindings & other crap.
+--     on_attach = aum_general_on_attach,
+--     -- |> Add nvim-cmp or snippet completion capabilities.
+--     capabilites = completion_capabilities,
+--     -- |> Activate custom handlers.
+--     handlers = aum_handler_config,
+-- })
 
-    init_options = {
-        index = {
-            threads = 0;
-        };
-        clang = {
-            excludeArgs = { "-frounding-math" };
-        };
+local lsp_util = require("lspconfig.util")
+
+-- => 'ccls.nvim' setup (STATE: TODO)
+require("ccls").setup({
+    lsp = {
+        -- Check `:help vim.lsp.start` for config options.
+        server = {
+            name = "ccls",  -- String name.
+
+            cmd = { "ccls-extra.sh" },  -- Point to your binary, has to be a table.
+            args = {},
+
+            -- autostart = false,  -- Does not seem to work here.
+
+            offset_encoding = "utf-32",  -- Default value set by plugin.
+
+            root_dir = vim.fs.dirname(vim.fs.find({ "compile_commands.json", ".git" }, { upward = true })[1]),
+
+            init_options = {
+                index = {
+                    threads = 0;
+                };
+
+                clang = {
+                    excludeArgs = { "-frounding-math" };
+                };
+            },
+
+            -- |> Fix diagnostics.
+            flags = lsp_flags,
+            -- |> Attach LSP keybindings & other crap.
+            on_attach = aum_general_on_attach,
+            -- |> Add nvim-cmp or snippet completion capabilities.
+            capabilites = completion_capabilities,
+            -- |> Activate custom handlers.
+            handlers = aum_handler_config,
+        },
     },
 
-    filetypes = { "c", "cpp", "objc", "objcpp" },
-    single_file_support = false,
+    win_config = {
+        -- Sidebar configuration.
+        sidebar = {
+            size = 50,
+            position = "topleft",
+            split = "vnew",
+            width = 50,
+            height = 20,
+        },
 
-    -- |> Fix diagnostics.
-    flags = lsp_flags,
-    -- |> Attach LSP keybindings & other crap.
-    on_attach = aum_general_on_attach,
-    -- |> Add nvim-cmp or snippet completion capabilities.
-    capabilites = completion_capabilities,
-    -- |> Activate custom handlers.
-    handlers = aum_handler_config,
+        -- Floating window configuration. check :help nvim_open_win for options.
+        float = {
+            style = "minimal",
+            relative = "cursor",
+            width = 50,
+            height = 20,
+            row = 0,
+            col = 0,
+            border = "rounded",
+        },
+    },
+
+    filetypes = {"c", "cpp"},
 })
 
 -- nvim_lsp.clangd.setup({
