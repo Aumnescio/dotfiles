@@ -2,6 +2,8 @@
 
 ## Neovim Theme
 
+![Image of Colorscheme](https://imgur.com/KOqQ2bG)
+
 Relevant files:
 
 - ./nvim/colors/aumnechroma.lua
