@@ -2,7 +2,7 @@
 
 ## Neovim Theme
 
-![Image of Colorscheme](https://imgur.com/KOqQ2bG)
+![Image of Colorscheme](https://i.imgur.com/KOqQ2bG.png)
 
 Relevant files:
 
