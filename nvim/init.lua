@@ -1224,7 +1224,7 @@ local aum_handler_config = {
 
 local lsp_util = require("lspconfig.util")
 
--- => 'ccls.nvim' setup (STATE: TODO)
+-- => 'ccls.nvim' setup (STATE: Good)
 require("ccls").setup({
     lsp = {
         -- Check `:help vim.lsp.start` for config options.
