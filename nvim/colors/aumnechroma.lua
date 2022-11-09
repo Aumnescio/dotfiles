@@ -6,7 +6,7 @@
 -- Not just 8 or 16 colors. (Current color count: 48)
 -- All colors handpicked. No color processing. No generated colors.
 -- Written in Lua, as fast as possible. (Source is of "pre-compiled" form.)
--- Easy to configure, or fork. (2 simple raw files.)  use
+-- Easy to configure, or fork. (2 simple raw files.)
 
 -- Manually configured plugins:
 -- => Treesitter
@@ -44,8 +44,10 @@ local colors = require("aumnechroma.colors")
 -- === |> - Core Groups (Link Groups) - <| ===
 
 -- 'Normal' needs to be defined first.  (Important) [Otherwise background color will break.]
-set_hl(ns_id, "Normal",                 { fg = colors.text, bg = colors.darkcrust })            -- STATE: 9.8/10  -- Good
--- set_hl(ns_id, "Normal",                 { fg = colors.text, bg = "NONE" })                      -- STATE: 9.8/10  -- Good
+-- => This one ("NONE") might work better with transparent background,
+set_hl(ns_id, "Normal",                 { fg = colors.text, bg = "NONE" })                      -- STATE: 9.8/10  -- Good
+-- => but if terminal backgrounds matches darkcrust color, it's still transparent if set to darkcrust.
+-- set_hl(ns_id, "Normal",                 { fg = colors.text, bg = colors.darkcrust })            -- STATE: 9.8/10  -- Good
 -- set_hl(ns_id, "Normal",                 { fg = colors.text, bg = colors.crust })                -- STATE: 9.3/10
 
 -- Cursor
