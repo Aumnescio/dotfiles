@@ -116,6 +116,7 @@ opt.swapfile = false        -- Not exactly sure what this is. Default is 'true',
 opt.backup = false          -- 'false' is default.
 opt.writebackup = true      -- 'true' is default. Not having this seemed unsafe. (This combo of backups should create backups on save but delete them after successful saves.)
 opt.autoread = true         -- Automatically read changed file.
+opt.undofile = true         -- Save undo history for all files.
 
 -- |> Error Bell settings.
 opt.visualbell = false      -- Don't flash my screen.
@@ -342,9 +343,9 @@ require("packer").startup({function()
         run = function() require("nvim-treesitter.install").update({ with_sync = true }) end,
     }                                                                   -- Treesitter           (STATE: Good)
 
-    use { "nvim-treesitter/nvim-treesitter-textobjects" }               -- Textobjects          (STATE: Okay, not used much.)
-    use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Good, if does not cause lag.)
-    use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments  (STATE: Good)
+    -- use { "nvim-treesitter/nvim-treesitter-textobjects" }               -- Textobjects          (STATE: Okay, not used much.) [Maybe out of date right now. (Nov 6th 2022)]
+    -- use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
+    -- use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments  (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
     use { "onsails/lspkind-nvim" }                                      -- Completion Icons     (STATE: Good)
     use { "stevearc/dressing.nvim" }                                    -- UI Lib               (STATE: Good)
     use { "MunifTanjim/nui.nvim" }                                      -- UI Lib               (STATE: Good)
@@ -427,7 +428,7 @@ require("packer").startup({function()
                                                                         -- & Extra Text Objects,      (STATE: Good)
                                                                         -- & Surround operations.     (STATE: Good)
     use { "smjonas/live-command.nvim" }                                 -- Live previews        (STATE: Slow in kitty terminal but good in Neovide.)
-    use { "nmac427/guess-indent.nvim" }                                 -- GuessIndent          (STATE: Very minimal impact, but maybe fine.)
+    -- use { "nmac427/guess-indent.nvim" }                                 -- GuessIndent          (STATE: Bad / not required?)
     use { "ZhiyuanLck/smart-pairs" }                                    -- AutoPairs            (STATE: Good, autodelete is misbehaving though.)
     use { "mrjones2014/legendary.nvim" }                                -- Keymap manager       (STATE: Good)
     -- use { "beauwilliams/focus.nvim" }                                -- SplitResizing        (STATE: Good)
@@ -473,13 +474,13 @@ require("nvim-treesitter.configs").setup({
         "css", "scss", "html", "javascript", "typescript", "vue", "svelte",
         "lua", "vim", "markdown", "toml", "yaml", "rst", "pug", "json",
         "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
-        "query", "commonlisp", "v"
+        "query", "commonlisp", "v", "markdown_inline",
     },
 
     auto_install = true,
 
     highlight = {
-        enable = true,  -- false will disable the whole extension
+        enable = true,  -- false will disable the whole extension.
         disable = function(lang, bufnr)  -- Disable treesitter in help files. (EXTREME speedup => From 0 fps to 165 fps)
             if vim.bo.filetype == 'help' then
                 return true
@@ -491,105 +492,108 @@ require("nvim-treesitter.configs").setup({
     },
 
     indent = {
-        enable = false
+        enable = true
     },
 
-    rainbow = {
-        enable = true,
-        extended_mode = false,
-        max_file_lines = 3000,
-    },
+    -- NOTE: Disabled atm, but generally okay to use.
+    -- rainbow = {
+    --     enable = true,  -- 'true' might be bugged as of Nov 6th 2022.
+    --     extended_mode = false,
+    --     max_file_lines = 3000,
+    -- },
 
-    textobjects = {
-        select = {
-            enable = true,
+    -- NOTE: Disabled atm, but generally okay to use.
+    -- textobjects = {
+    --     select = {
+    --         enable = true,
+    --
+    --         -- Automatically jump forward to textobj, similar to targets.vim
+    --         lookahead = true,
+    --
+    --         keymaps = {
+    --             -- You can use the capture groups defined in "textobjects.scm".
+    --             -- You can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
+    --             ["if"] = { query = "@function.inner", desc = "Select inner part of a function region" },
+    --             ["af"] = { query = "@function.outer", desc = "Select outer part of a function  region" },
+    --             ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+    --             ["ac"] = { query = "@class.outer", desc = "Select outer part of a class region" },
+    --         },
+    --
+    --         -- You can choose the select mode (default is charwise 'v')
+    --         selection_modes = {
+    --             ['@parameter.outer'] = 'v', -- charwise
+    --             ['@function.outer'] = 'V', -- linewise
+    --             ['@class.outer'] = '<c-v>', -- blockwise
+    --         },
+    --
+    --         -- If you set this to `true` (default is `false`) then any textobject is
+    --         -- extended to include preceding xor succeeding whitespace. Succeeding
+    --         -- whitespace has priority in order to act similarly to eg the built-in
+    --         -- `ap`.
+    --         include_surrounding_whitespace = true,
+    --
+    --         swap = {
+    --             enable = true,
+    --             swap_next = {
+    --                 ["<leader>a"] = "@parameter.inner",
+    --             },
+    --             swap_previous = {
+    --                 ["<leader>A"] = "@parameter.inner",
+    --             },
+    --         },
+    --     },
+    --
+    --     move = {
+    --         enable = true,
+    --         set_jumps = true, -- whether to set jumps in the jumplist
+    --         goto_next_start = {
+    --             ["]m"] = "@function.outer",
+    --             ["]]"] = "@class.outer",
+    --         },
+    --         goto_next_end = {
+    --             ["]M"] = "@function.outer",
+    --             ["]["] = "@class.outer",
+    --         },
+    --         goto_previous_start = {
+    --             ["[m"] = "@function.outer",
+    --             ["[["] = "@class.outer",
+    --         },
+    --         goto_previous_end = {
+    --             ["[M"] = "@function.outer",
+    --             ["[]"] = "@class.outer",
+    --         },
+    --     },
+    --
+    --     -- TODO: Enable and test after LSP active.
+    --     lsp_interop = {
+    --         enable = false,
+    --         border = 'none',
+    --         peek_definition_code = {
+    --             ["<leader>df"] = "@function.outer",
+    --             ["<leader>dF"] = "@class.outer",
+    --         },
+    --     },
+    -- },
 
-            -- Automatically jump forward to textobj, similar to targets.vim
-            lookahead = true,
-
-            keymaps = {
-                -- You can use the capture groups defined in "textobjects.scm".
-                -- You can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
-                ["if"] = { query = "@function.inner", desc = "Select inner part of a function region" },
-                ["af"] = { query = "@function.outer", desc = "Select outer part of a function  region" },
-                ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-                ["ac"] = { query = "@class.outer", desc = "Select outer part of a class region" },
-            },
-
-            -- You can choose the select mode (default is charwise 'v')
-            selection_modes = {
-                ['@parameter.outer'] = 'v', -- charwise
-                ['@function.outer'] = 'V', -- linewise
-                ['@class.outer'] = '<c-v>', -- blockwise
-            },
-
-            -- If you set this to `true` (default is `false`) then any textobject is
-            -- extended to include preceding xor succeeding whitespace. Succeeding
-            -- whitespace has priority in order to act similarly to eg the built-in
-            -- `ap`.
-            include_surrounding_whitespace = true,
-
-            swap = {
-                enable = true,
-                swap_next = {
-                    ["<leader>a"] = "@parameter.inner",
-                },
-                swap_previous = {
-                    ["<leader>A"] = "@parameter.inner",
-                },
-            },
-        },
-
-        move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-                ["]m"] = "@function.outer",
-                ["]]"] = "@class.outer",
-            },
-            goto_next_end = {
-                ["]M"] = "@function.outer",
-                ["]["] = "@class.outer",
-            },
-            goto_previous_start = {
-                ["[m"] = "@function.outer",
-                ["[["] = "@class.outer",
-            },
-            goto_previous_end = {
-                ["[M"] = "@function.outer",
-                ["[]"] = "@class.outer",
-            },
-        },
-
-        -- TODO: Enable and test after LSP active.
-        lsp_interop = {
-            enable = false,
-            border = 'none',
-            peek_definition_code = {
-                ["<leader>df"] = "@function.outer",
-                ["<leader>dF"] = "@class.outer",
-            },
-        },
-    },
-
-    playground = {
-        enable = false,
-        disable = {},
-        updatetime = 25, -- Debounced time.
-        persist_queries = false, -- Whether the query persists across vim sessions
-        keybindings = {
-            -- toggle_query_editor = 'o',
-            toggle_hl_groups = 'i',
-            -- toggle_injected_languages = 't',
-            -- toggle_anonymous_nodes = 'a',
-            toggle_language_display = 'I',
-            -- focus_language = 'f',
-            -- unfocus_language = 'F',
-            update = 'R',
-            goto_node = '<cr>',
-            show_help = '?',
-        },
-    },
+    -- NOTE: Disabled atm, but generally okay to use.
+    -- playground = {
+    --     enable = false,
+    --     disable = {},
+    --     updatetime = 25, -- Debounced time.
+    --     persist_queries = false, -- Whether the query persists across vim sessions
+    --     keybindings = {
+    --         -- toggle_query_editor = 'o',
+    --         toggle_hl_groups = 'i',
+    --         -- toggle_injected_languages = 't',
+    --         -- toggle_anonymous_nodes = 'a',
+    --         toggle_language_display = 'I',
+    --         -- focus_language = 'f',
+    --         -- unfocus_language = 'F',
+    --         update = 'R',
+    --         goto_node = '<cr>',
+    --         show_help = '?',
+    --     },
+    -- },
 })
 -- |> END - Treesitter Setup  --=>><⚡END⚡>]
 
@@ -684,34 +688,48 @@ cmp.setup({
     performance = {
         debounce = 80,
         throttle = 80,
-    },
+    },  -- Supposed to increase overall editor performance, at the cost of small completion latency.
 
-    preselect = cmp.PreselectMode.None,  -- Alt: cmp.PreselectMode.Item
+    preselect = cmp.PreselectMode.None,  -- Disables automatic preselection. (Enabled because of a bug with preselection: It skipped over snippets.)
+    -- Alt: cmp.PreselectMode.Item
 
     snippet = {
         expand = function(args)
             vim.fn["UltiSnips#Anon"](args.body)
         end,
-    },
+    },  -- UltiSnips functionality support.
 
     completion = {
-        -- autocomplete = cmp.TriggerEvent | false,
-        keyword_length = 2,
-        completeopt = "menu,menuone,preview,noselect,noinsert",
+        -- autocomplete = cmp.TriggerEvent | false,  -- Not sure what this is or how to use it.
+        keyword_length = 2,  -- Only show completion popup after 2 characters have been typed. (Maybe performance increase, compared to lower values.)
+        -- NOTE: Buffer source `keyword_length` is set to 3 below, in source section.
+        completeopt = "menu,menuone,preview,noselect,noinsert",  -- I don't feel like noinsert is doing anything, but these work.
+        -- NOTE: 'noinsert' probably overwritten by `cmp.ConfirmBehavior.Replace` option in keymaps. (Which is fine.)
     },
 
     matching = {
         disallow_fuzzy_matching = false,
         disallow_partial_matching = false,
-        disallow_prefix_unmatching = false,
+        disallow_prefix_unmatching = false,  -- Not clear what this does. No clear docs. (But set to false because it has worked fine.)
+        -- Fuzzy and Partial matching enabled = Good.
     },
 
     window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
+        completion = {
+            border = "rounded",
+            winhighlight = "Normal:CmpNormal,FloatBorder:CmpFloatBorder,Pmenu:CmpPmenu,CursorLine:CmpCursorLine,Search:CmpSearch",  -- STATE: Testing
+            col_offset = 0,
+            side_padding = 0,
+        },
+        documentation = {
+            border = "rounded",
+            winhighlight = "Normal:CmpDocNormal,FloatBorder:CmpDocFloatBorder,Pmenu:CmpDocPmenu,CursorLine:CmpDocCursorLineSearch,Search:CmpDocSearch,Comment:CmpDocComment",  -- STATE: Testing
+            col_offset = 0,
+            side_padding = 0,
+        }
     },
 
-    -- Not sure if I need to swap to this new syntax at some point...
+    -- Not sure if I need to swap to this new syntax at some point... (Kinda hope not because my stuff is working very well right now.)
     -- mapping = cmp.mapping.preset.insert({})
 
     mapping = {
@@ -808,7 +826,6 @@ cmp.setup({
         ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
         ["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() }),
         ["<CR>"] = cmp.mapping({
-            -- i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
             i = function(fallback)
                 if cmp.visible() then
                     cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
@@ -832,7 +849,7 @@ cmp.setup({
     formatting = {
         format = lspkind.cmp_format({
             mode = 'symbol',
-            maxwidth = 36,
+            maxwidth = 32,  -- NOTE: Something occasionally goes way beyond this maxwidth limit. Otherwise good width.
             before = function (entry, vim_item)
                 return vim_item
             end
@@ -854,7 +871,7 @@ cmp.setup({
     },
 
     sources = {
-        { name = "ultisnips", priority = 90 },
+        { name = "ultisnips", priority = 90 },  -- Very high prio because I want snippets to practically always be on top.
         -- { name = "nvim_lsp_signature_help", priority = 3 },  -- Disabled because using Noice.nvim for sig-help.
         { name = "nvim_lua", priority = 2 },
         { name = "nvim_lsp", priority = 2 },
@@ -868,7 +885,7 @@ cmp.setup({
 -- === START - Nvim-cmp Extra Settings - START === --
 --=================================================--
 
--- START -> Enable cmp signature help in neovide, because Noice might not yet work.
+-- START -> Enable cmp signature help in neovide, because Noice might not yet work. (And Noice is disabled in Neovide atm.)
 if g.neovide then
     local config = cmp.get_config()
 
@@ -883,7 +900,11 @@ if g.neovide then
 end
 -- END -> Enable cmp signature help in neovide, because Noice might not yet work.
 
---- => NOTE: This caused duplicate parenthesis with some lsp servers.
+--- => NOTE: This caused duplicate parenthesis with some lsp servers. (Rust-Analyzer)
+--- => NOTE: Disabled because not required in current setup, but can be useful snippet with other pairs plugins.
+--
+--- Tags: Autopairs, Smartpairs.
+--
 -- cmp.event:on("confirm_done", function(event)
 --     local item = event.entry:get_completion_item()
 --     local parensDisabled = item.data and item.data.funcParensDisabled or false
@@ -892,7 +913,7 @@ end
 --     end
 -- end)
 
--- |> Configure custom mappings. (These mappings do work.)
+-- |> Configure custom mappings. (These mappings do work, but not using dadbod atm.)
 -- vim.cmd([[
 -- augroup dbui_mappings
 -- autocmd!
@@ -918,7 +939,7 @@ cmp.setup.cmdline('/', {
 
 -- Use cmdline & path source for ':'.
 cmp.setup.cmdline(':', {
-    completion = { autocomplete = false },
+    completion = { autocomplete = false },  -- false => Need to press Tab to activate completion popup.
     sources = cmp.config.sources(
     {
         { name = 'path' }
@@ -946,18 +967,16 @@ cmp.setup.cmdline(':', {
 
 -- STATE: Good?
 -- Related:
---      - Install: 'aerial.nvim'
+-- - TODO: Install 'aerial.nvim' (?)
 
 -- |> START -> LSP Flags Setup  --=>><⚡START⚡>[
-
--- NOTE: 'allow_incremental_sync' is not stable yet. It makes LSP diagnostics essentially unuseable.
+--
+-- NOTE: 'allow_incremental_sync' is not stable yet. It makes LSP diagnostics essentially unuseable. (Might have been fixed?)
+--
 local lsp_flags = {
-    allow_incremental_sync = false,
-    -- Inc sync is prolly cause of some problems.
-    debounce_text_changes = 180
-    -- 250 worked. 150 is default.
+    allow_incremental_sync = true,  -- Testing this on `true`. Tags: Unsafe, Potential Issue, JUMPHERE.
+    debounce_text_changes = 150  -- 150 is default, and probably is fine.
 }
-
 -- |> END -> LSP Flags Setup  --=>><⚡END⚡>]
 
 -- |> START -> LSP Attach  --=>><⚡START⚡>[
@@ -969,29 +988,26 @@ local aum_general_on_attach = function(client, bufnr)
     local keymap = vim.keymap.set
 
     -- === - LSP Mappings - ===
-
-    -- TODO: Uncomment, configure and test the commands below.
-
-    keymap('n', '<F2>', vim.lsp.buf.rename, bufopts)                -- STATE: Good
+    keymap('n', '<F2>', vim.lsp.buf.rename, bufopts)                -- STATE: Good (I think `dressing.nvim` is overwriting the UI for this, and its good.)
     keymap('n', 'gh', vim.lsp.buf.hover, bufopts)                   -- STATE: Good
-    keymap('n', 'gd', vim.lsp.buf.definition, bufopts)              -- STATE: Probably good
+    keymap('n', 'gd', vim.lsp.buf.definition, bufopts)              -- STATE: Good
     keymap('n', '<space>D', vim.lsp.buf.type_definition, bufopts)   -- STATE: Probably good
     keymap('n', 'gD', vim.lsp.buf.declaration, bufopts)             -- STATE: Probably good
     keymap('n', 'gi', vim.lsp.buf.implementation, bufopts)          -- STATE: Probably good
     keymap('n', 'gr', vim.lsp.buf.references, bufopts)              -- STATE: Probably good
     keymap('n', '<space>ca', vim.lsp.buf.code_action, bufopts)      -- STATE: Probably good (Bind could be better.)
-    keymap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)       -- STATE: Not sure, not horribly required.
+    keymap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)       -- STATE: Not sure, not really often used or required.
 
-    keymap('n', '<space>f', function() vim.lsp.buf.format({ async = true }) end, bufopts)  -- STATE: Probably good
+    keymap('n', '<space>f', function() vim.lsp.buf.format({ async = true }) end, bufopts)  -- STATE: Seems to be good.
 
-    keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-    keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-    keymap('n', '<space>wl', function()
+    keymap('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)        -- STATE: Not sure, not really often used or required.
+    keymap('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)     -- STATE: Not sure, not really often used or required.
+    keymap('n', '<space>wl', function()                                        -- STATE: Not sure, not really often used or required.
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, bufopts)
 end
 
--- -- |> START -> Typescript/Javascript LSP 'on_attach' Keybindings and stuff.
+-- -- |> START -> Typescript/Javascript LSP 'on_attach' Keybindings and stuff. (TODO: Probably needs some cleanup or refreshing.)
 -- local ts_lsp_on_attach = function(client, bufnr)
     -- local ts_utils = require("nvim-lsp-ts-utils")
 
@@ -1147,12 +1163,9 @@ end
 -- === - START - Completion Capabilities For LSP - START === --|  --=>><⚡START⚡>[
 --===========================================================--+
 
--- local lsp_client_capabilities = vim.lsp.protocol.make_client_capabilities();
--- lsp_client_capabilities.textDocument.completion.completionItem.snippetSupport = true;
-
--- -- |> Add this on each server, as "capabilities = completion_capabilities".
+-- |> Add this on each server, as "capabilities = completion_capabilities".
+-- |> NOTE: Though it somehow seemed to work without it.
 local completion_capabilities = require('cmp_nvim_lsp').default_capabilities();
--- local completion_capabilities = require('cmp_nvim_lsp').default_capabilities(lsp_client_capabilities);
 
 --=====================================================--+
 -- === END - Completion Capabilities For LSP - END === --|  --=>><⚡END⚡>]
@@ -1162,6 +1175,7 @@ local completion_capabilities = require('cmp_nvim_lsp').default_capabilities();
 -- === START - LSP Handler, UI Customization & Diagnostics Setup - START === --|  --=>><⚡START⚡>[
 --===========================================================================--+
 
+-- Border characters (STATE: Good) (Using with `JetBrainsMono Nerd Font` font.)
 local my_border = {
     {"╭", "FloatBorder"}, {"─", "FloatBorder"},
     {"╮", "FloatBorder"}, {"│", "FloatBorder"},
@@ -1169,7 +1183,8 @@ local my_border = {
     {"╰", "FloatBorder"}, {"│", "FloatBorder"}
 }
 
--- LSP Handler Setup, UI customization. (for overriding per client)
+-- LSP Handler Setup, UI customization. (For overriding per client)
+-- NOTE: There is a good chance `Noice.nvim` or `nui.nvim` overwrite these. (TODO: Test without these?)
 local aum_handler_config = {
     ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = my_border }),
     ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = my_border }),
@@ -1183,6 +1198,8 @@ local aum_handler_config = {
 -- === START - LSP Debugger Paths - START === --|  --=>><⚡START⚡>[
 --============================================--+
 
+-- TODO: Config debuggers.
+
 -- local lldb_path = "/home/aumnescio/git/vscode-lldb/"
 -- local lldb_adapter_path = lldb_path .. "adapter/codelldb"
 -- local liblldb_path = lldb_path .. "lldb/lib/liblldb.so"
@@ -1194,33 +1211,6 @@ local aum_handler_config = {
 --==================================================================--+
 -- === START - LSP -> ClangD / CCLS / CPP / C++ - Setup - START === --|  --=>><⚡START⚡>[
 --==================================================================--+
-
--- => NOTE: Non-'ccls.nvim' setup.  (Inactive)
--- nvim_lsp.ccls.setup({
---     cmd = { "ccls-extra.sh" },
---     autostart = false,
---
---     init_options = {
---         index = {
---             threads = 0;
---         };
---         clang = {
---             excludeArgs = { "-frounding-math" };
---         };
---     },
---
---     filetypes = { "c", "cpp", "objc", "objcpp" },
---     single_file_support = false,
---
---     -- |> Fix diagnostics.
---     flags = lsp_flags,
---     -- |> Attach LSP keybindings & other crap.
---     on_attach = aum_general_on_attach,
---     -- |> Add nvim-cmp or snippet completion capabilities.
---     capabilities = completion_capabilities,
---     -- |> Activate custom handlers.
---     handlers = aum_handler_config,
--- })
 
 local lsp_util = require("lspconfig.util")
 
@@ -1234,7 +1224,7 @@ require("ccls").setup({
             cmd = { "ccls-extra.sh" },  -- Point to your binary, has to be a table.
             args = {},
 
-            -- autostart = false,  -- Does not seem to work here.
+            -- autostart = false,  -- Does not seem to work here. (TODO: Solve how to stop servers from autostarting.)
 
             offset_encoding = "utf-32",  -- Default value set by plugin.
 
@@ -1283,9 +1273,10 @@ require("ccls").setup({
         },
     },
 
-    filetypes = {"c", "cpp"},
+    filetypes = {"c", "cpp"},  -- Should this include "h" and "hpp"? ( Low prio TODO: Test )
 })
 
+-- State: Presumably good, but unused, in favor of `ccls.nvim`.
 -- nvim_lsp.clangd.setup({
 --     -- |> Fix diagnostics.
 --     flags = lsp_flags,
@@ -1305,89 +1296,81 @@ require("ccls").setup({
 -- === START - LSP -> Rust-analyzer Setup - START === --|  --=>><⚡START⚡>[
 --====================================================--+
 
--- |> Rust LSP / rust-analyzer Setup (STATE: Should be quite good once configged.)
+-- |> Rust LSP / rust-analyzer Setup (STATE: Good)
 require("rust-tools").setup({
     tools = { -- rust-tools options
 
-        -- how to execute terminal commands
-        -- options right now: termopen / quickfix
+        -- How to execute terminal commands.
+        -- Options right now: termopen / quickfix
         executor = require("rust-tools/executors").termopen,
 
-        -- callback to execute once rust-analyzer is done initializing the workspace
+        -- Callback to execute once rust-analyzer is done initializing the workspace.
         -- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
         on_initialized = nil,
 
-        -- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
+        -- Automatically call RustReloadWorkspace when writing to a Cargo.toml file.
         reload_workspace_from_cargo_toml = true,
 
-        -- These apply to the default RustSetInlayHints command
+        -- These apply to the default RustSetInlayHints command.
         inlay_hints = {
-            -- automatically set inlay hints (type hints)
-            -- default: true
+            -- Automatically set inlay hints. (type hints)
+            -- Default: true
             auto = true,
 
-            -- Only show inlay hints for the current line
+            -- Only show inlay hints for the current line.
             only_current_line = false,
 
-            -- whether to show parameter hints with the inlay hints or not
-            -- default: true
+            -- Whether to show parameter hints with the inlay hints or not.
+            -- Default: true
             show_parameter_hints = true,
 
-            -- prefix for parameter hints
-            -- default: "<-"
+            -- Prefix for parameter hints.
+            -- Default: "<-"
             parameter_hints_prefix = "<- ",
 
-            -- prefix for all the other hints (type, chaining)
-            -- default: "=>"
+            -- Prefix for all the other hints. (type, chaining)
+            -- Default: "=>"
             other_hints_prefix = "=> ",
 
-            -- whether to align to the length of the longest line in the file
+            -- Whether to align to the length of the longest line in the file.
             max_len_align = false,
 
-            -- padding from the left if max_len_align is true
+            -- Padding from the left if `max_len_align` is `true`.
             max_len_align_padding = 1,
 
-            -- whether to align to the extreme right or not
+            -- Whether to align to the extreme right or not.
             right_align = false,
 
-            -- padding from the right if right_align is true
+            -- Padding from the right if `right_align` is `true`.
             right_align_padding = 7,
 
-            -- The color of the hints
-            highlight = "Comment",
+            -- The color of the hints.
+            highlight = "AumRustToolsInlayHint",
         },
 
-        -- options same as lsp hover / vim.lsp.util.open_floating_preview()
+        -- Options same as lsp hover / vim.lsp.util.open_floating_preview()
         hover_actions = {
-            border = {
-                { "╭", "FloatBorder" },
-                { "─", "FloatBorder" },
-                { "╮", "FloatBorder" },
-                { "│", "FloatBorder" },
-                { "╯", "FloatBorder" },
-                { "─", "FloatBorder" },
-                { "╰", "FloatBorder" },
-                { "│", "FloatBorder" },
-            },
+            border = my_border,  -- Testing. This should work tho. (TODO: Remove comment after this is confirmed to work.)
             auto_focus = false,
         },
 
+        -- This is just copy paste from rust-tools github and not yet tested. (TODO, low prio)
         crate_graph = {
             -- Backend used for displaying the graph
-            -- see: https://graphviz.org/docs/outputs/
+            -- See: https://graphviz.org/docs/outputs/
             -- default: x11
             backend = "x11",
-            -- where to store the output, nil for no output stored (relative
-            -- path from pwd)
-            -- default: nil
+            -- Where to store the output, nil for no output stored.
+            -- (relative path from pwd)
+            -- Default: nil
             output = nil,
-            -- true for all crates.io and external crates, false only the local
-            -- crates
-            -- default: true
+            -- True for all crates.io and external crates, false only the local
+            -- crates.
+            -- Default: true
             full = true,
 
             -- List of backends found on: https://graphviz.org/docs/outputs/
-            -- Is used for input validation and autocompletion
+            -- Is used for input validation and autocompletion.
             -- Last updated: 2021-08-26
             enabled_graphviz_backends = {
                 "bmp",
@@ -1489,15 +1472,17 @@ require("rust-tools").setup({
                 procMacro = {
                     enable = true,
                 },
-                -- Testing this, it might work.
                 checkOnSave = {
                     command = "clippy",
+                    -- Had some minor issues with this but it does seem to work,
+                    -- if there are no problems in the cargo project.
+                    -- Can also set to `"check"`.
                 },
             }
         },
     },
 
-    -- debugging stuff
+    -- Debugging stuff. (TODO, low'ish prio)
     dap = {
         adapter = {
             type = "executable",
@@ -1515,6 +1500,7 @@ require("rust-tools").setup({
 -- === START - LSP -> Bash LS Setup - START === --|  --=>><⚡START⚡>[
 --==============================================--+
 
+-- STATE: Good (I think.)
 nvim_lsp.bashls.setup({
     cmd = { "bash-language-server", "start" },
     filetypes = { "sh", "bash" },
@@ -1812,7 +1798,7 @@ vim.diagnostic.config({
     --     source = "always",
     --     prefix = "●",
     --     spacing = 2,
-    -- },
+    -- },  -- Bit too intrusive. Just using underline, jump to diagnostics and trouble.nvim is better.
 
     float = {
         source = "always",
@@ -1826,51 +1812,51 @@ vim.diagnostic.config({
 
 -- START => trouble.nvim
 require("trouble").setup({
-    position = "bottom", -- position of the list can be: bottom, top, left, right
-    height = 10, -- height of the trouble list when position is top or bottom
-    width = 50, -- width of the list when position is left or right
-    icons = true, -- use devicons for filenames
-    mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
-    fold_open = "", -- icon used for open folds
-    fold_closed = "", -- icon used for closed folds
-    group = true, -- group results by file
-    padding = true, -- add an extra new line on top of the list
-    action_keys = { -- key mappings for actions in the trouble list
-        -- map to {} to remove a mapping, for example:
-        -- close = {},
-        close = "q", -- close the list
-        cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
-        refresh = "r", -- manually refresh
-        jump = {"<cr>", "<tab>"}, -- jump to the diagnostic or open / close folds
-        open_split = { "<c-x>" }, -- open buffer in new split
-        open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
-        open_tab = { "<c-t>" }, -- open buffer in new tab
-        jump_close = {"o"}, -- jump to the diagnostic and close the list
-        toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
-        toggle_preview = "P", -- toggle auto_preview
-        hover = "K", -- opens a small popup with the full multiline message
-        preview = "p", -- preview the diagnostic location
-        close_folds = {"zM", "zm"}, -- close all folds
-        open_folds = {"zR", "zr"}, -- open all folds
-        toggle_fold = {"zA", "za"}, -- toggle fold of current file
-        previous = "t", -- previous item
-        next = "h" -- next item
+    position = "bottom",  -- Position of the list can be: bottom, top, left, righ.
+    height = 10,  -- Height of the trouble list when position is top or botto.
+    width = 50,  -- Width of the list when position is left or righ.
+    icons = true,  -- Use devicons for filename.
+    mode = "workspace_diagnostics",  -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+    fold_open = "",  -- Icon used for open fold.
+    fold_closed = "",  -- Icon used for closed folds.
+    group = true,  -- Group results by file.
+    padding = true,  -- Add an extra new line on top of the list.
+    action_keys = {  -- Key mappings for actions in the trouble list.
+        -- Map to {} to remove a mapping, for example:
+        -- Close = {},
+        close = "q",  -- Close the list. (TODO: Config better)
+        cancel = "<esc>",  -- Cancel the preview and get back to your last window / buffer / cursor.
+        refresh = "r",  -- Manually refresh. (TODO: Config better)
+        jump = {"<cr>", "<tab>"},  -- Jump to the diagnostic or open / close folds.
+        open_split = { "<c-x>" },  -- Open buffer in new split.
+        open_vsplit = { "<c-v>" },  -- Open buffer in new vsplit.
+        open_tab = { "<c-t>" },  -- Open buffer in new tab.
+        jump_close = {"o"},  -- Jump to the diagnostic and close the list. (TODO: Config better)
+        toggle_mode = "m",  -- Toggle between "workspace" and "document" diagnostics mode.
+        toggle_preview = "P",  -- Toggle auto_preview.
+        hover = "K",  -- Opens a small popup with the full multiline message.
+        preview = "p",  -- Preview the diagnostic location.
+        close_folds = {"zM", "zm"},  -- Close all folds.
+        open_folds = {"zR", "zr"},  -- Open all folds.
+        toggle_fold = {"zA", "za"},  -- Toggle fold of current file.
+        previous = "t",  -- Previous item.  (STATE: Good)
+        next = "h"  -- Next item.  (STATE: Good)
     },
-    indent_lines = true, -- add an indent guide below the fold icons
-    auto_open = false, -- automatically open the list when you have diagnostics
-    auto_close = false, -- automatically close the list when you have no diagnostics
-    auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
-    auto_fold = false, -- automatically fold a file trouble list at creation
-    auto_jump = {"lsp_definitions"}, -- for the given modes, automatically jump if there is only a single result
+    indent_lines = true,  -- Add an indent guide below the fold icons.
+    auto_open = false,  -- Automatically open the list when you have diagnostics.
+    auto_close = false,  -- Automatically close the list when you have no diagnostics.
+    auto_preview = true,  -- Automatically preview the location of the diagnostic. <esc> to close preview and go back to last window.
+    auto_fold = false,  -- Automatically fold a file trouble list at creation.
+    auto_jump = {"lsp_definitions"},  -- For the given modes, automatically jump if there is only a single result.
     signs = {
-        -- icons / text used for a diagnostic
+        -- Icons / Text used for a diagnostic.
         error = "",
         warning = "",
         hint = "",
         information = "",
         other = "﫠"
     },
-    use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
+    use_diagnostic_signs = false  -- Enabling this will use the signs defined in your lsp client.
 })
 -- END => trouble.nvim
 
@@ -1886,7 +1872,7 @@ require("trouble").setup({
 -- === START - Comment Toggling Setup - START === --|  --=>><⚡START⚡>[
 --================================================--+
 
--- Comment.nvim setup
+-- Comment.nvim setup (STATE: Good)
 require("Comment").setup({
     padding = true,     -- Add a space between comment and the line.
     sticky = true,      -- Whether the cursor should stay at its position.
@@ -1910,7 +1896,7 @@ require("Comment").setup({
 
     -- Automatically create keybindings?
     -- NOTE: If given `false` then the plugin won't create any mappings.
-    -- TODO: Might want to test this if there are proper functions to call.
+    -- TODO: Might want to test this if there are proper functions to call. (And config more manually, but this is fine.)
     mappings = {
         basic = true,
         extra = true,
@@ -1927,8 +1913,8 @@ require("Comment").setup({
 -- === END - Comment Toggling Setup - END === --|  --=>><⚡END⚡>]
 --============================================--+
 
--- -- |> START -> Floating Terminal Setup  --=>><⚡START⚡>[
-require("FTerm").setup({
+-- |> START -> Floating Terminal Setup  --=>><⚡START⚡>[
+require("FTerm").setup({  -- STATE: Good (Though in Neovide the colors are wrong, but no idea how to fix that.)
     cmd = 'fish',
     border = 'single',
     dimensions  = {
@@ -1937,13 +1923,15 @@ require("FTerm").setup({
     },
     auto_close = true,
 })
--- -- |> END -> Floating Terminal Setup  --=>><⚡END⚡>]
+-- |> END -> Floating Terminal Setup  --=>><⚡END⚡>]
 
 --=========================================--+
 -- === START -> Formatter.nvim - Setup === --| --=>><⚡START⚡>]
 --=========================================--+
 
 -- STATE: Good for c++. (Run with ':Format')
+-- NOTE: Not sure how required this is, as lsp has format option, too.
+-- Not yet configured for other languages than `cpp`.
 
 -- Utilities for creating configurations
 local format_util = require("formatter.util")
@@ -2107,9 +2095,9 @@ require("dressing").setup({
         min_width = { 20, 0.2 },
 
         -- Window transparency (0-100)
-        winblend = 10,
+        winblend = 0,
         -- Change default highlight groups (see :help winhl)
-        winhighlight = "",
+        winhighlight = "Normal:DressingInputNormal,FloatBorder:DressingInputFloatBorder,Pmenu:DressingInputPmenu,Search:DressingInputSearch,Visual:DressingInputVisual",
 
         -- Set to `false` to disable
         mappings = {
@@ -2185,18 +2173,18 @@ require("dressing").setup({
             min_height = 10,
         },
 
-        -- Options for built-in selector
+        -- Options for built-in selector.
         builtin = {
-            -- These are passed to nvim_open_win
+            -- These are passed to nvim_open_win.
             anchor = "NW",
             border = "rounded",
-            -- 'editor' and 'win' will default to being centered
+            -- 'editor' and 'win' will default to being centered.
             relative = "editor",
 
             -- Window transparency (0-100)
-            winblend = 10,
-            -- Change default highlight groups (see :help winhl)
-            winhighlight = "",
+            winblend = 0,
+            -- Change default highlight groups. (see :help winhl)
+            winhighlight = "Normal:DressingBuiltinNormal,FloatBorder:DressingBuiltinFloatBorder,Pmenu:DressingBuiltinPmenu,Search:DressingBuiltinSearch,Visual:DressingBuiltinVisual",
 
             -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
             -- the min_ and max_ options can be a list of mixed types.
@@ -2234,9 +2222,9 @@ require("dressing").setup({
 -- -- |> START -> Zen Mode Setup  --=>><⚡START⚡>[
 require("zen-mode").setup({
     window = {
-        backdrop = 1, -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
-        width = 0.72, -- width of the Zen window (Below 1 values are percentages) (0.74'ish, 110'ish.)
-        height = 0.94, -- height of the Zen window (Below 1 values are percentages) (0.9'ish, 42'ish.)
+        backdrop = 1,  -- Shade the backdrop of the Zen window. Set to 1 to keep the same as Normal.
+        width = 0.72,  -- Width of the Zen window (Below 1 values are percentages) (0.74'ish, 110'ish.)
+        height = 0.94,  -- Height of the Zen window (Below 1 values are percentages) (0.9'ish, 42'ish.)
         options = {
             -- signcolumn = "no", -- disable signcolumn
             -- number = false, -- disable number column
@@ -2369,26 +2357,29 @@ require("mini.surround").setup({
 -- END |> Treesitter context
 
 -- === |> - hlargs. (START)
-require("hlargs").setup({
-    color = '#EF9062',
-    paint_arg_declarations = true,
-    paint_arg_usages = true,
-
-    paint_catch_blocks = {
-        declarations = false,
-        usages = false
-    },
-
-    hl_priority = 10000,
-
-    excluded_argnames = {
-        declarations = {},
-        usages = {
-            python = { 'self', 'cls' },
-            lua = { 'self' }
-        }
-    },
-})
+--
+-- NOTE: Temporarily disabled because suspected of being out of date.
+--
+-- require("hlargs").setup({
+--     color = '#EF9062',
+--     paint_arg_declarations = true,
+--     paint_arg_usages = true,
+--
+--     paint_catch_blocks = {
+--         declarations = false,
+--         usages = false
+--     },
+--
+--     hl_priority = 10000,
+--
+--     excluded_argnames = {
+--         declarations = {},
+--         usages = {
+--             python = { 'self', 'cls' },
+--             lua = { 'self' }
+--         }
+--     },
+-- })
 -- === |> - hlargs. (END)
 
 -- === |> - Colorizer. (START)
@@ -2432,24 +2423,24 @@ require("live-command").setup({
 -- === |> - Live-Command. (END)
 
 -- === |> - Guess indent. (START)
-require("guess-indent").setup({
-    auto_cmd = true,  -- Set to false to disable automatic execution.
-
-    -- A list of filetypes for which the auto command gets disabled.
-    filetype_exclude = { "netrw", "tutor" },
-
-    -- A list of buffer types for which the auto command gets disabled.
-    buftype_exclude = { "help", "nofile", "terminal", "prompt" },
-})
+-- require("guess-indent").setup({
+--     auto_cmd = true,  -- Set to false to disable automatic execution.
+--
+--     -- A list of filetypes for which the auto command gets disabled.
+--     filetype_exclude = { "netrw", "tutor" },
+--
+--     -- A list of buffer types for which the auto command gets disabled.
+--     buftype_exclude = { "help", "nofile", "terminal", "prompt" },
+-- })
 -- === |> - Guess indent. (END)
 
 -- === |> - Noice.nvim (START)
 if not g.neovide then
     require("noice").setup({
         cmdline = {
-            enabled = true,         -- Enables the Noice cmdline UI.
+            enabled = true,             -- Enables the Noice cmdline UI.
             view = "cmdline_popup",     -- View for rendering the cmdline. ( "cmdline" | "cmdline_popup" )
-            opts = {},              -- Global options for the cmdline. See section on views.
+            opts = {},                  -- Global options for the cmdline. See section on views.
 
             --@type table<string, CmdlineFormat>
             format = {
@@ -2483,7 +2474,7 @@ if not g.neovide then
         popupmenu = {
             enabled = true,  -- Enables the Noice popupmenu UI.
             -- @type "nui" | "cmp"
-            backend = "nui",  -- Backend to use for showing regular cmdline completions.
+            backend = "cmp",  -- Backend to use for showing regular cmdline completions. (This does not seem to make a difference.)
             -- @type NoicePopupmenuItemKind | false
             -- Icons for completion item kinds (see defaults at noice.config.icons.kinds)
             kind_icons = {},  -- Set to `false` to disable icons
@@ -2509,7 +2500,7 @@ if not g.neovide then
 
             -- :Noice last
             last = {
-                view = "popup",
+                view = "split",
                 opts = { enter = true, format = "details" },
                 filter = {
                     any = {
@@ -2525,7 +2516,7 @@ if not g.neovide then
 
             -- :Noice errors
             errors = {
-                view = "popup",
+                view = "split",
                 opts = { enter = true, format = "details" },
                 filter = { error = true },
                 filter_opts = { reverse = true },
@@ -2617,7 +2608,7 @@ if not g.neovide then
         },
 
         health = {
-            checker = true,  -- Disable if you don't want health checks to run.
+            checker = false,  -- Disable if you don't want health checks to run. (Enable if you do.)
         },
 
         smart_move = {
@@ -2633,7 +2624,7 @@ if not g.neovide then
             -- You can also add custom presets that you can enable/disable with `enabled=true`.
             bottom_search = false,          -- Use a classic bottom cmdline for search.
             command_palette = true,         -- Position the cmdline and popupmenu together.
-            long_message_to_split = false,  -- Long messages will be sent to a split.
+            long_message_to_split = true,   -- Long messages will be sent to a split.
             inc_rename = false,             -- Enables an input dialog for `inc-rename.nvim`.
         },
 
@@ -2695,22 +2686,50 @@ vim.api.nvim_create_autocmd("FileType", {
 -- |> Fix conceal in help files.
 local help_conceal_aumgroup = vim.api.nvim_create_augroup("MyHelpConceal", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"help"},
+    pattern = { "help" },
     command = 'lua vim.opt.concealcursor = ""',
     group = help_conceal_aumgroup
 })
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"help"},
+    pattern = { "help" },
     command = 'lua vim.opt.conceallevel = 0',
     group = help_conceal_aumgroup
 })
 
--- |> Highlight yanking. (Seems to work, though occasinally the rendering bugs out.)
+-- |> Enable full conceal in markdown files. (Maybe Neorg too)
+local markdown_conceal_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown" },
+    command = 'lua vim.opt.conceallevel = 3',
+    group = markdown_conceal_aumgroup
+})
+
+-- |> Highlight yanking. (Seems to work, though occasionally the rendering bugs out.)
 local yank_hl_aumgroup = vim.api.nvim_create_augroup("MyYankHighlight", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
     command = "silent! lua vim.highlight.on_yank()",
     group = yankhl_aumgroup
 })
+
+-- |> Set wrap when split (Don't really care for it.)
+-- local splitwrap_aumgroup = vim.api.nvim_create_augroup("MySplitWrap", { clear = true })
+-- vim.api.nvim_create_autocmd("WinNew", {
+--     command = "windo set wrap",
+--     group = splitwrap_aumgroup
+-- })
+
+-- |> Set wrap off in single window.
+-- vim.api.nvim_create_autocmd("WinEnter", {
+--     group = splitwrap_aumgroup,
+--     callback = function()
+--         -- Get handlers for current windows, we need it to get the windows amount.
+--         local active_windows = vim.api.nvim_list_wins()
+--         -- For some reason `nvim_list_wins()` returns 3 integers when I have only one window, so we check for "== 3" instead of "== 1".
+--         if #active_windows == 3 then
+--             vim.wo.wrap = false
+--         end
+--     end
+-- })
 
 -- |> Cmp Manual Debounce (For performance)
 --  NOTE: Disabled because performance difference not very noticeable.
