@@ -1,0 +1,17 @@
+{
+  "!shebang": {
+    "prefix": "!shebang",
+    "description": "Snippet for: fish shebang.",
+    "body": "#!/bin/fish"
+  },
+  "set": {
+    "prefix": "set",
+    "description": "Snippet for: set.",
+    "body": "set $1 $0"
+  },
+  "echo": {
+    "prefix": "echo",
+    "description": "Snippet for: echo.",
+    "body": "echo $0"
+  }
+}

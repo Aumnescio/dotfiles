@@ -134,7 +134,19 @@ opt.errorbells = false      -- No PING/BANG sounds plz.
 
 opt.mouse = "a"                     -- Enable mouse-support in all modes: "a".
 opt.mousehide = true                -- Hide mouse cursor/pointer when typing.
-opt.clipboard = "unnamedplus"       -- Enable System-clipboard functionality. (NOTE: Does not work on WSL.)
+opt.clipboard = "unnamedplus"       -- Enable System-clipboard functionality.
+-- opt.clipboard = {                -- Could do some alternate thing here to speed startup maybe.
+--     name = "xclip",
+--     copy = {
+--         plus = "xclip",
+--         star = "xclip",
+--     },
+--     paste = {
+--         plus = "xclip",
+--         star = "xclip",
+--     },
+--     cache_enabled = 0,
+-- }
 opt.grepprg = "rg\\ --vimgrep\\ --noheading\\ --smart-case"     -- Use ripgrep.
 opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"                         -- Grep format.
 -- g.loaded_python_provider = 1     -- Unsure what this is. Supposed to speed something up.
@@ -170,7 +182,7 @@ opt.lazyredraw = false          -- Stop updating screen when running a macro. (I
 opt.updatetime = 80             -- Some update-rate thing to help smoothness.
 
 -- |> Virtual characters.
-opt.listchars = "eol:↵,space:·,tab:»›,trail:~,extends:❯,precedes:❮"
+opt.listchars = "eol:↵,space:·,leadmultispace:.,tab:»›,trail:~,extends:❯,precedes:❮"
 opt.fillchars = "eob: "
 opt.list = false         -- To toggle: ":set list" and ":set nolist".
 
@@ -216,17 +228,19 @@ opt.shiftwidth = 0      -- '0' Automatically inherits 'tabstop' value.
 
 -- |> Search settings.
 opt.hlsearch = false    -- No permanent highlight after search.
-opt.incsearch = true    -- Highlight search results while typing.
+opt.incsearch = false   -- Highlight search results while typing. (Generally I really like this, but when using Noice.nvim, this is a lil bugged.)
+                            -- NOTE: The highlights flicker during search, and the whole screen flashes when the first search match is off-screen.
 opt.ignorecase = true   -- Disable Case-sensitivity from search,
 opt.smartcase = true    -- except for when search contains uppercase characters.
 opt.wrapscan = true     -- Toggle searching to wrap from end of buffer to beginning of buffer.
 
 -- |> Folding settings.
 opt.foldenable = true           -- Folding => Enabled
--- NOTE: TODO: Installing and configuring nvim-ufo. (Ultrafold) (Might mean this needs to be swapped. This is not really that good anyway.)
-vim.wo.foldmethod = "marker"    -- Fold Method. ("expr" for using Treesitter.)
-vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers.
-vim.wo.foldexpr = "0"           -- Treesitter folding can be set here. (Disabled atm because of suspected erroring.)
+vim.wo.foldmethod = "manual"    -- Fold Method.
+-- vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers.
+vim.wo.foldexpr = "0"           -- Fold expression.
+opt.foldcolumn = "0"            -- Disable fold icons in sign-column.
+opt.foldlevel = 99              -- High value preferred by `nvim-ufo`.
 opt.foldlevelstart = 99         -- Start unfolded => 99
 
 -- |> Scrolling settings.
@@ -267,7 +281,7 @@ opt.signcolumn = "yes"      -- Signcolumn. (Gutter) (NOTE: 'no' did not fully di
 opt.showmatch = false       -- Jump to matching pairs when inserting them. (This is horrible. Do not enable.)
 opt.laststatus = 3          -- 0 = Never, 3 = Global StatusLinn, maybe.
 opt.conceallevel = 0        -- Never/Always hide conceal. (0/3)
-opt.concealcursor = ""      -- Always show conceal characters on cursorline.
+opt.concealcursor = "nc"    -- Keep concealactive in normal and command mode, but not in visual and insert modes.
 
 --========================================--+
 -- === END - 5. Visual Settings - END === --|  --=>><⚡END⚡>]
@@ -281,7 +295,6 @@ opt.concealcursor = ""      -- Always show conceal characters on cursorline.
 
 opt.termguicolors = true  -- 24-bit colors in terminal ui.
 opt.guicursor = "n-v-sm:block,i-c-ci-ve:ver25,r-cr-o:hor20"  -- Cursor Settings
-vim.cmd([[set guifont=JetBrainsMono\ Nerd\ Font:h21]]) -- Font / Font-size. (For GUI (Neovide), not in Terminal.)
 
 --=====================================--+
 -- === END - 6. GUI Settings - END === --|  --=>><⚡END⚡>]
@@ -344,7 +357,7 @@ require("packer").startup({function()
     }                                                                   -- Treesitter           (STATE: Good)
 
     -- use { "nvim-treesitter/nvim-treesitter-textobjects" }               -- Textobjects          (STATE: Okay, not used much.) [Maybe out of date right now. (Nov 6th 2022)]
-    -- use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
+    use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
     -- use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments  (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
     use { "onsails/lspkind-nvim" }                                      -- Completion Icons     (STATE: Good)
     use { "stevearc/dressing.nvim" }                                    -- UI Lib               (STATE: Good)
@@ -378,8 +391,12 @@ require("packer").startup({function()
     use { "hrsh7th/cmp-path" }                                          -- Nvim-cmp Ext         (STATE: Good)
     use { "hrsh7th/cmp-cmdline" }                                       -- Nvim-cmp Ext         (STATE: Good)
     use { "hrsh7th/cmp-nvim-lsp-signature-help" }                       -- Nvim-cmp Ext         (STATE: Okay)
-    use { "SirVer/ultisnips" }                                          -- Snippets             (STATE: Good)
-    use { "quangnguyen30192/cmp-nvim-ultisnips" }                       -- Ultisnips Ext        (STATE: Good)
+    -- Snippets
+    use { "L3MON4D3/LuaSnip", tag = "v1.*" }                            -- Snippets             (STATE: Testing)
+    use { "saadparwaiz1/cmp_luasnip" }                                  -- LuaSnip Cmp Source   (STATE: Testing)
+    use { "smjonas/snippet-converter.nvim" }                            -- SnippetConvert       (STATE: Testing)
+    -- use { "SirVer/ultisnips" }                                          -- Snippets             (STATE: Good, but faced a error. )
+    -- use { "quangnguyen30192/cmp-nvim-ultisnips" }                       -- Ultisnips Ext        (STATE: Good, but moving to LuaSnip)
     -- use { "windwp/nvim-autopairs" }                                  -- Autopairs            (STATE: Issues)
     -- === |> - Autocompletion  --=>><⚡END⚡>]
 
@@ -428,8 +445,7 @@ require("packer").startup({function()
                                                                         -- & Extra Text Objects,      (STATE: Good)
                                                                         -- & Surround operations.     (STATE: Good)
     use { "smjonas/live-command.nvim" }                                 -- Live previews        (STATE: Slow in kitty terminal but good in Neovide.)
-    -- use { "nmac427/guess-indent.nvim" }                                 -- GuessIndent          (STATE: Bad / not required?)
-    use { "ZhiyuanLck/smart-pairs" }                                    -- AutoPairs            (STATE: Good, autodelete is misbehaving though.)
+    use { "ZhiyuanLck/smart-pairs" }                                    -- AutoPairs            (STATE: Barely useable.)
     use { "mrjones2014/legendary.nvim" }                                -- Keymap manager       (STATE: Good)
     -- use { "beauwilliams/focus.nvim" }                                -- SplitResizing        (STATE: Good)
     -- use { "anuvyklack/pretty-fold.nvim" }                            -- Pretty folding       (STATE: Good)
@@ -437,6 +453,10 @@ require("packer").startup({function()
     -- use { "lervag/vimtex" }                                          -- LaTeX Support        (STATE: Unknown)
     use { "aklt/plantuml-syntax" }                                      -- PlantUML SyntaxHL    (STATE: Good)
     use { "NvChad/nvim-colorizer.lua" }                                 -- Colors in editor     (STATE: Fine)
+    use {                                                               -- Folding              (STATE: Testing)
+        "kevinhwang91/nvim-ufo",
+        requires = "kevinhwang91/promise-async"
+    }
     -- === |> - Misc Nice Things  --=>><⚡END⚡>]
 end,
 
@@ -474,13 +494,13 @@ require("nvim-treesitter.configs").setup({
         "css", "scss", "html", "javascript", "typescript", "vue", "svelte",
         "lua", "vim", "markdown", "toml", "yaml", "rst", "pug", "json",
         "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
-        "query", "commonlisp", "v", "markdown_inline",
+        "query", "commonlisp", "v", "markdown_inline", "norg",
     },
 
     auto_install = true,
 
     highlight = {
-        enable = true,  -- false will disable the whole extension.
+        enable = true,  -- 'false' will disable the whole extension.
         disable = function(lang, bufnr)  -- Disable treesitter in help files. (EXTREME speedup => From 0 fps to 165 fps)
             if vim.bo.filetype == 'help' then
                 return true
@@ -492,15 +512,15 @@ require("nvim-treesitter.configs").setup({
     },
 
     indent = {
-        enable = true
+        enable = false
     },
 
     -- NOTE: Disabled atm, but generally okay to use.
-    -- rainbow = {
-    --     enable = true,  -- 'true' might be bugged as of Nov 6th 2022.
-    --     extended_mode = false,
-    --     max_file_lines = 3000,
-    -- },
+    rainbow = {
+        enable = true,  -- 'true' might be bugged as of Nov 6th 2022.
+        extended_mode = false,
+        max_file_lines = 3000,
+    },
 
     -- NOTE: Disabled atm, but generally okay to use.
     -- textobjects = {
@@ -597,10 +617,51 @@ require("nvim-treesitter.configs").setup({
 })
 -- |> END - Treesitter Setup  --=>><⚡END⚡>]
 
+-- |> START - UltraFold Setup  --=>><⚡START⚡>]
+local ufo_handler = function(virtText, lnum, endLnum, width, truncate)
+    local newVirtText = {}
+    local suffix = ('  %d '):format(endLnum - lnum)
+    local sufWidth = vim.fn.strdisplaywidth(suffix)
+    local targetWidth = width - sufWidth
+    local curWidth = 0
+    for _, chunk in ipairs(virtText) do
+        local chunkText = chunk[1]
+        local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+        if targetWidth > curWidth + chunkWidth then
+            table.insert(newVirtText, chunk)
+        else
+            chunkText = truncate(chunkText, targetWidth - curWidth)
+            local hlGroup = chunk[2]
+            table.insert(newVirtText, {chunkText, hlGroup})
+            chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            -- str width returned from truncate() may less than 2nd argument, need padding
+            if curWidth + chunkWidth < targetWidth then
+                suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            end
+            break
+        end
+        curWidth = curWidth + chunkWidth
+    end
+    table.insert(newVirtText, {suffix, 'MoreMsg'})
+    return newVirtText
+end
+
+require("ufo").setup({
+    provider_selector = function(bufnr, filetype, buftype)
+        return { "treesitter", "indent" }
+    end,
+
+    open_fold_hl_timeout = 120,
+
+    fold_virt_text_handler = ufo_handler,
+})
+-- |> END - UltraFold Setup  --=>><⚡END⚡>]
+
 -- |> START - Smartpairs Setup  --=>><⚡START⚡>]
+-- STATE: Not really satisfied.
 require("pairs"):setup({
     enter = {
-        enable_mapping = false,
+        enable_mapping = false,  -- NOTE: Why is this false exactly? Might be having some issue with binding enter with nvim-cmp and this.
     },
 })
 -- |> END - Smartpairs Setup  --=>><⚡END⚡>]
@@ -620,34 +681,18 @@ require("pairs"):setup({
 -- g.completion_matching_strategy_list = {"exact", "substring"}
 -- g.completion_matching_ignore_case = 1
 
--- |> Ultisnips Setup (START)
-g.UltiSnipsExpandTrigger = '<Plug>(ultisnips_expand)'
-g.UltiSnipsJumpForwardTrigger = '<Plug>(ultisnips_jump_forward)'
-g.UltiSnipsJumpBackwardTrigger = '<Plug>(ultisnips_jump_backward)'
-g.UltiSnipsListSnippets = '<C-x><C-s>'
-g.UltiSnipsRemoveSelectModeMappings = 1  -- Had this on 0, testing 1.
+-- |> Ultisnips Setup (START) (Moved to using LuaSnip)
+-- g.UltiSnipsExpandTrigger = '<Plug>(ultisnips_expand)'
+-- g.UltiSnipsJumpForwardTrigger = '<Plug>(ultisnips_jump_forward)'
+-- g.UltiSnipsJumpBackwardTrigger = '<Plug>(ultisnips_jump_backward)'
+-- g.UltiSnipsListSnippets = '<C-x><C-s>'
+-- g.UltiSnipsRemoveSelectModeMappings = 1  -- Had this on 0, testing 1.
 -- |> Ultisnips Setup (END) <|--
 
 local cmp = require("cmp")
 local lspkind = require("lspkind")
 local cmpkind = cmp.lsp.CompletionItemKind
-
--- |> Manual nvim-cmp debounce timer. (START)
--- NOTE: Related autocmd 'MyCmpDebounce' at bottom of file.
--- local cmp_timer = vim.loop.new_timer()
--- local CMP_DEBOUNCE_DELAY = 80
-
--- function cmp_debounce()
---     cmp_timer:stop()
---     cmp_timer:start(
---         CMP_DEBOUNCE_DELAY,
---         0,
---         vim.schedule_wrap(function()
---             cmp.complete({ reason = cmp.ContextReason.Auto })
---         end)
---     )
--- end
--- |> Manual nvim-cmp debounce timer. (END) <|--
+local luasnip = require("luasnip")
 
 local repterm = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
@@ -678,6 +723,17 @@ end
 
 -- |> END -> Autopairs (Nvim-Cmp)
 
+-- TODO: Lua choice node `next_choice` binding. (Had difficulty binding this to `C-e` so not sure what to bind to.)
+-- if luasnip.choice_active() then
+--     luasnip.next_choice()
+-- end
+
+-- |> Load LuaSnip Snippets. (Might be having issues with this.)
+-- require("luasnip.loaders.from_snipmate").lazy_load()
+-- require("luasnip.loaders.from_vscode").lazy_load()
+require("luasnip.loaders.from_snipmate").load({ paths = { "./snippets" } })  -- If lazy load does not work, this should.
+require("luasnip.loaders.from_vscode").load({ paths = { "./luasnip_snippets" } })  -- If lazy load does not work, this should.
+
 -- nvim-cmp setup (Core) - START
 cmp.setup({
     enabled = function()
@@ -695,9 +751,10 @@ cmp.setup({
 
     snippet = {
         expand = function(args)
-            vim.fn["UltiSnips#Anon"](args.body)
+            require("luasnip").lsp_expand(args.body)    -- For LuaSnip.
+            -- vim.fn["UltiSnips#Anon"](args.body)      -- For Ultisnips.
         end,
-    },  -- UltiSnips functionality support.
+    },  -- Snippet support.
 
     completion = {
         -- autocomplete = cmp.TriggerEvent | false,  -- Not sure what this is or how to use it.
@@ -742,23 +799,42 @@ cmp.setup({
                 end
             end,
             i = function(fallback)
-                if cmp.visible() and vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
-                elseif cmp.visible() then
-                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Replace })
-                elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
                 else
                     fallback()
                 end
             end,
             s = function(fallback)
-                if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
                 else
                     fallback()
                 end
-            end
+            end,
+            -- |> UltiSnips things:
+            -- i = function(fallback)
+            --     if cmp.visible() and vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            --     elseif cmp.visible() then
+            --         cmp.select_next_item({ behavior = cmp.SelectBehavior.Replace })
+            --     elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            --     else
+            --         fallback()
+            --     end
+            -- end,
+            -- s = function(fallback)
+            --     if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            --     else
+            --         fallback()
+            --     end
+            -- end
         }),
         ["<S-Tab>"] = cmp.mapping({
             c = function()
@@ -769,23 +845,42 @@ cmp.setup({
                 end
             end,
             i = function(fallback)
-                if cmp.visible() and vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
-                elseif cmp.visible() then
-                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Replace })
-                elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
                 else
                     fallback()
                 end
             end,
             s = function(fallback)
-                if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                    vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
                 else
                     fallback()
                 end
-            end
+            end,
+            -- |> UltiSnips things:
+            -- i = function(fallback)
+            --     if cmp.visible() and vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            --     elseif cmp.visible() then
+            --         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Replace })
+            --     elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            --     else
+            --         fallback()
+            --     end
+            -- end,
+            -- s = function(fallback)
+            --     if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            --     else
+            --         fallback()
+            --     end
+            -- end
         }),
         ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
         ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
@@ -821,10 +916,14 @@ cmp.setup({
                 end
             end
         }),
-        ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
-        ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+        ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-2), {'i', 'c'}),
+        ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(2), {'i', 'c'}),
         ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
-        ["<C-e>"] = cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() }),
+        ["<C-e>"] = cmp.mapping({
+            i = cmp.mapping.abort(),
+            s = cmp.mapping.abort(),
+            c = cmp.mapping.close(),
+        }),
         ["<CR>"] = cmp.mapping({
             i = function(fallback)
                 if cmp.visible() then
@@ -871,11 +970,13 @@ cmp.setup({
     },
 
     sources = {
-        { name = "ultisnips", priority = 90 },  -- Very high prio because I want snippets to practically always be on top.
+        { name = "luasnip", priority = 90, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
+        -- { name = "ultisnips", priority = 90, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
         -- { name = "nvim_lsp_signature_help", priority = 3 },  -- Disabled because using Noice.nvim for sig-help.
         { name = "nvim_lua", priority = 2 },
         { name = "nvim_lsp", priority = 2 },
         { name = "path" },
+        { name = "neorg" },
         { name = "buffer", keyword_length = 3, priority = 1 },
     },
 })
@@ -1350,7 +1451,7 @@ require("rust-tools").setup({
 
         -- Options same as lsp hover / vim.lsp.util.open_floating_preview()
         hover_actions = {
-            border = my_border,  -- Testing. This should work tho. (TODO: Remove comment after this is confirmed to work.)
+            border = my_border,  -- Should be ok.
             auto_focus = false,
         },
 
@@ -1802,6 +1903,7 @@ vim.diagnostic.config({
 
     float = {
         source = "always",
+        border = "rounded",
     },
 
     signs = true,
@@ -1956,6 +2058,10 @@ require("formatter").setup {
             end
         },
 
+        lua = {
+            require("formatter.filetypes.lua").stylua
+        },
+
         -- Use the special "*" filetype for defining formatter configurations on
         -- any filetype
         ["*"] = {
@@ -2094,10 +2200,12 @@ require("dressing").setup({
         max_width = { 140, 0.9 },
         min_width = { 20, 0.2 },
 
-        -- Window transparency (0-100)
-        winblend = 0,
-        -- Change default highlight groups (see :help winhl)
-        winhighlight = "Normal:DressingInputNormal,FloatBorder:DressingInputFloatBorder,Pmenu:DressingInputPmenu,Search:DressingInputSearch,Visual:DressingInputVisual",
+        win_options = {
+            -- Window transparency (0-100)
+            winblend = 0,
+            -- Change default highlight groups (see :help winhl)
+            winhighlight = "Normal:DressingInputNormal,FloatBorder:DressingInputFloatBorder,Pmenu:DressingInputPmenu,Search:DressingInputSearch,Visual:DressingInputVisual",
+        },
 
         -- Set to `false` to disable
         mappings = {
@@ -2181,10 +2289,12 @@ require("dressing").setup({
             -- 'editor' and 'win' will default to being centered.
             relative = "editor",
 
-            -- Window transparency (0-100)
-            winblend = 0,
-            -- Change default highlight groups. (see :help winhl)
-            winhighlight = "Normal:DressingBuiltinNormal,FloatBorder:DressingBuiltinFloatBorder,Pmenu:DressingBuiltinPmenu,Search:DressingBuiltinSearch,Visual:DressingBuiltinVisual",
+            win_options = {
+                -- Window transparency (0-100)
+                winblend = 0,
+                -- Change default highlight groups. (see :help winhl)
+                winhighlight = "Normal:DressingBuiltinNormal,FloatBorder:DressingBuiltinFloatBorder,Pmenu:DressingBuiltinPmenu,Search:DressingBuiltinSearch,Visual:DressingBuiltinVisual",
+            },
 
             -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
             -- the min_ and max_ options can be a list of mixed types.
@@ -2562,12 +2672,33 @@ if not g.neovide then
                 auto_open = {
                     enabled = true,
                     trigger = true,     -- Automatically show signature help when typing a trigger character from the LSP.
-                    luasnip = false,    -- Will open signature help when jumping to Luasnip insert nodes.
+                    luasnip = true,     -- Will open signature help when jumping to Luasnip insert nodes.
                     throttle = 50,      -- Debounce lsp signature help request by 50ms.
                 },
                 view = nil,             -- When nil, use defaults from documentation.
                 -- @type NoiceViewOptions
-                opts = {},              -- Merged with defaults from documentation.
+                opts = {  -- Having some issue with the placement of this window. Config here.
+                    view = "popup",
+                    relative = "cursor",
+                    anchor = "auto",        -- What options does this take?
+                    position = "auto",      -- What options does this take?
+                    zindex = 45,
+                    enter = false,
+                    size = {
+                        width = "auto",
+                        height = "auto",
+                        max_height = 8,     -- 8 to 12'ish is good.
+                        max_width = 60,     -- 60 to 80'ish I guess, would be good.
+                    },
+                    border = {
+                        style = "rounded",
+                        padding = { 0, 2 },
+                    },
+                    win_options = {
+                        wrap = true,
+                        linebreak = true,
+                    },
+                },  -- Merged with defaults from documentation.
             },
 
             message = {
@@ -2622,7 +2753,7 @@ if not g.neovide then
         presets = {
             -- You can enable a preset by setting it to true, or a table that will override the preset config.
             -- You can also add custom presets that you can enable/disable with `enabled=true`.
-            bottom_search = false,          -- Use a classic bottom cmdline for search.
+            bottom_search = false,           -- Use a classic bottom cmdline for search.
             command_palette = true,         -- Position the cmdline and popupmenu together.
             long_message_to_split = true,   -- Long messages will be sent to a split.
             inc_rename = false,             -- Enables an input dialog for `inc-rename.nvim`.
@@ -2642,6 +2773,25 @@ if not g.neovide then
 end
 -- === |> - Noice.nvim (END)
 
+-- === |> - Snipper Converter (START)
+-- NOTE: To convert snippets, run the command: `:ConvertSnippets` (It's not working what to do...)
+require("snippet_converter").setup({
+    templates = {{
+        -- name = "aumsnips",  -- Optionally give your template a name to refer to it in the `ConvertSnippets` command.
+        sources = {
+            ultisnips = {
+                vim.fn.stdpath("config") .. "/UltiSnips",       -- This should be ok.
+            },
+        },
+        output = {
+            vscode_luasnip = {  -- This might work out of the box for LuaSnip.
+                vim.fn.stdpath("config") .. "/luasnip_snippets",    -- This should be ok.
+            },
+        }
+    }}
+})
+-- === |> - Snipper Converter (END)
+
 --========================================--+
 -- === END - 8. Plugin Settings - END === --|  --=>><⚡END⚡>]
 --========================================--+
@@ -2660,14 +2810,14 @@ require("keybindings/good-binds")
 
 vim.cmd([[command! -nargs=0 AumConfig edit /home/aum/.config/nvim/init.lua]])
 vim.cmd([[command! -nargs=0 AumBinds edit /home/aum/.config/nvim/lua/keybindings/good-binds.lua]])
-vim.cmd([[command! -nargs=0 AumTheme edit /home/aum/.config/nvim/colors/aumneccino.lua]])
+vim.cmd([[command! -nargs=0 AumTheme edit /home/aum/.config/nvim/colors/aumnechroma.lua]])
 vim.cmd([[command! -nargs=0 AumLines edit /home/aum/.config/nvim/lua/heirline/aumneline.lua]])
 vim.cmd([[command! -nargs=0 FishConfig edit /home/aum/.config/fish/config.fish]])
 vim.cmd([[command! -nargs=0 KittyConfig edit /home/aum/.config/kitty/kitty.conf]])
 
 -- Autogroups and Autocommands:
 
--- |> Indent fixing maybe.. for C and CPP.
+-- |> Indent fixing maybe, for C and CPP.
 local cindent_aumgroup = vim.api.nvim_create_augroup("MyCindent", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {"c", "cpp", "h", "hpp"},
@@ -2696,7 +2846,7 @@ vim.api.nvim_create_autocmd("FileType", {
     group = help_conceal_aumgroup
 })
 
--- |> Enable full conceal in markdown files. (Maybe Neorg too)
+-- |> Enable full conceal in markdown files.
 local markdown_conceal_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
     pattern = { "markdown" },
@@ -2708,38 +2858,8 @@ vim.api.nvim_create_autocmd("FileType", {
 local yank_hl_aumgroup = vim.api.nvim_create_augroup("MyYankHighlight", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
     command = "silent! lua vim.highlight.on_yank()",
-    group = yankhl_aumgroup
+    group = yank_hl_aumgroup
 })
-
--- |> Set wrap when split (Don't really care for it.)
--- local splitwrap_aumgroup = vim.api.nvim_create_augroup("MySplitWrap", { clear = true })
--- vim.api.nvim_create_autocmd("WinNew", {
---     command = "windo set wrap",
---     group = splitwrap_aumgroup
--- })
-
--- |> Set wrap off in single window.
--- vim.api.nvim_create_autocmd("WinEnter", {
---     group = splitwrap_aumgroup,
---     callback = function()
---         -- Get handlers for current windows, we need it to get the windows amount.
---         local active_windows = vim.api.nvim_list_wins()
---         -- For some reason `nvim_list_wins()` returns 3 integers when I have only one window, so we check for "== 3" instead of "== 1".
---         if #active_windows == 3 then
---             vim.wo.wrap = false
---         end
---     end
--- })
-
--- |> Cmp Manual Debounce (For performance)
---  NOTE: Disabled because performance difference not very noticeable.
---  NOTE: Also causes issue with autopair CR mappings.
---  NOTE: Also the cmp Performance settings should do the same thing.
--- local cmpdebounce_aumgroup = vim.api.nvim_create_augroup("MyCmpDebounce", { clear = true })
--- vim.api.nvim_create_autocmd("TextChangedI", {
---     command = "lua cmp_debounce()",
---     group = cmpdebounce_aumgroup
--- })
 
 -- |> Search Highlight AutoCommands
 local search_hl_aumgroup = vim.api.nvim_create_augroup("MySearchHL", { clear = true })
@@ -2760,6 +2880,14 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = {"*"},
     command = "set fo-=c fo-=r fo-=o",
     group = formatopt_aumgroup
+})
+
+-- |> Assembly Syntax (Asm)
+local asmsyntax_aumgroup = vim.api.nvim_create_augroup("MyAsmSyntax", { clear = true })
+vim.api.nvim_create_autocmd("BufRead, BufNew", {
+    pattern = { '*.asm' },
+    command = "set filetype=nasm",
+    group = asmsyntax_aumgroup
 })
 
 -- Autocommands to change "commentstring" for specific filetypes. (TODO: Create lua version.)
@@ -2787,8 +2915,11 @@ autocmd!
 augroup END
 ]])
 
--- |> Set colorscheme / theme
+-- |> Set Colorscheme / Theme:
 vim.api.nvim_cmd({ cmd = "colorscheme", args = { "aumnechroma" }}, {})
+
+-- |> Set Neovide Font:
+vim.cmd([[set guifont=JetBrainsMono\ Nerd\ Font:h20:b]])
 
 --========================================--+
 -- === END - 10. Custom Commands - END === --|  --=>><⚡END⚡>]

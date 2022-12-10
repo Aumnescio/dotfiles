@@ -1,0 +1,12 @@
+{
+  "use": {
+    "prefix": "use",
+    "description": "Snippet for: Packer use.",
+    "body": "use { \"$1\" \\}$0"
+  },
+  "bindkey": {
+    "prefix": "bindkey",
+    "description": "Snippet for: bindkey.",
+    "body": "bindkey(\"$1\", \"$2\", \"$0\")"
+  }
+}

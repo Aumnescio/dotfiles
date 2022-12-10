@@ -1,6 +1,6 @@
 # Aumnescio's Config Files
 
-## Neovim Theme
+## Neovim Theme Install
 
 ![Image of Colorscheme](https://i.imgur.com/KOqQ2bG.png)
 

@@ -9,7 +9,10 @@ snippet !latexbase "Snippet for: (Lua)Latex base template." b
 \usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{titlesec}
-\usepackage{verbatim}
+\usepackage{verbatim}       % For manually formatted text.
+% \usepackage{minted}         % For colored code blocks.
+% \usemintedstyle{tango}    % Colored code block theme.
+% \graphicspath{{/home/aum/Pictures/Screenshots/}}  % Can remove if not using images.
 
 % Settings
 \setmainfont{JetBrains Mono Regular Nerd Font Complete}  % This works as a font, but is telling me the unicode characters are missing.
@@ -85,7 +88,7 @@ luatexbase.add_to_callback("pre_linebreak_filter", nodeprocessor, "replace missi
 % |> START -> Document <|
 \begin{document}
 \maketitle
-\tableofcontents
+% \tableofcontents
 
 \section{$2}
 
@@ -130,9 +133,24 @@ snippet item "Snippet for: \item."
 \item $0
 endsnippet
 
+snippet verbatim "Snippet for: verbatim environment." b
+\begin{verbatim}
+$0
+\end{verbatim}
+endsnippet
 
 snippet codeblock "Snippet for: codeblock."
 \begin(lstlisting)
 $0
 \end(lstlisting)
+endsnippet
+
+snippet image "Snippet for: includegraphics image."
+\includegraphics[width=\textwidth]{$0}  % Name of image without extension.
+endsnippet
+
+snippet codeblock_colored "Snippet for: minted codeblock."
+\begin{minted}{$1}
+	$0
+\end{minted}
 endsnippet

@@ -1,0 +1,20 @@
+{
+  "snip_snip": {
+    "prefix": "snip_snip",
+    "description": "Snippet for: Creating a new snippet.",
+    "body": [
+      "snippet $1 \"Snippet for: $2.\"",
+      "$3",
+      "endsnippet$0"
+    ]
+  },
+  "snip_css": {
+    "prefix": "snip_css",
+    "description": "Snippet for: Creating new CSS Snippet.",
+    "body": [
+      "snippet $1 \"Snippet for: CSS Property ------=>> '$1$2'\"",
+      "$1$3: $4\\${1\\};",
+      "endsnippet$5"
+    ]
+  }
+}

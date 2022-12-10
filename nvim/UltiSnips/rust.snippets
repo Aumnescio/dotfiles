@@ -10,13 +10,59 @@ fn $1($2) -> $3 {
 }
 endsnippet
 
-snippet strfrom "Snippet for: String::from()."
-String::from("$1")$0
+snippet strfrom "Snippet for: String::from()." iA
+String::from("$0")
+endsnippet
+
+snippet vecnew "Snippet for: Vec::new()." iA
+Vec::new()$0
+endsnippet
+
+snippet vecint "Snippet for: Vec<i32>." iA
+Vec<i32>$0
+endsnippet
+
+snippet arrint "Snippet for: [i32; x]." iA
+[i32; $1]$0
+endsnippet
+
+snippet vecchar "Snippet for: Vec<char>." iA
+Vec<char>$0
+endsnippet
+
+snippet vecstr "Snippet for: Vec<String>." iA
+Vec<String>$0
+endsnippet
+
+snippet colstr "Snippet for: collect::<String>()." iA
+collect::<String>()$0
+endsnippet
+
+snippet colvec "Snippet for: collect::<Vec<T>>()." iA
+collect::<Vec<$0>>()
+endsnippet
+
+snippet reverse_string "Snippet for: Reversing String or &str." b
+let reversed: String = $0.chars().rev().collect();
 endsnippet
 
 snippet struct "Snippet for: 'struct' definition."
 struct $1 {
 	$2: $3,$0
+}
+endsnippet
+
+snippet struct_with_new "Snippet for: 'struct' definition with `new()` constructor."
+struct $1 {
+	$2: $3,$4
+}
+
+impl $1 {
+	fn new() -> Self {
+		$1 {
+			$2$0
+		}
+	}
 }
 endsnippet
 
@@ -35,6 +81,16 @@ endsnippet
 snippet impl "Snippet for: 'impl' keyword."
 impl $1 {
 	$0
+}
+endsnippet
+
+snippet impl_new "Snippet for: 'impl' block with new()."
+impl $1 {
+	fn new() -> Self {
+		$1 {
+			$2$0
+		}
+	}
 }
 endsnippet
 

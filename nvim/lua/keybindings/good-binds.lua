@@ -27,16 +27,16 @@ vim.g.mapleader = "\\"
 -- Key:         Shift-t                 (Normal, Visual)
 -- Action:      Move cursor 6 lines upwards.
 bindkey({"n", "v"},             "<S-t>",    "6k",       opts)
--- bindkey({"n", "v"},             "<S-t>",    "6<C-y>6k",       opts)
 
 -- Key:         Shift-h                 (Normal, Visual)
 -- Action:      Move cursor 6 lines downwards.
 bindkey({"n", "v"},             "<S-h>",    "6j",       opts)
--- bindkey({"n", "v"},             "<S-h>",    "6<C-e>6j",       opts)
 
 -- Key:         Ctrl-t
 -- Action:      Move cursor upwards to next paragraph.
 bindkey({"n", "v", "o"},        "<C-t>",    "{",        opts)
+-- Action:      Create new line below current and move there.
+bindkey("i",                    "<C-t>",    "<C-o>o",   opts)
 
 -- Key:         Ctrl-h
 -- Action:      Move cursor downwards to next paragraph.
@@ -133,9 +133,11 @@ bindkey("i",    "<C-a>",      "<Esc>I",      opts)
 bindkey("i",    "<C-s>",      "<Esc>A",      opts)
 
 -- Key:         j
+-- Action:      Jump forwards to Character.
 bindkey({"n", "o", "v"},    "j",         "f",           opts)
 
 -- Key:         Shift-j
+-- Action:      Jump backwards to Character.
 bindkey({"n", "o", "v"},    "<S-j>",     "<S-f>",       opts)
 
 -- Key:         Shift-o
@@ -193,20 +195,10 @@ bindkey("n",    "zz",        "zz",       opts)
 -- === START - Pattern searching - START === --
 --===========================================--
 
--- => STATE: Good
-
--- Key:         r
-bindkey("n",    "r",    "/",                { silent = false })
-bindkey("v",    "r",    "/",                { silent = false })
-bindkey("o",    "r",    "/",                { silent = false })
+-- => STATE: Good (But moving to legendary)
 
 -- Key:         Shift-r
-bindkey("v",    "<S-r>",    'y/<C-r>"<CR>:set hlsearch<CR>',    { silent = false })
-
--- Key:         ?
-bindkey("n",    "?",    "?",    { silent = false })
-bindkey("v",    "?",    "?",    { silent = false })
-bindkey("o",    "?",    "?",    { silent = false })
+bindkey("v",    "<S-r>",    'y/<C-r>"<CR><Cmd>set hlsearch<CR>',    { silent = true })
 
 -- Key:         b
 -- Action:      Jump to next search.
@@ -220,10 +212,10 @@ bindkey({"n", "v", "o"},    "<S-b>",    "<S-n>",    { silent = true })
 -- bindkey("i",    "<C-s>",    "<C-o>/",            { silent = false })
 
 -- Key:         Shift-8 (* [star])
-bindkey("n",    "*",        "*<S-n>:set hlsearch<CR>",     opts)
+bindkey("n",    "*",        "*<S-n><Cmd>set hlsearch<CR>",     opts)
 
 -- Key:         Shift-3 (# [hashtag])
-bindkey("n",    "#",        "#<S-n>:set hlsearch<CR>",     opts)
+bindkey("n",    "#",        "#<S-n><Cmd>set hlsearch<CR>",     opts)
 
 --=======================================--
 -- === END - Pattern searching - END === --
@@ -323,15 +315,12 @@ bindkey("v",    "<S-a>",    ":Norm A",  { silent = false })
 bindkey("n",    "ie",       "ea",       opts)
 
 -- Key:         ih
-bindkey("n",    "ih",       "o",        opts)
-bindkey("o",    "ih",       "o",        opts)
+-- Action:      Enter insert mode on line below.
+bindkey({ "n", "o" },    "ih",       "o",        opts)
 
 -- Key:         it
-bindkey("n",    "it",       "<S-o>",    opts)
-bindkey("o",    "it",       "<S-o>",    opts)
-
--- Key:         Ctrl-t
-bindkey("i",    "<C-t>",    "<C-o>o",   opts)
+-- Action:      Enter insert mode on line above.
+bindkey({ "n", "o" },    "it",       "<S-o>",    opts)
 
 --=================================--
 -- === END - Insert Mode - END === --
@@ -376,16 +365,16 @@ bindkey("v",    "<BS>",     '"_d',                 opts)
 
 -- Key:         Ctrl - <BS>  (Backspace)
 bindkey("i",    "<C-BS>",   "<C-w>",               opts)
--- bindkey("n", "<C-BS>", '"_dd0')  -- This does not work, because of it being linked to Ctrl-h.
--- bindkey("v", "<C-BS>", '"_d')    -- This does not work, because of it being linked to Ctrl-h.
+-- bindkey("n", "<C-BS>", '"_dd0')  -- This does not work, because of it being linked to Ctrl-h. (TODO: Make it work, because can do so in Kitty now.)
+-- bindkey("v", "<C-BS>", '"_d')    -- This does not work, because of it being linked to Ctrl-h. (TODO: Make it work, because can do so in Kitty now.)
 
--- Key:         Shift-j
-bindkey("n",    "<S-j>",    "<S-j>",       opts)
-bindkey("o",    "<S-j>",    "<S-j>",       opts)
-bindkey("v",    "<S-j>",    "<S-j>",       opts)
+-- Key:         Shift-i
+-- Action:      Join lines with spaces.
+bindkey({ "n", "o", "v" },    "<S-i>",    "<S-j>",      opts)
 
--- Key:         g, Shift-j
-bindkey("n",    "g<S-j>",   "g<S-j>",      opts)
+-- Key:         g, Shift-i
+-- Action:      Join lines without spaces.
+bindkey({ "n", "o", "v" },    "g<S-i>",   "g<S-j>",     opts)
 
 --==============================--
 -- === END - Deleting - END === --
@@ -397,47 +386,13 @@ bindkey("n",    "g<S-j>",   "g<S-j>",      opts)
 
 -- => STATE: Good
 
--- Key:         y
--- Action:      Yank operator.
-bindkey({"n", "v", "o"},        "y",        "y",        opts)
-
--- Key:         Shift-y
--- Action:      Yank to end.
-bindkey({"n", "v", "o"},        "<S-y>",    "yg_",      opts)
-
--- Key:         ygn
--- Action:      Yank to end.
-bindkey({"n", "v", "o"},        "ygn",      "y$",       opts)
-
--- Key:         ygo
--- Action:      Yank to start.
-bindkey({"n", "v", "o"},        "ygo",      "y^",       opts)
-
--- Key:         yy
--- Action:      Yank current line.
-bindkey("n",                    "yy",       "0vg_y",    opts)
-
--- Key:         yl
--- Action:      Yank current line.
-bindkey("n",                    "yl",       "0vg_y",    opts)
-
--- Key:         ye
--- Action:      Yank to end of word.
-bindkey("n",                    "ye",       "ye",       opts)
-
--- Key:         p               (Insert)
--- Action:      Paste.
-bindkey("n",                    "p",        "<S-p>",                opts)
-bindkey("v",                    "p",        '"_c<C-o><S-p><Esc>',   opts)
-bindkey("o",                    "p",        "<S-p>",                opts)
-
 -- Key:         Ctrl-v          (Insert)
 -- Action:      Paste.
-bindkey("i",    "<C-v>",    " <BS><C-o>P",           opts)
+bindkey("i",    "<C-v>",    " <BS><C-o><S-p>",           opts)
 
 -- Key:         Shift-p
 -- Action:      Paste below.
-bindkey("n",    "<S-p>",    "o<C-o>P<Esc>",          opts)
+bindkey("n",    "<S-p>",    "o<C-o><S-p><Esc>",          opts)
 
 -- Key:         Ctrl-r
 bindkey("i",    "<C-r>",    "<C-r>",                 opts)
@@ -497,19 +452,34 @@ bindkey("v",    "<S-u>",    "<S-u>",    opts)
 bindkey({"n", "v", "o"},    "gq",       "gq",       opts)
 
 -- Key:         Shift-d                 (NOTE: I really like this.)
--- Action:      Replace word under cursor and prep dot repeat replacement.
-bindkey("n",    "<S-d>",    '*<S-n>:set hlsearch<CR>"_cgn',     opts)
+-- Action:      Replace test under cursor and prep dot repeat replacement.
+bindkey("n",    "<S-d>",    '*<S-n><Cmd>set hlsearch<CR>"_cgn',     opts)
 
--- Key:         Shift-d                 (NOTE: I really like this.)
--- Action:      Replace visually selected text globally.
-bindkey("v",    "<S-d>",    "y:%s/<C-r>0//g<Left><Left>",       { noremap = true, silent = false })
+-- Key:         gb
+-- Action:      Replace word under cursor and prep dot repeat replacement.
+-- NOTE:        On its own this does not really do anything.
+bindkey({"n", "v", "o"},    "gb",       "gn",     opts)
+
+-- Key:         kgb
+-- Action:      Replace word under cursor and prep dot repeat replacement.
+-- NOTE:        Move this elsewhere.
+bindkey({"n", "o"},    "kgb",       '*<S-n><Cmd>set hlsearch<CR>"_cgn',     opts)
+
+-- Key:         gx
+-- Action:      Open URL under cursor. (Might also work for opening files like images.)
+bindkey({"n", "o"},    "gx",        "gx",     opts)
 
 -- Key:         Shift-k                 (NOTE: I really like this.)
--- Action:      Replace yank register text within visual selection.
-bindkey("v",    "<S-k>",    ":s/\\%V<C-r>0//g<Left><Left>",    { noremap = true, silent = false })
+-- Action:      Replace visually selected text globally.
+bindkey("v",    "<S-k>",            "y:%s/<C-r>0//g<Left><Left>",       { noremap = true, silent = false })
 
--- Key:         is                      (NOTE: I quite like this. The bind is just easily forgotten.)
-bindkey("n",    "is",       "i<Space><Esc>",   opts)
+-- Key:         Shift-d                 (NOTE: I really like this.)
+-- Action:      Replace yank register text within visual selection.
+bindkey("v",    "<S-d>",            ":s/\\%V<C-r>0//g<Left><Left>",    { noremap = true, silent = false })
+
+-- Key:         is
+-- Action:      Insert a <Space>.
+bindkey("n",    "is",               "i<Space><Esc>",   opts)
 
 --=================================================--
 -- === END - Changing and Replacing text - END === --
@@ -522,26 +492,33 @@ bindkey("n",    "is",       "i<Space><Esc>",   opts)
 -- STATE: Good'ish (I think.)
 
 -- Key:         g
+-- Action:      Do nothing, wait for next key in chord.
 bindkey({"n", "v", "o"},    "g",    "g",   opts)
 
 -- Key:         i
+-- Action:      Do nothing, wait for next key in chord. (Can enter insert too, if not pressing a chord key.)
 bindkey({"n", "o", "v"},    "i",    "i",   opts)
 
 -- Key:         z
+-- Action:      Do nothing, wait for next key in chord. (Can jump to a character, if not pressing chord key.)
 bindkey({"n", "o", "v"},    "z",    "t",   opts)
 
 -- Key:         zt
+-- Action:      Jump to `Character`. (1 Character before)
 bindkey({"n", "o", "v"},    "zt",    "t",   opts)
 
 -- Key:         zf
+-- Action:      Jump to `Character`. (On top)       (Same as "j")
 bindkey({"n", "o", "v"},    "zf",    "f",   opts)
 
 -- Key:         z=
--- Action:      Fix spelling. (TODO: Move somewhere else.)
+-- Action:      Fix spelling.               
+-- NOTE:        TODO: Move somewhere else.
 bindkey({"n", "o"},    "z=",    "z=",   opts)
 
 -- Key:         <Leader>sp
--- Action:      Automatically fix next spelling mistake. (TODO: Move somewhere else.)
+-- Action:      Automatically fix next spelling mistake.
+-- NOTE:        TODO: Move somewhere else.
 bindkey({"n", "o"},    "<Leader>sp",    "]s1z=",   opts)
 
 --======================================--
@@ -624,6 +601,9 @@ bindkey("o",    "<S-f>", "dg_",         opts)
 --==================================--
 -- === START - Visual Selection === --
 --==================================--
+
+-- Key:         Ctrl-w
+bindkey("i",    "<C-w>",        "<Esc><Plug>(wildfire-fuel)",        opts)
 
 -- Key:         v
 bindkey({"n", "v", "o"},    "v",        "v",        opts)
@@ -718,17 +698,15 @@ bindkey("v",    "<A-t>",      ":m '<-2<CR>gv",       opts)
 -- bindkey("n", "<C-q>", ':let idx = 0 | g/<C-r>"1/let idx += 1 | s//\\= "<C-r>"" . idx', { noremap = true, silent = false })
 
 -- Key:         l
--- Action:      Enter command mode. (Moved to Legendary. But do not remove yet.)
--- bindkey("n",    "l",    ":",   { noremap = true, silent = false, nowait = true })
--- bindkey("v",    "l",    ":",   { noremap = true, silent = false, nowait = true })
--- bindkey("o",    "l",    ":",   { noremap = true, silent = false, nowait = true })
+-- Action:      Enter command mode. (Moved to Legendary, but don't remove yet.)
+-- bindkey({"n", "v", "o"},    "l",    ":",   { noremap = true, silent = false, nowait = true })
 
 -- Key:         zt
 -- Action:      Toggle fold. (TODO: Find new fold binding and bind all the stuff and make it work with ufo.)
 -- bindkey("n",    "zt",   "za",       opts)
 
 -- Key:         Leader-Leader-f-s
-bindkey("n",    "<Leader><Leader>fs",  ":set guifont=JetBrainsMono\\ Nerd\\ Font:h", { noremap = true, silent = false })
+bindkey("n",    "<Leader><Leader>fs",  ":set guifont=JetBrainsMono\\ Nerd\\ Font:h:b<Left><Left>", { noremap = true, silent = false })
 
 -- Key:         Ctrl-Shift-d
 bindkey("n",    "<C-S-d>", ":UltiSnipsEdit<CR>",  opts)
@@ -748,14 +726,13 @@ bindkey("n",    "<C-a>",  "<S-g><S-v>gg0",   opts)
 -- bindkey("v", "s", ":s/\\%V<C-r>0\\%V//g<Left><Left>", { noremap = true, silent = false })
 
 -- Key:         Enter           (Normal)
-bindkey("n",    "<CR>",    "k<S-a><CR><Esc>j",   opts)
+bindkey("n",    "<CR>",    "i<CR><Esc>",   opts)
 
 -- Key:         Enter           (Insert)
 -- Action:      Insert new line, autocomplete, do autopairs things.
 -- Note:        Handled by nvim-cmp and nvim-autopairs.
--- bindkey("i",    "<CR>",    "k<S-a><CR><Esc>j",   opts)
 
--- Key:         Ctrl-Enter            (NOTE: Does not work in all/most terminals.)
+-- Key:         Ctrl-Enter            (NOTE: Does not work in all/most terminals. Works in Kitty though.)
 bindkey("n",    "<C-CR>",  "o<Esc>S<Esc>k",      opts)
 
 -- Key:         Shift-Enter           (NOTE: Does not work in all/most terminals.)
@@ -818,7 +795,7 @@ bindkey("n",   "<Leader>bd",   ":Sayonara!<CR>",        opts)
 -- bindkey("i", "<C-S-j>", '<Esc>t"?"<CR>ni', opts)
 
 -- Key:         Esc
-bindkey("n",   "<Esc>",  "<Esc>:set nohlsearch<CR>", opts)
+bindkey("n",   "<Esc>",  "<Esc><Cmd>set nohlsearch<CR>", opts)
 
 -- Key:         Esc
 bindkey("t",   "<Esc>",  "<C-\\><C-n>",         opts)
@@ -1014,7 +991,7 @@ require("legendary").setup({
         -- Legendary                    ( STATE: TODO )
         { "<Leader>key",                "<Cmd> lua require('legendary').find({ kind = 'keymaps' })<CR>",    description = "Search keymaps/bindings using Legendary and Telescope.",     mode = "n",   opts = opts },
 
-        -- Command mode                 ( STATE: TODO )
+        -- Command mode                 ( STATE: Does not work from Legendary. )
         { "l",          ":",            description = "Enter command mode.",                    mode = { 'n', 'v', 'o' },   opts = { noremap = true, silent = false, nowait = true } },
 
         -- Up / Down                    ( STATE: Good )
@@ -1037,11 +1014,53 @@ require("legendary").setup({
 
         -- Visual                       ( STATE: TODO )
 
-        -- Search                       ( STATE: TODO )
+        -- Search                       ( STATE: Okay )
+        -- Key:         r
+        { "r",          "/",            description = "Initiate search forwards.",              mode = { 'n', 'v', 'o' },   opts = { noremap = true, silent = false, nowait = true } },
+        -- Key:         ?
+        { "?",          "?",            description = "Initiate search backwards.",             mode = { 'n', 'v', 'o' },   opts = { noremap = true, silent = false, nowait = true } },
 
         -- Next / Back                  ( STATE: Okay )
-        { "b",          "n",            description = "Jump to next search match.",             mode = { 'n', 'v', 'o' },     opts = opts },
-        { "<S-b>",      "<S-n>",        description = "Jump to previous search match.",         mode = { 'n', 'v', 'o' },     opts = opts },
+        -- Key:         b
+        { "b",          "n",            description = "Jump to next search match.",             mode = { 'n', 'v', 'o' },   opts = opts },
+        -- Key:         Shift-b
+        { "<S-b>",      "<S-n>",        description = "Jump to previous search match.",         mode = { 'n', 'v', 'o' },   opts = opts },
+
+        -- Copy / Yank                  ( STATE: Okay )
+        -- Key:         y
+        { "y",          "y",            description = "Initiate Yank / Copy.",                  mode = { 'n', 'v', 'o' },   opts = opts },
+        -- Key:         Shift-y
+        { "<S-y>",      "yg_",          description = "Yank / Copy to end of line.",            mode = { 'n', 'v', 'o' },   opts = opts },
+        -- Key:         ygn
+        { "ygn",        "y$",           description = "Yank / Copy to end of line.",            mode = { 'n', 'v', 'o' },   opts = opts },
+        -- Key:         ygo
+        { "ygo",        "y^",           description = "Yank / Copy to start of line.",          mode = { 'n', 'v', 'o' },   opts = opts },
+        -- Key:         yy
+        { "yy",         "0vg_y",        description = "Yank / Copy current line. (1)",          mode = { 'n' },             opts = opts },
+        -- Key:         yl
+        { "yl",         "0vg_y",        description = "Yank / Copy current line. (2)",          mode = { 'n' },             opts = opts },
+        -- Key:         ye
+        { "ye",         "ye",           description = "Yank / Copy to end of word.",            mode = { 'n' },             opts = opts },
+
+        -- Paste                        ( STATE: Okay )
+        -- Key:         p
+        { "p",          "<S-p>",        description = "Paste from clipboard or registers.",     mode = {"n", "v", "o"},     opts = opts },
+
+        -- Folding
+        -- Key:         zo (Open fold)
+        { "zo",         "zo",                                   description = "Open fold.",                 mode = {"n", "o"},     opts = opts },
+        -- Key:         zr (Open fold)
+        { "zr",         require("ufo").openFoldsExceptKinds,    description = "Reduce (Open) fold.",        mode = {"n", "o"},     opts = opts },
+        -- Key:         zR (Open all)
+        { "z<S-r>",     require("ufo").openAllFolds,            description = "Reduce (Open) all folds.",   mode = {"n", "o"},     opts = opts },
+        -- Key:         zc (Close fold)
+        { "zc",         "zc",                                   description = "Close fold.",                mode = {"n", "o"},     opts = opts },
+        -- Key:         zm (Close fold)
+        { "zm",         require("ufo").closeFoldsWith,          description = "Close fold (More).",         mode = {"n", "o"},     opts = opts },
+        -- Key:         zM (Close all)
+        { "z<S-m>",     require("ufo").closeAllFolds,           description = "Close all folds.",           mode = {"n", "o"},     opts = opts },
+        -- Key:         zt (Toggle fold)
+        { "zt",         "za",                                   description = "Toggle folding.",            mode = {"n", "o"},     opts = opts },
 
         -- Telescope                    ( STATE: TODO )
         { "<Leader><S-t>ele<S-h>i",     "<Cmd>Telescope highlights<CR>",        description = "Telescope: List and search highlight groups.",           mode = "n",     opts = opts },
@@ -1053,24 +1072,31 @@ require("legendary").setup({
     },
 
     commands = {},
-    functions = {},
+    funcs = {},
     autocmds = {},
 
     which_key = {
+        auto_register = false,
         mappings = {},
         opts = {},
         do_binding = true,  -- `true` => handled by legendary. `false` => handled by which_key. (I think.)
     },
 
-    auto_register_which_key = false,
-
     -- Settings for the `:LegendaryScratch` command.
     scratchpad = {
-        display_results = "float",  -- 'float' | 'print' ( `q` or `esc` closes float )
-        cache_file = string.format("%s/%s", vim.fn.stdpath("cache"), "legendary_scratch.lua"),
+        view = "float",
+        results_view = "float",
+        -- keep_contents = false,
+        cache_path = string.format("%s/%s", vim.fn.stdpath("cache"), "legendary_scratch.lua"),
     },
 })
 -- === END - Legendary Setup - END === --
+
+-- Temporary test.
+-- -> Binding Ctrl-Key and Ctrl-Shift-Key works properly now, because I configured Kitty. 
+-- bindkey("n", "<C-e>",    "n")           
+-- bindkey("n", "<C-S-e>",  "N")
+-- bindkey("n", "<C-i>",    "j")  -- Differentiated from <Tab>, because Kitty supports this.
 
 --=================================================--
 -- === END - Plugin Specific Keybindings - END === --

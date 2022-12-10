@@ -271,6 +271,10 @@ local StatuslineMessage= {
 }
 -- END => StatuslineMessage
 
+-- START => LSP Diagnostics
+-- TODO
+-- END => LSP Diagnostics
+
 -- === |> - StatusLine combined - <| ===
 local StatusLine = {
     Space, ViModeIndicator, Space, FileNameBlock, Space, Align,

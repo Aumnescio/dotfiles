@@ -19,6 +19,7 @@
 -- => Leap.nvim
 -- => Trouble.nvim
 -- => hlargs.nvim
+-- => nvim-ufo
 -- => nvim-notify
 -- => nvim-ts-rainbow
 
@@ -66,7 +67,7 @@ set_hl(ns_id, "AumWhitespace",          { fg = colors.ghost })                  
 set_hl(ns_id, "AumVisual",              { fg = colors.rouge, bg = colors.dusk, bold = true, italic = true, underline = true })  -- STATE: 9.3/10 (Bit fancy, maybe not for everyone.)
 set_hl(ns_id, "AumPmenu",               { link = "AumNormalTer" })                              -- STATE: 9.5/10
 set_hl(ns_id, "AumBorderBase",          { fg = colors.plum })                                   -- STATE: 9.6/10
-set_hl(ns_id, "AumMatch",               { fg = colors.apricot })                                -- STATE: 9.6/10
+set_hl(ns_id, "AumMatch",               { fg = colors.amber, underline = true })                -- STATE: 9.7/10
 set_hl(ns_id, "AumLineNumberActive",    { fg = colors.hail })                                   -- STATE: 9.0/10
 set_hl(ns_id, "AumLineNumberInactive",  { fg = colors.comment })                                -- STATE: 9.0/10
 
@@ -91,7 +92,7 @@ set_hl(ns_id, "AumVariableBuiltin",     { fg = colors.hail, bold = true })      
 set_hl(ns_id, "AumIdentifierBase",      { fg = colors.pink })                                   -- STATE: ?
 set_hl(ns_id, "AumStatementBase",       { fg = colors.green })                                  -- STATE: ?
 set_hl(ns_id, "AumExceptionBase",       { fg = colors.rouge })                                  -- STATE: ?
-set_hl(ns_id, "AumConstantBase",        { fg = colors.cyan, bold = true })                      -- STATE: WIP
+set_hl(ns_id, "AumConstantBase",        { fg = colors.rosewater, bold = true })                 -- STATE: WIP
 set_hl(ns_id, "AumFieldBase",           { fg = colors.azure, bold = false })                    -- STATE: 9.9/10
 set_hl(ns_id, "AumPropertyBase",        { fg = colors.blue })                                   -- STATE: 9.0/10
 set_hl(ns_id, "AumTypeBase",            { fg = colors.sea, bold = true })                       -- STATE: 9.0/10
@@ -100,11 +101,13 @@ set_hl(ns_id, "AumStructureBase",       { fg = colors.yellow })                 
 set_hl(ns_id, "AumFunctionBase",        { fg = colors.marigold, bold = true })                  -- STATE: 9.3/10
 set_hl(ns_id, "AumFunctionCall",        { fg = colors.valencia })                               -- STATE: 8.8/10
 set_hl(ns_id, "AumFunctionMacro",       { fg = colors.rosy })                                   -- STATE: 8.2/10
-set_hl(ns_id, "AumParameterBase",       { fg = colors.amber })                                  -- STATE: 9.0/10
+-- set_hl(ns_id, "AumParameterBase",       { fg = colors.amber })                                  -- STATE: 9.2/10 (Good, but now the same as AumMatch)
+set_hl(ns_id, "AumParameterBase",       { fg = colors.apricot })                                -- STATE: 9.0/10 (Testing)
 set_hl(ns_id, "AumPreprocBase",         { fg = colors.titian })                                 -- STATE: 8.2/10
 set_hl(ns_id, "AumIncludeBase",         { fg = colors.flamingo })                               -- STATE: 9.0/10
 set_hl(ns_id, "AumNamespaceBase",       { fg = colors.lavender })                               -- STATE: ?
-set_hl(ns_id, "AumTagBase",             { fg = colors.plum })                                   -- STATE: ? (TODO)
+set_hl(ns_id, "AumTagPri",              { fg = colors.plum })                                   -- STATE: 9.0/10
+set_hl(ns_id, "AumTagSec",              { fg = colors.mauve })                                  -- STATE: 8.8/10
 set_hl(ns_id, "AumTagAttributeBase",    { link = "AumFieldBase" })                              -- STATE: ? (TODO)
 set_hl(ns_id, "AumPunctuationPri",      { fg = colors.sky })    -- Delimiters                   -- STATE: 9.2/10
 set_hl(ns_id, "AumPunctuationSec",      { fg = colors.ceru })   -- Brackets                     -- STATE: 9.0/10'ish
@@ -117,7 +120,8 @@ set_hl(ns_id, "AumRainbowBracket5",     { fg = colors.cyan })                   
 set_hl(ns_id, "AumRainbowBracket6",     { fg = colors.ceru })                                   -- STATE: ?
 set_hl(ns_id, "AumRainbowBracket7",     { fg = colors.sky })                                    -- STATE: ?
 set_hl(ns_id, "AumSpecial",             { fg = colors.titian })                                 -- STATE: 8.8/10
-set_hl(ns_id, "AumReference",           { fg = colors.lilac })                                  -- STATE: 9.3/10
+-- set_hl(ns_id, "AumReference",           { fg = colors.lilac })                                  -- STATE: 9.1/10 (Not sure, looks weak in html)
+set_hl(ns_id, "AumReference",           { fg = colors.linkblue })                               -- STATE: 9.3/10
 set_hl(ns_id, "AumCommentBase",         { fg = colors.comment })                                -- STATE: 9.8/10
 
 -- Cursor
@@ -137,10 +141,41 @@ set_hl(ns_id, "SignColumn",             { link = "AumNormalPri" })
 set_hl(ns_id, "ColorColumn",            { link = "AumNormalSec" })
 
 -- Text
+set_hl(ns_id, "text",                   { link = "AumNormalTer" })  -- Or Pri
+set_hl(ns_id, "@text",                  { link = "AumNormalTer" })  -- Or Pri
+set_hl(ns_id, "text.strong",            { fg = colors.hail, bold = true })
+set_hl(ns_id, "@text.strong",           { fg = colors.hail, bold = true })
+set_hl(ns_id, "text.emphasis",          { fg = colors.heaven, italic = true })
+set_hl(ns_id, "@text.emphasis",         { fg = colors.heaven, italic = true })
+set_hl(ns_id, "text.underline",         { fg = colors.heaven, underline = true })
+set_hl(ns_id, "@text.underline",        { fg = colors.heaven, underline = true })
+set_hl(ns_id, "text.strikethrough",     { fg = colors.heaven, strikethrough = true })
+set_hl(ns_id, "@text.strikethrough",    { fg = colors.heaven, strikethrough = true })
+set_hl(ns_id, "text.title",             { link = "AumTitle" })
+set_hl(ns_id, "@text.title",            { link = "AumTitle" })
 set_hl(ns_id, "text.literal",           { link = "AumTypeBuiltin" })
 set_hl(ns_id, "@text.literal",          { link = "AumTypeBuiltin" })
+set_hl(ns_id, "text.math",              { link = "AumIncludeBase" })
+set_hl(ns_id, "@text.math",             { link = "AumIncludeBase" })
+set_hl(ns_id, "text.uri",               { link = "AumReference" })
+set_hl(ns_id, "@text.uri",              { link = "AumReference" })
 set_hl(ns_id, "text.reference",         { link = "AumReference" })
 set_hl(ns_id, "@text.reference",        { link = "AumReference" })
+set_hl(ns_id, "text.environment",       { link = "AumIdentifierBase" })     -- TODO: Make unique
+set_hl(ns_id, "@text.environment",      { link = "AumIdentifierBase" })     -- TODO: Make unique
+set_hl(ns_id, "text.environment.name",  { link = "AumFieldBase" })          -- TODO: Make unique
+set_hl(ns_id, "@text.environment.name", { link = "AumFieldBase" })          -- TODO: Make unique
+set_hl(ns_id, "text.todo",              { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all todo use the AumTodo.
+set_hl(ns_id, "@text.todo",             { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all todo use the AumTodo.
+set_hl(ns_id, "text.note",              { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all note use the AumNote.
+set_hl(ns_id, "@text.note",             { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all note use the AumNote.
+set_hl(ns_id, "text.warning",           { link = "AumWarning" })
+set_hl(ns_id, "@text.warning",          { link = "AumWarning" })
+set_hl(ns_id, "text.danger",            { link = "AumError" })
+set_hl(ns_id, "@text.danger",           { link = "AumError" })
+-- Text.Diff.<Add|Delete>
+set_hl(ns_id, "@text.diff.add",         { link = "AumStringBase" })
+set_hl(ns_id, "@text.diff.delete",      { link = "AumOperatorBase" })
 
 -- Floating windows
 set_hl(ns_id, "NormalFloat",            { link = "AumNormalPri" })
@@ -152,11 +187,15 @@ set_hl(ns_id, "FloatShadowThrough",     { link = "AumNone" })
 set_hl(ns_id, "comment",                { link = "AumCommentBase" })
 set_hl(ns_id, "@comment",               { link = "AumCommentBase" })
 
--- String
+-- String (Probably WIP)
 set_hl(ns_id, "string",                 { link = "AumStringBase" })
 set_hl(ns_id, "@string",                { link = "AumStringBase" })
 set_hl(ns_id, "string.escape",          { link = "AumOperatorBase" })
 set_hl(ns_id, "@string.escape",         { link = "AumOperatorBase" })
+set_hl(ns_id, "string.regex",           { link = "AumPreprocBase" })
+set_hl(ns_id, "@string.regex",          { link = "AumPreprocBase" })
+set_hl(ns_id, "string.special",         { link = "AumBooleanBase" })
+set_hl(ns_id, "@string.special",        { link = "AumBooleanBase" })
 
 -- Character
 set_hl(ns_id, "character",              { link = "AumCharacterBase" })
@@ -169,8 +208,8 @@ set_hl(ns_id, "@character.special",     { link = "AumOperatorBase" })
 set_hl(ns_id, "number",                 { link = "AumNumberBase" })
 set_hl(ns_id, "@number",                { link = "AumNumberBase" })
 -- Float
-set_hl(ns_id, "float",                  { link = "AumNumberBase" })
-set_hl(ns_id, "@float",                 { link = "AumNumberBase" })
+set_hl(ns_id, "float",                  { link = "AumNumberBase" })  -- TODO: Could be made unique
+set_hl(ns_id, "@float",                 { link = "AumNumberBase" })  -- TODO: Could be made unique
 
 -- Boolean
 set_hl(ns_id, "boolean",                { link = "AumBooleanBase" })
@@ -179,12 +218,22 @@ set_hl(ns_id, "@boolean",               { link = "AumBooleanBase" })
 -- Variable
 set_hl(ns_id, "variable",               { link = "AumVariableBase" })
 set_hl(ns_id, "@variable",              { link = "AumVariableBase" })
+-- Variable.Builtin
 set_hl(ns_id, "variable.builtin",       { link = "AumVariableBuiltin" })
 set_hl(ns_id, "@variable.builtin",      { link = "AumVariableBuiltin" })
+-- Variable.Global
+set_hl(ns_id, "variable.global",        { link = "AumVariableBase" })  -- TODO: Could be made unique.
+set_hl(ns_id, "@variable.global",       { link = "AumVariableBase" })  -- TODO: Could be made unique.
 
 -- Constant
 set_hl(ns_id, "constant",               { link = "AumConstantBase" })
 set_hl(ns_id, "@constant",              { link = "AumConstantBase" })
+-- Constant.Builtin
+set_hl(ns_id, "constant.builtin",       { link = "AumConstantBase" })  -- TODO: Could be made unique.
+set_hl(ns_id, "@constant.builtin",      { link = "AumConstantBase" })  -- TODO: Could be made unique.
+-- Constant.Macro
+set_hl(ns_id, "constant.macro",         { link = "AumConstantBase" })  -- TODO: Could be made unique.
+set_hl(ns_id, "@constant.macro",        { link = "AumConstantBase" })  -- TODO: Could be made unique.
 
 -- Field
 set_hl(ns_id, "field",                  { link = "AumFieldBase" })
@@ -194,14 +243,49 @@ set_hl(ns_id, "@field",                 { link = "AumFieldBase" })
 set_hl(ns_id, "property",               { link = "AumPropertyBase" })
 set_hl(ns_id, "@property",              { link = "AumPropertyBase" })
 
+-- Attribute
+set_hl(ns_id, "attribute",              { link = "AumTagAttributeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "@attribute",             { link = "AumTagAttributeBase" })  -- TODO: Make unique.
+
 -- Type
 set_hl(ns_id, "type",                   { link = "AumTypeBase" })
 set_hl(ns_id, "@type",                  { link = "AumTypeBase" })
-set_hl(ns_id, "TypeDef",                { link = "AumTypeBase" })  -- TODO: Make unique.
 set_hl(ns_id, "type.builtin",           { link = "AumTypeBuiltin" })
 set_hl(ns_id, "@type.builtin",          { link = "AumTypeBuiltin" })
+set_hl(ns_id, "type.definition",        { link = "AumTypeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "@type.definition",       { link = "AumTypeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "type.qualifier",         { link = "AumTypeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "@type.qualifier",        { link = "AumTypeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "TypeDef",                { link = "AumTypeBase" })  -- TODO: Make unique.
+
+-- TypeParameter
+set_hl(ns_id, "@typeParameter",         { link = "AumTypeBase" })  -- TODO: Make unique.
+
+-- Class
+set_hl(ns_id, "@class",                 { link = "AumTypeBase" })  -- TODO: Make unique.
+
+-- Enum
+set_hl(ns_id, "@enum",                  { link = "AumTypeBase" })  -- TODO: Make unique.
+set_hl(ns_id, "@enumMember",            { link = "AumConstantBase" })  -- TODO: Make unique.
+
+-- Event
+set_hl(ns_id, "@event",                 { link = "AumIdentifierBase" })  -- TODO: Make unique.
+
+-- Interface
+set_hl(ns_id, "@interface",             { link = "AumIdentifierBase" })  -- TODO: Make unique.
+
+-- Modifier
+set_hl(ns_id, "@modifier",              { link = "AumIdentifierBase" })  -- TODO: Make unique.
+
+-- Regexp
+set_hl(ns_id, "@regexp",                { link = "AumSpecial" })  -- TODO: Make unique.
+
+-- Decorator
+set_hl(ns_id, "@decorator",             { link = "AumIdentifierBase" })  -- TODO: Make unique.
 
 -- Structure
+set_hl(ns_id, "struct",                 { link = "AumStructureBase" })
+set_hl(ns_id, "@struct",                { link = "AumStructureBase" })
 set_hl(ns_id, "structure",              { link = "AumStructureBase" })
 set_hl(ns_id, "@structure",             { link = "AumStructureBase" })
 
@@ -235,11 +319,20 @@ set_hl(ns_id, "exception",              { link = "AumExceptionBase" })
 set_hl(ns_id, "@exception",             { link = "AumExceptionBase" })
 
 -- Tag
-set_hl(ns_id, "tag",                    { link = "AumTagBase" })
-set_hl(ns_id, "@tag",                   { link = "AumTagBase" })
+set_hl(ns_id, "tag",                    { link = "AumTagPri" })
+set_hl(ns_id, "@tag",                   { link = "AumTagPri" })
+set_hl(ns_id, "_tag",                   { link = "AumTagSec" })
+set_hl(ns_id, "@_tag",                  { link = "AumTagSec" })
 -- Tag.Attribute
 set_hl(ns_id, "tag.attribute",          { link = "AumTagAttributeBase" })
 set_hl(ns_id, "@tag.attribute",         { link = "AumTagAttributeBase" })
+set_hl(ns_id, "_tag.attribute",         { link = "AumTagAttributeBase" })
+set_hl(ns_id, "@_tag.attribute",        { link = "AumTagAttributeBase" })
+-- Tag.Delimiter
+set_hl(ns_id, "tag.delimiter",          { link = "AumPunctuationPri" })
+set_hl(ns_id, "@tag.delimiter",         { link = "AumPunctuationPri" })
+set_hl(ns_id, "_tag.delimiter",         { link = "AumPunctuationPri" })
+set_hl(ns_id, "@_tag.delimiter",        { link = "AumPunctuationPri" })
 
 -- Punctuation.Delimiter
 set_hl(ns_id, "delimiter",              { link = "AumPunctuationPri" })
@@ -274,6 +367,16 @@ set_hl(ns_id, "@function.call",         { link = "AumFunctionCall" })
 -- Function.Macro
 set_hl(ns_id, "function.macro",         { link = "AumFunctionMacro" })
 set_hl(ns_id, "@function.macro",        { link = "AumFunctionMacro" })
+-- Function.Builtin
+set_hl(ns_id, "function.builtin",       { link = "AumTypeBuiltin" })  -- TODO: Create unique group
+set_hl(ns_id, "@function.builtin",      { link = "AumTypeBuiltin" })  -- TODO: Create unique group
+
+-- Method
+set_hl(ns_id, "method",                 { link = "AumFunctionBase" })  -- TODO: Make unique
+set_hl(ns_id, "@method",                { link = "AumFunctionBase" })  -- TODO: Make unique
+-- Method
+set_hl(ns_id, "method.call",            { link = "AumFunctionCall" })  -- TODO: Make unique
+set_hl(ns_id, "@method.call",           { link = "AumFunctionCall" })  -- TODO: Make unique
 
 -- Parameter
 set_hl(ns_id, "parameter",              { link = "AumParameterBase" })
@@ -292,6 +395,10 @@ set_hl(ns_id, "@repeat",                { link = "AumRepeatBase" })
 set_hl(ns_id, "preproc",                { link = "AumPreprocBase" })
 set_hl(ns_id, "@preproc",               { link = "AumPreprocBase" })
 
+-- Define
+set_hl(ns_id, "define",                 { link = "AumPreprocBase" })  -- TODO: Make unique
+set_hl(ns_id, "@define",                { link = "AumPreprocBase" })  -- TODO: Make unique
+
 -- Include
 set_hl(ns_id, "include",                { link = "AumIncludeBase" })
 set_hl(ns_id, "@include",               { link = "AumIncludeBase" })
@@ -300,11 +407,13 @@ set_hl(ns_id, "@include",               { link = "AumIncludeBase" })
 set_hl(ns_id, "namespace",              { link = "AumNamespaceBase" })
 set_hl(ns_id, "@namespace",             { link = "AumNamespaceBase" })
 
+-- Symbol
+set_hl(ns_id, "symbol",                 { link = "AumIncludeBase" })  -- TODO: Make unique
+set_hl(ns_id, "@symbol",                { link = "AumIncludeBase" })  -- TODO: Make unique
+
 -- Titles   (STATE: Okay)
 set_hl(ns_id, "Title",                  { link = "AumTitle" })
 set_hl(ns_id, "@title",                 { link = "AumTitle" })
-set_hl(ns_id, "text.title",             { link = "AumTitle" })
-set_hl(ns_id, "@text.title",            { link = "AumTitle" })
 set_hl(ns_id, "FloatTitle",             { link = "AumTitle" })
 set_hl(ns_id, "LspInfoTitle",           { link = "AumTitle" })
 -- -- Markdown Headings   (STATE: Okay)
@@ -316,15 +425,15 @@ set_hl(ns_id, "MarkdownH5",             { fg = colors.peach })
 set_hl(ns_id, "MarkdownH6",             { fg = colors.sky })
 
 -- Label (TODO)
-set_hl(ns_id, "Label",                  { link = "AumNormalPri" })
-set_hl(ns_id, "@label",                 { link = "AumNormalPri" })
+set_hl(ns_id, "Label",                  { link = "AumTitle" })
+set_hl(ns_id, "@label",                 { link = "AumTitle" })
 
 -- Special (TODO)
 set_hl(ns_id, "Special",                { link = "AumBooleanBase" })
 set_hl(ns_id, "@special",               { link = "AumBooleanBase" })
 
 -- Search
-set_hl(ns_id, "Search",                 { fg = colors.night, bg = colors.orange, bold = true })
+set_hl(ns_id, "Search",                 { fg = colors.night, bg = colors.amber, bold = true })
 set_hl(ns_id, "CurSearch",              { fg = colors.night, bg = colors.rouge, bold = true, italic = true })
 set_hl(ns_id, "IncSearch",              { fg = colors.night, bg = colors.yellow, bold = true, italic = true })
 
@@ -332,6 +441,7 @@ set_hl(ns_id, "IncSearch",              { fg = colors.night, bg = colors.yellow,
 set_hl(ns_id, "DiagnosticInfo",                     { link = "AumLineNumberActive" })
 set_hl(ns_id, "DiagnosticHint",                     { fg = colors.peach, sp = colors.peach, underline = true })
 set_hl(ns_id, "Error",                              { link = "AumError" })
+set_hl(ns_id, "@error",                             { link = "AumError" })
 set_hl(ns_id, "NvimInternalError",                  { link = "AumError" })
 set_hl(ns_id, "ErrorMsg",                           { link = "AumError" })
 set_hl(ns_id, "DiagnosticError",                    { link = "AumError" })
@@ -344,6 +454,34 @@ set_hl(ns_id, "DiagnosticUnderlineError",           { fg = colors.text, sp = col
 set_hl(ns_id, "DiagnosticUnderlineWarn",            { fg = colors.text, sp = colors.orange, underline = true })
 set_hl(ns_id, "DiagnosticUnderlineInfo",            { fg = colors.text, sp = colors.cyan, underline = true })
 set_hl(ns_id, "DiagnosticUnderlineHint",            { fg = colors.text, sp = colors.hail, underline = true })
+
+-- Storageclass
+set_hl(ns_id, "storageclass",                       { link = "AumKeywordBase" })  -- TODO: Make unique. (Some bright'ish purple'ish color.)
+set_hl(ns_id, "@storageclass",                      { link = "AumKeywordBase" })  -- TODO: Make unique. (Some bright'ish purple'ish color.)
+-- Storageclass.Lifetime
+set_hl(ns_id, "storageclass.lifetime",              { link = "AumCharacterBase" })  -- TODO: Make unique.
+set_hl(ns_id, "@storageclass.lifetime",             { link = "AumCharacterBase" })  -- TODO: Make unique.
+
+-- Definition
+set_hl(ns_id, "@definition",                        { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.constant",               { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.function",               { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.method",                 { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.var",                    { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.parameter",              { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.macro",                  { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.type",                   { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.field",                  { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.enum",                   { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.namespace",              { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.import",                 { link = "AumError" })  -- TODO: Make unique.
+set_hl(ns_id, "@definition.associated",             { link = "AumError" })  -- TODO: Make unique.
+
+-- Scope
+set_hl(ns_id, "@scope",                             { link = "AumSpecial" })  -- TODO: Make unique.
+
+-- Reference
+set_hl(ns_id, "@reference",                         { link = "AumReference" })
 
 -- Trouble.nvim (Okay, but TODO/WIP)
 set_hl(ns_id, "TroubleNormal",                      { link = "AumNormalSec" })
@@ -375,7 +513,7 @@ set_hl(ns_id, "TroubleSignOther",                   { link = "AumNormalSec" })
 -- START: Custom Groups
 set_hl(ns_id, "CmpNormal",                          { link = "AumFieldBase" })      -- STATE: Good
 set_hl(ns_id, "CmpFloatBorder",                     { link = "AumBorderBase" })     -- STATE: Good
-set_hl(ns_id, "CmpCursorLine",                      { fg = colors.orange })         -- STATE: Good
+set_hl(ns_id, "CmpCursorLine",                      { link = "AumMatch" })          -- STATE: Good
 set_hl(ns_id, "CmpPmenu",                           { link = "AumPmenu" })          -- STATE: Might not do anything.
 set_hl(ns_id, "CmpSearch",                          { link = "Search" })            -- STATE: Might not do anything.
 
@@ -483,13 +621,22 @@ set_hl(ns_id, "LeapLabelSelected",      { fg = colors.coral, bold = true, underl
 set_hl(ns_id, "TelescopeNormal",        { link = "AumNormalTer" })      -- Text entered into prompt.        -- STATE: 9.5/10
 set_hl(ns_id, "TelescopePromptCounter", { link = "AumCommentBase" })    -- Prompt result count.             -- STATE: 9.5/10
 set_hl(ns_id, "TelescopeMatching",      { link = "AumMatch" })          -- Search match highlight.          -- STATE: 9.5/10
-set_hl(ns_id, "TelescopeSelection",     { link = "AumCursorLine" })     -- Active selection.                -- STATE: 9.5/10
-set_hl(ns_id, "TelescopePreviewLine",   { link = "AumCursorLine" })     -- CursorLine in preview panel.     -- STATE: 9.5/10
+set_hl(ns_id, "TelescopeSelection",     { bg = "#1B082D" })             -- Active selection.                -- STATE: 9.5/10
+set_hl(ns_id, "TelescopePreviewLine",   { bg = "#1B082D" })             -- CursorLine in preview panel.     -- STATE: 9.5/10
 set_hl(ns_id, "TelescopeTitle",         { link = "AumTitle" })                                              -- STATE: 9.2/10
 set_hl(ns_id, "TelescopePromptTitle",   { link = "AumTitle" })                                              -- STATE: 9.2/10
 set_hl(ns_id, "TelescopeResultsTitle",  { link = "AumTitle" })                                              -- STATE: 9.2/10
 set_hl(ns_id, "TelescopePreviewTitle",  { link = "AumTitle" })                                              -- STATE: 9.2/10
 set_hl(ns_id, "TelescopeBorder",        { link = "AumBorderBase" })     -- Border.                          -- STATE: 9.6/10
+
+-- Nvim-Ufo     (STATE: WIP)
+set_hl(ns_id, "UfoFoldedBg",            { bg = colors.remnant })                        -- Fine, I think.
+-- set_hl(ns_id, "UfoFoldedFg",            { fg = colors.hail })                           -- Does not really do anything.
+-- set_hl(ns_id, "UfoPreviewSbar",         { bg = colors.alloy, fg = colors.pink })        -- Dunno what this is.
+-- set_hl(ns_id, "UfoPreviewThumb",        { bg = colors.sky, fg = colors.oldrosy })       -- Dunno what this is.
+-- set_hl(ns_id, "UfoPreviewWinBar",       { bg = colors.ceru, fg = colors.lilac })        -- Dunno what this is.
+-- set_hl(ns_id, "UfoPreviewCursorline",   { link = "AumCursorLine" })                     -- Dunno what this is. Should be fine though.
+-- set_hl(ns_id, "UfoFoldedEllipsis",      { bg = colors.remnant, fg = colors.mauve })     -- Does not really feel like it works.
 
 -- Misc UI
 set_hl(ns_id, "MatchParen",             { link = "AumMatch" })
@@ -509,7 +656,8 @@ set_hl(ns_id, "LineNrAbove",            { link = "AumLineNumberInactive" })  -- 
 set_hl(ns_id, "LineNrBelow",            { link = "AumLineNumberInactive" })  -- For when 'relativenumber' is active.
 
 -- Fold (TODO)
-set_hl(ns_id, "Folded",                 { link = "AumCommentBase" })
+set_hl(ns_id, "Folded",                 { link = "UfoFoldedBg"  })
+set_hl(ns_id, "@fold",                  { link = "UfoFoldedBg" })
 set_hl(ns_id, "FoldColumn",             { link = "AumCommentBase" })
 set_hl(ns_id, "CursorLineFold",         { link = "AumCommentBase" })
 
