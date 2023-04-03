@@ -1,13 +1,19 @@
-set -U fish_greeting
+set fish_greeting
 
 #: Global variable exports
 
 #: Editor
-set -gx EDITOR neovide
-set -gx MOAR '-colors=16M -style dracula -no-statusbar'
+set -gx EDITOR nvim
+set -gx MOAR '-colors=16M -style dracula -no-statusbar -no-linenumbers'
+#: Looking for better pager.
+set -gx PAGER moar
+set -gx MANPAGER moar
 # set -gx PAGER /home/linuxbrew/.linuxbrew/bin/moar
-set -gx MOST_INITFILE /home/aum/.config/most/most.rc
-set -gx PAGER most
+# set -gx MOST_INITFILE /home/aum/.config/most/most.rc
+
+#: Hope this is not gonna break anything. Testing because of Bevy issue.
+#: It is telling me to do something like this.
+set -gx PKG_CONFIG_PATH "/usr/lib/x86_64-linux-gnu/pkgconfig/"
 
 #: Path
 #: Node version manager `fnm`:
@@ -21,6 +27,13 @@ set -gx FZF_ALT_C_COMMAND 'fd -H -t d'
 #: Starship config location
 set -gx STARSHIP_CONFIG '/home/aum/.config/starship/starship.toml'
 
+#: Matplotlib kitty backend
+set -gx MPLBACKEND 'module://matplotlib-backend-kitty'
+set -gx MPLBACKEND_KITTY_SIZING 'manual'
+
+#: `cargo doc` (rustdoc) default theme.
+set -gx RUSTDOCFLAGS '--default-theme=ayu'
+
 if status is-interactive
     #: Commands to run in interactive sessions can go here
 
@@ -30,6 +43,7 @@ if status is-interactive
     abbr --add --global rm 'rm -vi'
     abbr --add --global cp 'cp -vi'
     abbr --add --global mv 'mv -vi'
+    abbr --add --global md 'mkdir'
     abbr --add --global nv 'nvim'
     abbr --add --global nvs 'nvim (fzf)'
     abbr --add --global notes 'nvim /home/aum/Secondbrain/notes/temp-notes.md'
@@ -38,7 +52,10 @@ if status is-interactive
     abbr --add --global cheat 'cht.sh --shell'
     abbr --add --global rodb 'rofi -show kb -modi kb:/home/aum/.config/rofi/custom-modes/rofi-kb-mode.bash'
     abbr --add --global aumusic 'ncmpcpp'
-    abbr --add --global setkeyrepeatrate 'xset r rate 192 72'
+    abbr --add --global setkeyboardrepeatrate 'xset r rate 192 90'
+    abbr --add --global fixkeyboardrepeatrate 'xset r rate 192 90'
+
+    abbr --add --global python 'python3'
 
     abbr --add --global siv 'sxiv -bft'
     abbr --add --global icat 'kitty +kitten icat'
@@ -141,6 +158,10 @@ if status is-interactive
         ffmpeg -i $argv[1] -filter_complex "[0:v]setpts=0.64*PTS[v];[0:a]atempo=1.5625[a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac $argv[2]
     end
 
+    function reencodevideo
+        ffmpeg -i $argv[1] -filter_complex "[0:v]setpts=1.0*PTS[v];[0:a]atempo=1.0[a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac $argv[2]
+    end
+
     function zd
         set -l finds (fd --type directory --max-depth 3 --hidden)
 
@@ -169,6 +190,7 @@ if status is-interactive
     #: Init Starship prompt.
 
     starship init fish | source
+    pyenv init - | source
 end
 
 # =============================================================================

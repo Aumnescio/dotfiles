@@ -331,7 +331,7 @@ root.buttons(gears.table.join(
 --  - Moving to next / previous workspace/tag. [DONE]
 --  - Move to specific workspace/tag. [TODO => Rebind the number keys, or maybe get used to them.]
 --
--- |> Key Bindings / Key Mappings / Keyboard Shortcuts / Keys:
+-- |> Keybindings / Key Mappings / Keyboard Shortcuts / Keys:
 globalkeys = gears.table.join(
     -- Key:         Super + Shift + s
     -- Action:      Show Hotkey Popup (Help).
@@ -432,15 +432,15 @@ globalkeys = gears.table.join(
     -- Key:         Super + h
     -- Action:      Focus Next Screen.                                  (STATE: Okay)
     -- NOTE:        This is supposed to be a Function.
-    awful.key({ modkey }, "h", function()
-        awful.screen.focus_relative(1)
+    awful.key({ modkey }, "h", function(screen)
+        awful.screen.focus_bydirection("left", screen)
     end, { description = "Focus Next Screen", group = "screen" }),
 
     -- Key:         Super + t
     -- Action:      Focus Previous Screen.                              (STATE: Okay)
     -- NOTE:        This is supposed to be a Function.
-    awful.key({ modkey }, "t", function()
-        awful.screen.focus_relative(-1)
+    awful.key({ modkey }, "t", function(screen)
+        awful.screen.focus_bydirection("right", screen)
     end, { description = "Focus Previous Screen", group = "screen" }),
 
     -- Key:         Super + u
@@ -464,13 +464,12 @@ globalkeys = gears.table.join(
     end, { description = "Focus Previous Window on Screen", group = "Window/Client" }),
     -- |> END => Layout manipulation
 
-    -- |> START => Standard program
     -- Key:         Super + <Enter>/<CR>/<Return>
     -- Action:      Open new Terminal.                                  (STATE: Okay)
     -- NOTE:        This is supposed to be a Function.
-    awful.key({ modkey }, "Return", function()
-        awful.spawn(terminal)
-    end, { description = "Open new Terminal", group = "launcher" }),
+    -- awful.key({ modkey }, "Return", function()
+    --     awful.spawn(terminal)
+    -- end, { description = "Open new Terminal", group = "launcher" }),
 
     -- Key:         Super + Ctrl + r
     -- Action:      Reload Awesome. (Very soft restart)                 (STATE: Okay)
@@ -847,19 +846,19 @@ end)
 
 local last_focus
 
--- |> Set Border Color when Focused.
+-- |> Set `Border Color` when Focused.
 client.connect_signal("focus", function(window)
     last_focus = nil
     window.border_color = beautiful.border_focus
 end)
 
--- |> Set Border Color when Unfocused.
+-- |> Set `Border Color` when Unfocused.
 client.connect_signal("unfocus", function(window)
     last_focus = window
     window.border_color = beautiful.border_normal
 end)
 
--- Trying to fix some sort of autofocus thing.
+-- Trying to fix some sort of `autofocus` thing.
 client.connect_signal("unmanage", function(window)
     if last_focus == window and window.transient_for then
         client.focus = window.transient_for
@@ -869,10 +868,9 @@ end)
 -- END => Simple Signal Events
 
 -- |> START => Aum's Custom Things
--- NOTE: Placing these in `.xprofile` does not work well enough, or at all.
 
 -- |> Run xrandr script to Setup Monitors.
--- STATE: This should work. (Though it might not)
+-- STATE: Good
 awful.spawn.with_shell("/home/aum/.screenlayout/arandrsetup.sh")
 
 -- |> Set keyboard layout.
@@ -882,16 +880,10 @@ awful.spawn.with_shell("/home/aum/.screenlayout/arandrsetup.sh")
 -- |> Start mpd.
 -- |> Start xbanish.
 -- |> Start picom.
--- STATE: This should work. (Though it might not.)
+-- STATE: Good
 awful.spawn.with_shell("/home/aum/.config/awesome/autorun.sh")
 
 -- TODO:
 --  - Create binding to toggle picom. (Kill / Start)
 
--- NOTE:
---  - Other things to maybe start here:
---      - Alsamixer thing, probably. [TODO]
---      - sxkhd [DONE, Maybe]
---      - A compositor? [DONE, Maybe]
-
--- END => Config    (NOTE: Default config is 600'ish lines.)
+-- END => Config

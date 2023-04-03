@@ -1,229 +1,88 @@
-##### directories ######
-##
-## Directory for storing ncmpcpp related files.  Changing it is useful if you
-## want to store everything somewhere else and provide command line setting for
-## alternative location to config file which defines that while launching
-## ncmpcpp.
-##
-#
+### - Aumnescio `ncmpcpp` Config - ###
 ncmpcpp_directory = ~/.config/ncmpcpp
-#
-##
-## Directory for storing downloaded lyrics. It defaults to ~/.lyrics since other
-## MPD clients (eg. ncmpc) also use that location.
-##
-#
-#lyrics_directory = ~/.lyrics
-#
-##### connection settings #####
-#
-mpd_host = localhost
-#
-mpd_port = 6600
-#
-mpd_connection_timeout = 5
-#
-## Needed for tag editor and file operations to work.
-##
+lyrics_directory = ~/.lyrics
 mpd_music_dir = ~/Music
-#
+
+## Connection Settings ##
+mpd_host = localhost
+mpd_port = 6600
+mpd_connection_timeout = 5
 mpd_crossfade_time = 5
-#
-# Exclude pattern for random song action
-# http://www.boost.org/doc/libs/1_46_1/libs/regex/doc/html/boost_regex/syntax/perl_syntax.html
+
+## Exclude pattern for random song action ##
+# NOTE: http://www.boost.org/doc/libs/1_46_1/libs/regex/doc/html/boost_regex/syntax/perl_syntax.html
 #random_exclude_pattern = "^(temp|midi_songs).*"
+
+## Delays ##
+playlist_disable_highlight_delay = 3
+message_delay_time = 5
+
+## Song Format ##
 #
-##### music visualizer #####
-##
-## In order to make music visualizer work with MPD you need to use the fifo
-## output. Its format parameter has to be set to 44100:16:1 for mono
-## visualization or 44100:16:2 for stereo visualization. As an example here is
-## the relevant section for mpd.conf:
-##
-## audio_output {
-##        type            "fifo"
-##        name            "Visualizer feed"
-##        path            "/tmp/mpd.fifo"
-##        format          "44100:16:2"
-## }
-##
-## If the visualization on occasion diverges from the audio output, please set
-## 'buffer_time' parameter of your audio output in mpd.conf to '100000' (100ms)
-## or less to prevent that from happening.
-##
-## Note: If you're using Mopidy, an address of a udpsink gstreamer's output is
-## also accepted. For example, the following section in mopidy.conf:
-##
-## [audio]
-## output = tee name=t ! queue ! autoaudiosink t.
-##        ! queue ! audio/x-raw,rate=44100,channels=2,format=S16LE
-##        ! udpsink host=localhost port=5555
-##
-## will make localhost:5555 available as a source of data for the stereo
-## visualizer.
-##
+# For a song format you can use:
 #
-#visualizer_data_source = /tmp/mpd.fifo
+#   %l - length
+#   %f - filename
+#   %D - directory
+#   %a - artist
+#   %A - album artist
+#   %t - title
+#   %b - album
+#   %y - date
+#   %n - track number (01/12 -> 01)
+#   %N - full track info (01/12 -> 01/12)
+#   %g - genre
+#   %c - composer
+#   %p - performer
+#   %d - disc
+#   %C - comment
+#   %P - priority
+#   $R - begin right alignment
 #
-##
-## Note: Below parameter is needed for ncmpcpp to determine which output
-## provides data for visualizer and reset it at the beginning of visualization
-## to synchronize with audio.
-##
+# If you want to make sure that a part of the format is displayed only when
+# certain tags are present, you can archieve it by grouping them with brackets,
+# e.g. '{%a - %t}' will be evaluated to 'ARTIST - TITLE' if both tags are
+# present or '' otherwise.  It is also possible to define a list of
+# alternatives by providing several groups and separating them with '|',
+# e.g. '{%t}|{%f}' will be evaluated to 'TITLE' or 'FILENAME' if the former is
+# not present.
 #
-#visualizer_output_name = Visualizer feed
+# Note: If you want to set limit on maximal length of a tag, just put the
+# appropriate number between % and character that defines tag type, e.g. to
+# make album take max. 20 terminal cells, use '%20b'.
 #
-##
-## If you set format to 44100:16:2, make it 'yes'.
-##
-#visualizer_in_stereo = yes
+# In addition, formats support markers used for text attributes.  They are
+# followed by character '$'. After that you can put:
 #
-##
-## Note: set below to >=10 only if you have synchronization issues with
-## visualization and audio.
-##
+# - 0 - default window color (discards all other colors)
+# - 1 - black
+# - 2 - red
+# - 3 - green
+# - 4 - yellow
+# - 5 - blue
+# - 6 - magenta
+# - 7 - cyan
+# - 8 - white
+# - 9 - end of current color
+# - b - bold text
+# - u - underline text
+# - r - reverse colors
+# - a - use alternative character set
 #
-#visualizer_sync_interval = 0
+# If you don't want to use a non-color attribute anymore, just put it again,
+# but this time insert character '/' between '$' and attribute character,
+# e.g. {$b%t$/b}|{$r%f$/r} will display bolded title tag or filename with
+# reversed colors.
 #
-##
-## Note: To enable spectrum frequency visualization you need to compile ncmpcpp
-## with fftw3 support.
-##
+# If you want to use 256 colors and/or background colors in formats (the naming
+# scheme is described below in section about color definitions), it can be done
+# with the syntax $(COLOR), e.g. to set the artist tag to one of the
+# non-standard colors and make it have yellow background, you need to write
+# $(197_yellow)%a$(end). Note that for standard colors this is interchangable
+# with attributes listed above.
 #
-## Available values: spectrum, wave, wave_filled, ellipse.
-##
-#visualizer_type = spectrum
+# Note: colors can be nested.
 #
-#visualizer_fps = 60
-#
-#visualizer_autoscale = no
-#
-#visualizer_look = ●▮
-#
-#visualizer_color = blue, cyan, green, yellow, magenta, red
-#
-## Alternative subset of 256 colors for terminals that support it.
-##
-#visualizer_color = 47, 83, 119, 155, 191, 227, 221, 215, 209, 203, 197, 161
-#
-##
-## Note: The next few visualization options apply to the spectrum visualizer.
-##
-#
-## Use unicode block characters for a smoother, more continuous look.
-## This will override the visualizer_look option. With transparent terminals
-## and visualizer_in_stereo set, artifacts may be visible on the bottom half of
-## the visualization.
-#
-#visualizer_spectrum_smooth_look = yes
-#
-## A value between 1 and 5 inclusive. Specifying a larger value makes the
-## visualizer look at a larger slice of time, which results in less jumpy
-## visualizer output.
-#
-#visualizer_spectrum_dft_size = 2
-#
-#visualizer_spectrum_gain = 10
-#
-## Left-most frequency of visualizer in Hz, must be less than HZ MAX
-#
-#visualizer_spectrum_hz_min = 20
-#
-## Right-most frequency of visualizer in Hz, must be greater than HZ MIN
-#
-#visualizer_spectrum_hz_max = 20000
-#
-##### system encoding #####
-##
-## ncmpcpp should detect your charset encoding but if it failed to do so, you
-## can specify charset encoding you are using here.
-##
-## Note: You can see whether your ncmpcpp build supports charset detection by
-## checking output of `ncmpcpp --version`.
-##
-## Note: Since MPD uses UTF-8 by default, setting this option makes sense only
-## if your encoding is different.
-##
-#
-#system_encoding = ""
-#
-##### delays #####
-#
-## Time of inactivity (in seconds) after playlist highlighting will be disabled
-## (0 = always on).
-##
-#playlist_disable_highlight_delay = 5
-#
-## Defines how long messages are supposed to be visible.
-##
-#message_delay_time = 5
-#
-##### song format #####
-##
-## For a song format you can use:
-##
-## %l - length
-## %f - filename
-## %D - directory
-## %a - artist
-## %A - album artist
-## %t - title
-## %b - album
-## %y - date
-## %n - track number (01/12 -> 01)
-## %N - full track info (01/12 -> 01/12)
-## %g - genre
-## %c - composer
-## %p - performer
-## %d - disc
-## %C - comment
-## %P - priority
-## $R - begin right alignment
-##
-## If you want to make sure that a part of the format is displayed only when
-## certain tags are present, you can archieve it by grouping them with brackets,
-## e.g. '{%a - %t}' will be evaluated to 'ARTIST - TITLE' if both tags are
-## present or '' otherwise.  It is also possible to define a list of
-## alternatives by providing several groups and separating them with '|',
-## e.g. '{%t}|{%f}' will be evaluated to 'TITLE' or 'FILENAME' if the former is
-## not present.
-##
-## Note: If you want to set limit on maximal length of a tag, just put the
-## appropriate number between % and character that defines tag type, e.g. to
-## make album take max. 20 terminal cells, use '%20b'.
-##
-## In addition, formats support markers used for text attributes.  They are
-## followed by character '$'. After that you can put:
-##
-## - 0 - default window color (discards all other colors)
-## - 1 - black
-## - 2 - red
-## - 3 - green
-## - 4 - yellow
-## - 5 - blue
-## - 6 - magenta
-## - 7 - cyan
-## - 8 - white
-## - 9 - end of current color
-## - b - bold text
-## - u - underline text
-## - r - reverse colors
-## - a - use alternative character set
-##
-## If you don't want to use a non-color attribute anymore, just put it again,
-## but this time insert character '/' between '$' and attribute character,
-## e.g. {$b%t$/b}|{$r%f$/r} will display bolded title tag or filename with
-## reversed colors.
-##
-## If you want to use 256 colors and/or background colors in formats (the naming
-## scheme is described below in section about color definitions), it can be done
-## with the syntax $(COLOR), e.g. to set the artist tag to one of the
-## non-standard colors and make it have yellow background, you need to write
-## $(197_yellow)%a$(end). Note that for standard colors this is interchangable
-## with attributes listed above.
-##
-## Note: colors can be nested.
-##
 #
 #song_list_format = {%a - }{%t}|{$8%f$9}$R{$3%l$9}
 #
@@ -525,68 +384,51 @@ search_engine_default_search_mode = 2
 ## Note: set to yes if external editor is a console application.
 ##
 #use_console_editor = yes
+
+## Color Definitions ##
 #
-##### colors definitions #####
-##
-## It is possible to set a background color by setting a color value
-## "<foreground>_<background>", e.g. red_black will set foregound color to red
-## and background color to black.
-##
-## In addition, for terminals that support 256 colors it is possible to set one
-## of them by using a number in range [1, 256] instead of color name,
-## e.g. numerical value corresponding to red_black is 2_1. To find out if the
-## terminal supports 256 colors, run ncmpcpp and check out the bottom of the
-## help screen for list of available colors and their numerical values.
-##
-## What is more, there are two special values for the background color:
-## "transparent" and "current". The first one explicitly sets the background to
-## be transparent, while the second one allows you to preserve current
-## background color and change only the foreground one. It's used implicitly
-## when background color is not specified.
-##
-## Moreover, it is possible to attach format information to selected color
-## variables by appending to their end a colon followed by one or more format
-## flags, e.g. black:b or red:ur. The following variables support this syntax:
-## visualizer_color, color1, color2, empty_tag_color, volume_color,
-## state_line_color, state_flags_color, progressbar_color,
-## progressbar_elapsed_color, player_state_color, statusbar_time_color,
-## alternative_ui_separator_color.
-##
-## Note: due to technical limitations of older ncurses version, if 256 colors
-## are used there is a possibility that you'll be able to use only colors with
-## transparent background.
+# It is possible to set a background color by setting a color value
+# "<foreground>_<background>", e.g. red_black will set foregound color to red
+# and background color to black.
 #
+# In addition, for terminals that support 256 colors it is possible to set one
+# of them by using a number in range [1, 256] instead of color name,
+# e.g. numerical value corresponding to red_black is 2_1. To find out if the
+# terminal supports 256 colors, run ncmpcpp and check out the bottom of the
+# help screen for list of available colors and their numerical values.
+#
+# What is more, there are two special values for the background color:
+# "transparent" and "current". The first one explicitly sets the background to
+# be transparent, while the second one allows you to preserve current
+# background color and change only the foreground one. It's used implicitly
+# when background color is not specified.
+#
+# Moreover, it is possible to attach format information to selected color
+# variables by appending to their end a colon followed by one or more format
+# flags, e.g. black:b or red:ur. The following variables support this syntax:
+# visualizer_color, color1, color2, empty_tag_color, volume_color,
+# state_line_color, state_flags_color, progressbar_color,
+# progressbar_elapsed_color, player_state_color, statusbar_time_color,
+# alternative_ui_separator_color.
+#
+# Note: due to technical limitations of older ncurses version, if 256 colors
+# are used there is a possibility that you'll be able to use only colors with
+# transparent background.
+
 #colors_enabled = yes
-#
 #empty_tag_color = cyan
-#
 #header_window_color = default
-#
 #volume_color = default
-#
 #state_line_color = default
-#
 #state_flags_color = default:b
-#
 #main_window_color = yellow
-#
 #color1 = white
-#
 #color2 = green
-#
 #progressbar_color = black:b
-#
 #progressbar_elapsed_color = green:b
-#
 #statusbar_color = default
-#
 #statusbar_time_color = default:b
-#
 #player_state_color = default:b
-#
 #alternative_ui_separator_color = black:b
-#
 #window_border_color = green
-#
 #active_window_border = red
-#

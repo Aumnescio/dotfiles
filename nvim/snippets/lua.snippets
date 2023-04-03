@@ -1,0 +1,9 @@
+snippet use "Packer 'use'."
+	use { "$0" }
+
+# TODO: Make one for use with Legendary
+snippet bindkey "Create a new keybinding."
+	bindkey("$1", "$2", "$0")
+
+snippet map_legendary_key "Create new keybind in Legendary."
+	{ "$1",          "$2",            description = "$0",          mode = { 'n', 'v', 'o' },   opts = opts },

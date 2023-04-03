@@ -33,6 +33,11 @@ colors = {
     hail        = "#A3AFE0",                -- Orig: A3AFE0
     oldhail     = "#9AA7DD",                -- Orig: 9AA7DD
 
+    -- Quinary foreground.                  (STATE: Good, Contrast Ratio: ?)
+    -- Kind of meant to be almost background color.
+    -- Used for inactive `Buffer Name` in BufferLine.
+    fadedsnow   = "#747B93",                 -- Orig: 747B93
+
     -- === Reds ===
     -- Operators: '=', '>', '<', '+', '-'.  (STATE: Very Good, Contrast Ratio: 7.04:1)
     red         = "#FA6969",                -- Orig: FA6969
@@ -85,6 +90,10 @@ colors = {
     -- Mostly used for namespaces.          (STATE: Good, Contrast Ratio: 7.98:1)
     lavender    = "#AD91F3",                -- Orig: AD91F3
     oldlavender = "#A98BF2",                -- Orig: A98BF2
+
+    -- Faded Foreground Blue.               (STATE: Good?)
+    -- Used for BufferLine `Buffer Number`.
+    fablue      = "#4E567F",                -- Orig: 4E567F
 
     -- === Cyans ===
     -- Mostly used for constants.           (STATE: Very Good?, Contrast Ratio: 11.05:1)

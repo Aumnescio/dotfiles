@@ -1,0 +1,22 @@
+snippet package "package."
+	package $0
+
+snippet main_class "Main class and function base."
+	public class $1 {
+		public static void main(String[] args) {
+			$0
+		}
+	}
+
+snippet class_public "Class definition."
+	public class $1 {
+		$0
+	}
+
+snippet function "New Function."
+	public static void $1($2) {
+		$0
+	}
+
+snippet println_text "Print Line."
+	System.out.println("$0");

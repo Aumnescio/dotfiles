@@ -1,5 +1,278 @@
 # Snipmate Syntax Snippets for LuaSnip
+
+snippet fn_void "Snippet for: function definition without return value."
+	fn $1($2) {
+		$0
+	}
+
+snippet fn_with_return_type "Snippet for: function definition with return value."
+	fn $1($2) -> $3 {
+		$0
+	}
+
+snippet string_from "Snippet for: String::from()."
+	String::from("$0")
+
+snippet vecnew "Snippet for: Vec::new()."
+	Vec::new()$0
+
+snippet vecint "Snippet for: Vec<i32>."
+	Vec<i32>$0
+
+snippet arrint "Snippet for: [i32; x]."
+	[i32; $1]$0
+
+snippet vecchar "Snippet for: Vec<char>."
+	Vec<char>$0
+
+snippet vecstr "Snippet for: Vec<String>."
+	Vec<String>$0
+
+snippet colstr "Snippet for: collect::<String>()."
+	collect::<String>()$0
+
+snippet colvec "Snippet for: collect::<Vec<T>>()."
+	collect::<Vec<$0>>()
+
+snippet reverse_string "Snippet for: Reversing String or &str."
+	let reversed: String = $0.chars().rev().collect();
+
+snippet struct "Snippet for: 'struct' definition."
+	struct $1 {
+		$2: $3,$0
+	}
+
+snippet struct_with_new "Snippet for: 'struct' definition with `new()` constructor."
+	struct $1 {
+		$2: $3,$4
+	}
+	
+	impl $1 {
+		fn new() -> Self {
+			$1 {
+				$2$0
+			}
+		}
+	}
+
+snippet enum "Snippet for: 'enum' keyword."
+	enum $1 {
+		$2,$0
+	}
+
+snippet trait "Snippet for: 'trait' keyword."
+	trait $1 {
+		$0
+	}
+
+snippet impl "Snippet for: 'impl' keyword."
+	impl $1 {
+		$0
+	}
+
+snippet impl_new "Snippet for: 'impl' block with new()."
+	impl $1 {
+		fn new() -> Self {
+			$1 {
+				$2$0
+			}
+		}
+	}
+
+snippet impl_display "Snippet for: Basic `fmt::display` implementation."
+	impl fmt::Display for $1 {
+		fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+			write!(formatter, "$0")
+		}
+	}
+
+snippet derive "Snippet for: derive."
+	#[derive($0)]
+
+snippet derive_debug "Snippet for: derive debug."
+	#[derive(Debug)]$0
+
+snippet derive_clone "Snippet for: derive clone."
+	#[derive(Clone)]$0
+
+snippet derive_copy "Snippet for: derive copy."
+	#[derive(Copy)]$0
+
+snippet derive_clonecopy "Snippet for: derive clone and copy."
+	#[derive(Clone, Copy)]$0
+
+snippet match "Snippet for: 'match' keyword."
+	match $1 {
+		$2 => $3,
+		_ => $0,
+	}
+
+snippet loop "Snippet for: 'loop' keyword."
+	loop '$1 {
+		$0
+	}
+
+snippet loop_n_times "Loop a number of times."
+	for _ in 0..$1 {
+		$0
+	}
+
+snippet while "Snippet for: while loop."
+	while $1 {
+		$0
+	}
+
+snippet whilelet "Snippet for: while let loop."
+	while let $1 = $2 {
+		$0
+	}
+
+snippet for "Snippet for: for loop."
+	for $1 in $2 {
+		$0
+	}
+
+snippet print "Snippet for: println!."
+	println!("$0");
+
+snippet print_var "Snippet for: println! with variable."
+	println!("{}", $0);
+
+snippet int "Snippet for: i32."
+	i32
+
+snippet var_int "Snippet for: i32 variable."
+	let $1: i32 = $0;
+
+snippet var_int_mut "Snippet for: Mutable i32 variable."
+	let mut $1: i32 = $0;
+
+snippet var_float "Snippet for: f64 variable."
+	let $1: f64 = $0;
+
+snippet var_float_mut "Snippet for: Mutable f64 variable."
+	let mut $1: f64 = $0;
+
+# TODO: Name this "var_string".
+snippet var_string "String variable."
+	let $1: String = String::from("$0");
+
+snippet var_string_mut "Snippet for: Mutable String variable."
+	let mut $1: String = "$2".to_string();$0
+
+snippet var_tuple_duo "Two value tuple variable."
+	let $1: ($2, $3) = ($4, $0);
+
+snippet var_tuple_trio "Three value tuple variable."
+	let $1: ($2, $3, $4) = ($5, $6, $0);
+
+snippet string "Snippet for: 'String' type."
+	String$0
+
+snippet as "Snippet for: 'as' keyword."
+	as $0
+
+snippet async "Snippet for: 'async' keyword."
+	async $0
+
+snippet await "Snippet for: 'await' keyword."
+	await $0
+
+snippet break "Snippet for: 'break' keyword."
+	break$0
+
+snippet const "Snippet for: 'const' keyword."
+	const $0
+
+snippet continue "Snippet for: 'continue' keyword."
+	continue$0
+
+snippet crate "Snippet for: 'crate' keyword."
+	crate $0
+
+snippet dyn "Snippet for: 'dyn' keyword."
+	dyn $0
+
+snippet else "Snippet for: 'else' keyword."
+	else $0
+
+snippet extern "Snippet for: 'extern' keyword."
+	extern $0
+
+snippet false "Snippet for: 'false' keyword."
+	false$0
+
+snippet true "Snippet for: 'true' keyword."
+	true$0
+
+snippet in "Snippet for: 'in' keyword."
+	in $0
+
+snippet if "Snippet for: 'if' keyword."
+	if $1 {
+		$0
+	}
+
+snippet iflet "Snippet for: 'if let'."
+	if let $1 = $2 {
+		$0
+	}
+
+snippet let "Snippet for: 'let' keyword."
+	let $0
+
+snippet mod "Snippet for: 'mod' keyword."
+	mod $0
+
+snippet move "Snippet for: 'move' keyword."
+	move $0
+
+snippet mut "Snippet for: 'mut' keyword."
+	mut$0
+
+snippet pub "Snippet for: 'pub' keyword."
+	pub $0
+
+snippet ref "Snippet for: 'ref' keyword."
+	ref $0
+
+snippet return "Snippet for: 'return' keyword."
+	return $0;
+
+snippet Self "Snippet for: 'Self' keyword."
+	Self$0
+
+snippet self "Snippet for: 'self' keyword."
+	self$0
+
+snippet static "Snippet for: 'static' keyword."
+	static $0
+
+snippet super "Snippet for: 'super' keyword."
+	super $0
+
+snippet type "Snippet for: 'type' keyword."
+	type $0
+
+snippet union "Snippet for: 'union' keyword."
+	union $0
+
+snippet unsafe "Snippet for: 'unsafe' keyword."
+	unsafe {
+	$0
+	}
+
+snippet use "Snippet for: 'use' keyword."
+	use $0
+
+snippet where "Snippet for: 'where' keyword."
+	where $0
+
 snippet allow_unused "Bunch of allows for unused things.."
-		#![allow(unused_variables)]
-		#![allow(unused_mut)]
-		#![allow(unused_assignments)]
+	#![allow(unused_variables)]
+	#![allow(unused_mut)]
+	#![allow(unused_assignments)]
+
+snippet use_bevy_prelude "Import Bevy prelude."
+	use bevy::prelude::*;
+

@@ -18,28 +18,25 @@ local themes_path = gfs.get_themes_dir()
 local theme = {}
 
 theme.font                      = "JetBrainsMono Nerd Font 12"
-
--- Aum Testing: Hotkey_Popup fixing.
--- These might be working.
 theme.hotkeys_font              = "JetBrainsMono Nerd Font 14"
 theme.hotkeys_description_font  = "JetBrainsMono Nerd Font 14"
 
-theme.bg_normal                 = "#040206" -- TODO, Maybe
-theme.bg_focus                  = "#120818" -- TODO
-theme.bg_urgent                 = "#DD1122" -- TODO
-theme.bg_minimize               = "#0B0412" -- TODO
+theme.bg_normal                 = "#09050F" -- Good
+theme.bg_focus                  = "#181226" -- Good
+theme.bg_urgent                 = "#80252A" -- Maybe fine?
+theme.bg_minimize               = "#201440" -- Fine?
 theme.bg_systray                = theme.bg_normal
 
-theme.fg_normal                 = "#343466" -- TODO
-theme.fg_focus                  = "#49398A" -- TODO
-theme.fg_urgent                 = "#323988" -- TODO
-theme.fg_minimize               = "#322888" -- TODO
+theme.fg_normal                 = "#524284" -- Maybe Good
+theme.fg_focus                  = "#8090CF" -- Maybe Good
+theme.fg_urgent                 = "#ABB0EF" -- Maybe Good
+theme.fg_minimize               = "#9294AE" -- Maybe Good
 
 theme.useless_gap               = dpi(2)
 theme.border_width              = dpi(2)
 theme.border_normal             = "#000000" -- Okay?
 theme.border_focus              = "#553377" -- Okay
-theme.border_marked             = "#91231c" -- TODO
+theme.border_marked             = "#7c3f72" -- Okay
 
 -- There are other variable sets
 -- overriding the default one when

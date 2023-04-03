@@ -73,8 +73,8 @@ local opt           = vim.opt
 -- | |> - fzf                   (Telescope Extension, improved fuzzy-finding)       [Installed / STATE: Good]
 -- | |> - Nvim-cmp              (Autocompletion)                                    [Installed / STATE: Good]
 -- | |> - Comment.nvim          (Commenting keybindings)                            [Installed / STATE: Good]
--- | |> - TrueZen               (zen-mode)                                          [Not Installed / STATE: Test] (TODO)
--- | |> - UltiSnips             (Snippets)                                          [Installed / STATE: Good]
+-- | |> - Zen-Mode              (zen-mode)                                          [Installed / STATE: Meh]
+-- | |> - LuaSnips              (Snippets)                                          [Installed / STATE: Good]
 -- | |> - focus.nvim            (Split resizing)                                    [TODO]
 -- | |> - Windows.nvim          (Split resizing)                                    [TODO]
 -- | |> - And lots of other smaller plugins.                                        [Installed / STATE: Good]
@@ -134,19 +134,22 @@ opt.errorbells = false      -- No PING/BANG sounds plz.
 
 opt.mouse = "a"                     -- Enable mouse-support in all modes: "a".
 opt.mousehide = true                -- Hide mouse cursor/pointer when typing.
-opt.clipboard = "unnamedplus"       -- Enable System-clipboard functionality.
--- opt.clipboard = {                -- Could do some alternate thing here to speed startup maybe.
---     name = "xclip",
---     copy = {
---         plus = "xclip",
---         star = "xclip",
---     },
---     paste = {
---         plus = "xclip",
---         star = "xclip",
---     },
---     cache_enabled = 0,
--- }
+
+-- Clipboard related things causing major issues, like Neovim not starting up properly or long startup time.
+g.clipboard = {                     -- Trying to resolve issues using this. (Enable System-clipboard functionality.)
+    name = "xsel",
+    copy = {
+        ["+"] = "xsel --nodetach -ib",
+        ["*"] = "xsel --nodetach -ip"
+    },
+    paste = {
+        ["+"] = "xsel -ob",
+        ["*"] = "xsel -op"
+    },
+    cache_enabled = true,
+}
+vim.cmd([[set clipboard+=unnamedplus]])  -- Enable System-clipboard functionality. (This might be working well with the above thing.)
+
 opt.grepprg = "rg\\ --vimgrep\\ --noheading\\ --smart-case"     -- Use ripgrep.
 opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"                         -- Grep format.
 -- g.loaded_python_provider = 1     -- Unsure what this is. Supposed to speed something up.
@@ -204,7 +207,7 @@ opt.cmdwinheight = 10   -- Window height of command line history window. (Activa
 
 -- |> Misc
 opt.virtualedit = "all"                     -- Virtual Space => Enabled
-opt.backspace = {"indent", "eol", "start"}  -- Backspace functionality.
+opt.backspace = { "indent", "eol", "start" }  -- Backspace functionality.
 
 -- |> Completion popup settings.
 -- NOTE: nvim-cmp opts effectively include also "noselect" and "noinsert". (noselect and noinsert are not doing anything.)
@@ -214,10 +217,10 @@ opt.pumwidth = 18           -- Completion popup menu width.
 opt.pumblend = 0            -- Transparency percentage for popup menu. (Prolly prefer no transparency.)
 -- NOTE: Wildmenu seems to be active by default in Neovim.
 
--- |> Indentation Settings.
+-- |> Indentation Settings. (WIP)
 opt.autoindent = true   -- Automatic indentation.
 opt.smartindent = true  -- More automatic/smart indentation. (Or stupid idk.)
-opt.cindent = true      -- Some c-like indentation rule.
+opt.cindent = false      -- Some c-like indentation rule.
 
 -- |> Tabbing settings.
 opt.expandtab = true    -- Covenrt Tabs to Spaces automatically.
@@ -237,17 +240,15 @@ opt.wrapscan = true     -- Toggle searching to wrap from end of buffer to beginn
 -- |> Folding settings.
 opt.foldenable = true           -- Folding => Enabled
 vim.wo.foldmethod = "manual"    -- Fold Method.
--- vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers.
+vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers. (I kind of want to change these.)
 vim.wo.foldexpr = "0"           -- Fold expression.
 opt.foldcolumn = "0"            -- Disable fold icons in sign-column.
 opt.foldlevel = 99              -- High value preferred by `nvim-ufo`.
 opt.foldlevelstart = 99         -- Start unfolded => 99
 
 -- |> Scrolling settings.
-opt.scrolloff = 9       -- Vertical scroll offset. (0-12) (NOTE: Neovide --multigrid doesn't really behave great with scrolloffs)
-opt.sidescrolloff = 4   -- Horizontal scroll offset. (0-20)
--- g.scrollfix = -1        -- Plugin setting. (-1 => Disable)
--- g.scrollinfo = 0        -- Plugin setting. (0 => Disable)
+opt.scrolloff = 9       -- Vertical scroll offset. (0-12) (NOTE: `neovide --multigrid` doesn't really behave great with scrolloffs)
+opt.sidescrolloff = 2   -- Horizontal scroll offset. (0-20)
 
 -- |> Split settings.
 opt.splitright = true   -- Split direction right instead of left.
@@ -255,11 +256,13 @@ opt.splitbelow = true   -- Split direction below instead of above.
 
 -- |> Wrap settings.
 opt.wrap = false            -- Base text wrapping. (Virtual)
-opt.linebreak = true        -- I forgor.
+opt.linebreak = false       -- Break at specific column instead of last char that fits on screen. (Not good)
 opt.breakindent = true      -- When wrapping, visually indent lines.
 opt.breakindentopt = "sbr"  -- "showbreak"
 opt.showbreak = "❯ "
--- opt.textwidth = 92          -- Hard break column limit.
+-- opt.textwidth = 80          -- Hard break column limit.
+    -- Might cause issues with certain things,
+    -- but I might want this for LaTeX, Markdown, and Org.
 
 --===============================================--+
 -- === END - 4. Functionality Settings - END === --|  --=>><⚡END⚡>]
@@ -274,14 +277,14 @@ opt.showbreak = "❯ "
 -- This is kinda harsh to set here. (But having it enabled caused an error, I think.)
 -- Syntax required for some filetypes such as '.sql' and '.snippets', for now.
 -- vim.cmd([[syntax off]])
-opt.cursorline = false      -- Visual Line-highlight Toggle.
+opt.cursorline = true      -- Visual Line-highlight Toggle.
 opt.number = false          -- Line Numbers.
 opt.relativenumber = false  -- Relative Line Numbers.
 opt.signcolumn = "yes"      -- Signcolumn. (Gutter) (NOTE: 'no' did not fully disable LSP signcolumn.)
 opt.showmatch = false       -- Jump to matching pairs when inserting them. (This is horrible. Do not enable.)
 opt.laststatus = 3          -- 0 = Never, 3 = Global StatusLinn, maybe.
 opt.conceallevel = 0        -- Never/Always hide conceal. (0/3)
-opt.concealcursor = "nc"    -- Keep concealactive in normal and command mode, but not in visual and insert modes.
+opt.concealcursor = ""      -- Options: "nivc" - Empty: Disable conceal on cursorline.
 
 --========================================--+
 -- === END - 5. Visual Settings - END === --|  --=>><⚡END⚡>]
@@ -315,7 +318,7 @@ g.neovide_cursor_antialiasing = true
 g.neovide_refresh_rate = 165
 g.neovide_refresh_rate_idle = 165
 g.neovide_transparency = 1
-g.neovide_scroll_animation_length = 0.42
+g.neovide_scroll_animation_length = 0.24
 g.neovide_confirm_quit = true
 g.neovide_cursor_unfocused_outline_width = 0.125
 g.neovide_profiler = false
@@ -330,16 +333,18 @@ g.neovide_cursor_vfx_particle_phase = 2.5
 g.neovide_cursor_vfx_particle_curl = 2.5
 g.neovide_cursor_animation_length = 0.020
 g.neovide_cursor_trail_length = 0.06
+g.neovide_curser_animate_in_insert_mode = true
+g.neovide_curser_animate_command_line = false
 
 --===============================================--+
 -- === END - 7. Neovide Settings (GUI) - END === --|  --=>><⚡END⚡>]
 --===============================================--+
---|---------------------------------------------|
---============================================--+
--- === START - 8. Plugin Settings - START === --|  --=>><⚡START⚡>[
---============================================--+
+--|------------------------------------------------|
+--======================================================--+
+-- === START - 8. Plugin Settings (Plugins) - START === --|  --=>><⚡START⚡>[
+--======================================================--+
 
--- === |> Packer Plugin Management  --=>><⚡START⚡>[
+-- === |> Packer Plugin Management (Plugins)  --=>><⚡START⚡>[
 require("packer").startup({function()
 
     -- === |> - Misc / Helper  --=>><⚡START⚡>[
@@ -357,7 +362,7 @@ require("packer").startup({function()
     }                                                                   -- Treesitter           (STATE: Good)
 
     -- use { "nvim-treesitter/nvim-treesitter-textobjects" }               -- Textobjects          (STATE: Okay, not used much.) [Maybe out of date right now. (Nov 6th 2022)]
-    use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
+    -- use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Some issues)
     -- use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments  (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
     use { "onsails/lspkind-nvim" }                                      -- Completion Icons     (STATE: Good)
     use { "stevearc/dressing.nvim" }                                    -- UI Lib               (STATE: Good)
@@ -392,11 +397,9 @@ require("packer").startup({function()
     use { "hrsh7th/cmp-cmdline" }                                       -- Nvim-cmp Ext         (STATE: Good)
     use { "hrsh7th/cmp-nvim-lsp-signature-help" }                       -- Nvim-cmp Ext         (STATE: Okay)
     -- Snippets
-    use { "L3MON4D3/LuaSnip", tag = "v1.*" }                            -- Snippets             (STATE: Testing)
-    use { "saadparwaiz1/cmp_luasnip" }                                  -- LuaSnip Cmp Source   (STATE: Testing)
-    use { "smjonas/snippet-converter.nvim" }                            -- SnippetConvert       (STATE: Testing)
-    -- use { "SirVer/ultisnips" }                                          -- Snippets             (STATE: Good, but faced a error. )
-    -- use { "quangnguyen30192/cmp-nvim-ultisnips" }                       -- Ultisnips Ext        (STATE: Good, but moving to LuaSnip)
+    use { "L3MON4D3/LuaSnip", tag = "v1.*" }                            -- Snippets             (STATE: Good, but needs some work.)
+    use { "saadparwaiz1/cmp_luasnip" }                                  -- LuaSnip Cmp Source   (STATE: Good)
+    -- use { "smjonas/snippet-converter.nvim" }                            -- SnippetConvert       (STATE: Not good enough)
     -- use { "windwp/nvim-autopairs" }                                  -- Autopairs            (STATE: Issues)
     -- === |> - Autocompletion  --=>><⚡END⚡>]
 
@@ -431,9 +434,13 @@ require("packer").startup({function()
     use { "nvim-telescope/telescope-ui-select.nvim" }                   -- Telescope UI Ext     (STATE: Good)
     -- === |> - Fuzzy Finder (Telescope)  --=>><⚡END⚡>]
 
+    -- === |> - Interactive Workflow  --=>><⚡START⚡>[
+    use { "luk400/vim-jukit" }                                          -- Jupyter alternative  (STATE: Good)
+    -- === |> - Interactive Workflow  --=>><⚡END⚡>]
+
     -- === |> - Misc Nice Things  --=>><⚡START⚡>[
     use { "goolord/alpha-nvim" }                                        -- StartupScreen        (STATE: Good)
-    use { "folke/zen-mode.nvim" }                                       -- Zen-Mode             (STATE: Okay, looking at swapping to true-zen.)
+    use { "folke/zen-mode.nvim" }                                       -- Zen-Mode             (STATE: Some lag issues, some toggling issues.)
     use { "mhartington/formatter.nvim" }                                -- FormatRunner         (STATE: Fine)
     use { "tpope/vim-repeat" }                                          -- Improved Repeat      (STATE: Good)
     use { "mhinz/vim-sayonara" }                                        -- Better 'bd'          (STATE: Good)
@@ -460,6 +467,7 @@ require("packer").startup({function()
     -- === |> - Misc Nice Things  --=>><⚡END⚡>]
 end,
 
+-- Packer commands window opening style. (Floating window with border.)
 config = {
     display = {
         open_fn = function()
@@ -511,13 +519,13 @@ require("nvim-treesitter.configs").setup({
         additional_vim_regex_highlighting = false,
     },
 
+    -- Experimenting with this experimental feature.
     indent = {
-        enable = false
+        enable = true
     },
 
-    -- NOTE: Disabled atm, but generally okay to use.
     rainbow = {
-        enable = true,  -- 'true' might be bugged as of Nov 6th 2022.
+        enable = false,  -- 'true' has some minor issues. Prefer not to have my crap borked.
         extended_mode = false,
         max_file_lines = 3000,
     },
@@ -657,7 +665,7 @@ require("ufo").setup({
 })
 -- |> END - UltraFold Setup  --=>><⚡END⚡>]
 
--- |> START - Smartpairs Setup  --=>><⚡START⚡>]
+-- |> START - Smartpairs Setup  --=>><⚡START⚡>[
 -- STATE: Not really satisfied.
 require("pairs"):setup({
     enter = {
@@ -666,10 +674,8 @@ require("pairs"):setup({
 })
 -- |> END - Smartpairs Setup  --=>><⚡END⚡>]
 
--- |> START - Leap.nvim Setup  --=>><⚡START⚡>]
-
--- Crap
-
+-- |> START - Leap.nvim Setup  --=>><⚡START⚡>[
+-- Bindings are created in good-binds file.
 -- |> END - Leap.nvim Setup  --=>><⚡END⚡>]
 
 --=============================================--+
@@ -681,18 +687,9 @@ require("pairs"):setup({
 -- g.completion_matching_strategy_list = {"exact", "substring"}
 -- g.completion_matching_ignore_case = 1
 
--- |> Ultisnips Setup (START) (Moved to using LuaSnip)
--- g.UltiSnipsExpandTrigger = '<Plug>(ultisnips_expand)'
--- g.UltiSnipsJumpForwardTrigger = '<Plug>(ultisnips_jump_forward)'
--- g.UltiSnipsJumpBackwardTrigger = '<Plug>(ultisnips_jump_backward)'
--- g.UltiSnipsListSnippets = '<C-x><C-s>'
--- g.UltiSnipsRemoveSelectModeMappings = 1  -- Had this on 0, testing 1.
--- |> Ultisnips Setup (END) <|--
-
 local cmp = require("cmp")
 local lspkind = require("lspkind")
 local cmpkind = cmp.lsp.CompletionItemKind
-local luasnip = require("luasnip")
 
 local repterm = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
@@ -720,7 +717,6 @@ end
 
 -- local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 -- local autopair_handlers = require('nvim-autopairs.completion.handlers')
-
 -- |> END -> Autopairs (Nvim-Cmp)
 
 -- TODO: Lua choice node `next_choice` binding. (Had difficulty binding this to `C-e` so not sure what to bind to.)
@@ -728,11 +724,33 @@ end
 --     luasnip.next_choice()
 -- end
 
--- |> Load LuaSnip Snippets. (Might be having issues with this.)
--- require("luasnip.loaders.from_snipmate").lazy_load()
--- require("luasnip.loaders.from_vscode").lazy_load()
-require("luasnip.loaders.from_snipmate").load({ paths = { "./snippets" } })  -- If lazy load does not work, this should.
-require("luasnip.loaders.from_vscode").load({ paths = { "./luasnip_snippets" } })  -- If lazy load does not work, this should.
+local luasnip = require("luasnip")
+
+-- |> LuaSnip Config
+-- This is unbelievably badly documented. (This might not even be working.)
+-- Found example: "https://github.com/L3MON4D3/LuaSnip/blob/master/Examples/snippets.lua"
+luasnip.setup({
+    -- Even when false, history is being retained. I do not like it.
+    history = false,
+    enable_autosnippets = true,  -- I suspect I like this. 
+
+    -- A single character wrong in this string makes it fail, like a space after comma.
+    update_events = "TextChanged,TextChangedI",  -- Without this, the repeat nodes are really clunky.
+    delete_check_events = "TextChanged,InsertLeave",
+    -- region_check_events = "CursorMoved,CursorMovedI",  -- Might cause lag.
+})
+
+-- |> Loading LuaSnip Snippets - START
+
+-- Snipmate snippets are working. (I will use these snippets for simple snippets.)
+require("luasnip.loaders.from_snipmate").load({ paths = { "./snippets" } })
+
+-- Lua snippets are working when created in a file and fetched. (I will use these snippets for more complicated things.)
+require("luasnip.loaders.from_lua").load({ paths = { "./snippets" } })
+
+-- LuaSnip `add_snippets` function is not working.
+-- require("luasnip/snippets")
+-- |> Loading LuaSnip Snippets - END
 
 -- nvim-cmp setup (Core) - START
 cmp.setup({
@@ -741,9 +759,10 @@ cmp.setup({
         return true
     end,  -- Disables completion in Telescope.
 
+    -- I want this to be either very very fast, or delayed by a good bit, not in-between.
     performance = {
-        debounce = 80,
-        throttle = 80,
+        debounce = 20,
+        throttle = 20,
     },  -- Supposed to increase overall editor performance, at the cost of small completion latency.
 
     preselect = cmp.PreselectMode.None,  -- Disables automatic preselection. (Enabled because of a bug with preselection: It skipped over snippets.)
@@ -752,14 +771,13 @@ cmp.setup({
     snippet = {
         expand = function(args)
             require("luasnip").lsp_expand(args.body)    -- For LuaSnip.
-            -- vim.fn["UltiSnips#Anon"](args.body)      -- For Ultisnips.
         end,
-    },  -- Snippet support.
+    },  -- Snippet support. (Very good, I think.)
 
     completion = {
         -- autocomplete = cmp.TriggerEvent | false,  -- Not sure what this is or how to use it.
         keyword_length = 2,  -- Only show completion popup after 2 characters have been typed. (Maybe performance increase, compared to lower values.)
-        -- NOTE: Buffer source `keyword_length` is set to 3 below, in source section.
+        -- NOTE: `buffer` source `keyword_length` is set to 3 below, in source section.
         completeopt = "menu,menuone,preview,noselect,noinsert",  -- I don't feel like noinsert is doing anything, but these work.
         -- NOTE: 'noinsert' probably overwritten by `cmp.ConfirmBehavior.Replace` option in keymaps. (Which is fine.)
     },
@@ -816,25 +834,6 @@ cmp.setup({
                     fallback()
                 end
             end,
-            -- |> UltiSnips things:
-            -- i = function(fallback)
-            --     if cmp.visible() and vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
-            --     elseif cmp.visible() then
-            --         cmp.select_next_item({ behavior = cmp.SelectBehavior.Replace })
-            --     elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
-            --     else
-            --         fallback()
-            --     end
-            -- end,
-            -- s = function(fallback)
-            --     if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_forward)"), 'm', true)
-            --     else
-            --         fallback()
-            --     end
-            -- end
         }),
         ["<S-Tab>"] = cmp.mapping({
             c = function()
@@ -862,25 +861,6 @@ cmp.setup({
                     fallback()
                 end
             end,
-            -- |> UltiSnips things:
-            -- i = function(fallback)
-            --     if cmp.visible() and vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
-            --     elseif cmp.visible() then
-            --         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Replace })
-            --     elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
-            --     else
-            --         fallback()
-            --     end
-            -- end,
-            -- s = function(fallback)
-            --     if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-            --         vim.api.nvim_feedkeys(repterm("<Plug>(ultisnips_jump_backward)"), 'm', true)
-            --     else
-            --         fallback()
-            --     end
-            -- end
         }),
         ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
         ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
@@ -948,7 +928,7 @@ cmp.setup({
     formatting = {
         format = lspkind.cmp_format({
             mode = 'symbol',
-            maxwidth = 32,  -- NOTE: Something occasionally goes way beyond this maxwidth limit. Otherwise good width.
+            maxwidth = 32,  -- NOTE: Something occasionally goes way beyond this maxwidth limit. Otherwise good width. any
             before = function (entry, vim_item)
                 return vim_item
             end
@@ -971,7 +951,6 @@ cmp.setup({
 
     sources = {
         { name = "luasnip", priority = 90, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
-        -- { name = "ultisnips", priority = 90, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
         -- { name = "nvim_lsp_signature_help", priority = 3 },  -- Disabled because using Noice.nvim for sig-help.
         { name = "nvim_lua", priority = 2 },
         { name = "nvim_lsp", priority = 2 },
@@ -1071,12 +1050,9 @@ cmp.setup.cmdline(':', {
 -- - TODO: Install 'aerial.nvim' (?)
 
 -- |> START -> LSP Flags Setup  --=>><⚡START⚡>[
---
--- NOTE: 'allow_incremental_sync' is not stable yet. It makes LSP diagnostics essentially unuseable. (Might have been fixed?)
---
 local lsp_flags = {
-    allow_incremental_sync = true,  -- Testing this on `true`. Tags: Unsafe, Potential Issue, JUMPHERE.
-    debounce_text_changes = 150  -- 150 is default, and probably is fine.
+    allow_incremental_sync = true,  -- This used to be buggy, but maybe it is fine now.
+    debounce_text_changes = 80  -- 150 is default, and probably is fine. (I wonder if this affects speed of autocompletion. It might.)
 }
 -- |> END -> LSP Flags Setup  --=>><⚡END⚡>]
 
@@ -1085,19 +1061,26 @@ local nvim_lsp = require("lspconfig")
 
 -- LSP Keybindings. (Mostly here)
 local aum_general_on_attach = function(client, bufnr)
+    -- Disable `Semantic Tokens Highlighting`:
+    client.server_capabilities.semanticTokensProvider = nil
+    -- NOTE: It is not good enough yet. (Web 29th March)
+    -- REASON: Colors looking bad and not updating well.
+    -- TODO: These colors would need to be customized very heavily.
+    -- But I'm not even sure if they can be made to look good.
+
     local lsp_opts = { noremap = true, silent = true, buffer=bufnr }
     local keymap = vim.keymap.set
 
     -- === - LSP Mappings - ===
     keymap('n', '<F2>', vim.lsp.buf.rename, bufopts)                -- STATE: Good (I think `dressing.nvim` is overwriting the UI for this, and its good.)
-    keymap('n', 'gh', vim.lsp.buf.hover, bufopts)                   -- STATE: Good
+    keymap('n', 'gh', vim.lsp.buf.hover, bufopts)                   -- STATE: Good, expect that it occasionally lags. (Rust-Analyzer, Pyright)
     keymap('n', 'gd', vim.lsp.buf.definition, bufopts)              -- STATE: Good
     keymap('n', '<space>D', vim.lsp.buf.type_definition, bufopts)   -- STATE: Probably good
     keymap('n', 'gD', vim.lsp.buf.declaration, bufopts)             -- STATE: Probably good
     keymap('n', 'gi', vim.lsp.buf.implementation, bufopts)          -- STATE: Probably good
-    keymap('n', 'gr', vim.lsp.buf.references, bufopts)              -- STATE: Probably good
+    keymap('n', 'gr', vim.lsp.buf.references, bufopts)              -- STATE: Bit awkward to use window. Some Aerial-like or Navigator plugin might be better.
     keymap('n', '<space>ca', vim.lsp.buf.code_action, bufopts)      -- STATE: Probably good (Bind could be better.)
-    keymap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)       -- STATE: Not sure, not really often used or required.
+    keymap('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)       -- STATE: Good. Displays good info and is responsive. (This seems to be a different one from the Noice provided one.)
 
     keymap('n', '<space>f', function() vim.lsp.buf.format({ async = true }) end, bufopts)  -- STATE: Seems to be good.
 
@@ -1266,7 +1249,7 @@ end
 
 -- |> Add this on each server, as "capabilities = completion_capabilities".
 -- |> NOTE: Though it somehow seemed to work without it.
-local completion_capabilities = require('cmp_nvim_lsp').default_capabilities();
+local completion_capabilities = require("cmp_nvim_lsp").default_capabilities();
 
 --=====================================================--+
 -- === END - Completion Capabilities For LSP - END === --|  --=>><⚡END⚡>]
@@ -1316,66 +1299,66 @@ local aum_handler_config = {
 local lsp_util = require("lspconfig.util")
 
 -- => 'ccls.nvim' setup (STATE: Good)
-require("ccls").setup({
-    lsp = {
-        -- Check `:help vim.lsp.start` for config options.
-        server = {
-            name = "ccls",  -- String name.
-
-            cmd = { "ccls-extra.sh" },  -- Point to your binary, has to be a table.
-            args = {},
-
-            -- autostart = false,  -- Does not seem to work here. (TODO: Solve how to stop servers from autostarting.)
-
-            offset_encoding = "utf-32",  -- Default value set by plugin.
-
-            root_dir = vim.fs.dirname(vim.fs.find({ "compile_commands.json", ".git" }, { upward = true })[1]),
-
-            init_options = {
-                index = {
-                    threads = 0;
-                };
-
-                clang = {
-                    excludeArgs = { "-frounding-math" };
-                };
-            },
-
-            -- |> Fix diagnostics.
-            flags = lsp_flags,
-            -- |> Attach LSP keybindings & other crap.
-            on_attach = aum_general_on_attach,
-            -- |> Add nvim-cmp or snippet completion capabilities.
-            capabilities = completion_capabilities,
-            -- |> Activate custom handlers.
-            handlers = aum_handler_config,
-        },
-    },
-
-    win_config = {
-        -- Sidebar configuration.
-        sidebar = {
-            size = 50,
-            position = "topleft",
-            split = "vnew",
-            width = 50,
-            height = 20,
-        },
-
-        -- Floating window configuration. check :help nvim_open_win for options.
-        float = {
-            style = "minimal",
-            relative = "cursor",
-            width = 50,
-            height = 20,
-            row = 0,
-            col = 0,
-            border = "rounded",
-        },
-    },
-
-    filetypes = {"c", "cpp"},  -- Should this include "h" and "hpp"? ( Low prio TODO: Test )
-})
+-- require("ccls").setup({
+    --lsp = {
+        ---- Check `:help vim.lsp.start` for config options.
+        --server = {
+            --name = "ccls",  -- String name.
+--
+            --cmd = { "ccls-extra.sh" },  -- Point to your binary, has to be a table.
+            --args = {},
+--
+            ---- autostart = false,  -- Does not seem to work here. (TODO: Solve how to stop servers from autostarting.)
+--
+            --offset_encoding = "utf-32",  -- Default value set by plugin.
+--
+            --root_dir = vim.fs.dirname(vim.fs.find({ "compile_commands.json", ".git" }, { upward = true })[1]),
+--
+            --init_options = {
+                --index = {
+                    --threads = 0;
+                --};
+--
+                --clang = {
+                    --excludeArgs = { "-frounding-math" };
+                --};
+            --},
+--
+            ---- |> Fix diagnostics.
+            --flags = lsp_flags,
+            ---- |> Attach LSP keybindings & other crap.
+            --on_attach = aum_general_on_attach,
+            ---- |> Add nvim-cmp or snippet completion capabilities.
+            --capabilities = completion_capabilities,
+            ---- |> Activate custom handlers.
+            --handlers = aum_handler_config,
+        --},
+    --},
+--
+    --win_config = {
+        ---- Sidebar configuration.
+        --sidebar = {
+            --size = 50,
+            --position = "topleft",
+            --split = "vnew",
+            --width = 50,
+            --height = 20,
+        --},
+--
+        ---- Floating window configuration. check :help nvim_open_win for options.
+        --float = {
+            --style = "minimal",
+            --relative = "cursor",
+            --width = 50,
+            --height = 20,
+            --row = 0,
+            --col = 0,
+            --border = "rounded",
+        --},
+    --},
+--
+    --filetypes = {"c", "cpp"},  -- Should this include "h" and "hpp"? ( Low prio TODO: Test )
+--})
 
 -- State: Presumably good, but unused, in favor of `ccls.nvim`.
 -- nvim_lsp.clangd.setup({
@@ -1400,7 +1383,6 @@ require("ccls").setup({
 -- |> Rust LSP / rust-analyzer Setup (STATE: Good)
 require("rust-tools").setup({
     tools = { -- rust-tools options
-
         -- How to execute terminal commands.
         -- Options right now: termopen / quickfix
         executor = require("rust-tools/executors").termopen,
@@ -1446,7 +1428,7 @@ require("rust-tools").setup({
             right_align_padding = 7,
 
             -- The color of the hints.
-            highlight = "AumRustToolsInlayHint",
+            highlight = "AumRustToolsInlayHint",  -- Configured in my theme: `Aumnechroma`.
         },
 
         -- Options same as lsp hover / vim.lsp.util.open_floating_preview()
@@ -1536,6 +1518,11 @@ require("rust-tools").setup({
     -- These override the defaults set by rust-tools.nvim.
     -- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
     server = {
+        -- |> Disable autostart.
+        -- REASON: For light editing, starting up LSP is too heavy. Easy to startup if one wants it active.
+        autostart = false,  -- This works.
+        -- autostart = true,  -- If want autostart.
+
         -- |> Fix diagnostics.
         flags = lsp_flags,
 
@@ -1556,8 +1543,8 @@ require("rust-tools").setup({
         settings = {
             ["rust-analyzer"] = {
                 diagnostics = {
-                    enableExperimental = false,
-                    enable = true
+                    enable = true,
+                    enableExperimental = false
                 },
                 imports = {
                     granularity = {
@@ -1574,10 +1561,15 @@ require("rust-tools").setup({
                     enable = true,
                 },
                 checkOnSave = {
-                    command = "clippy",
-                    -- Had some minor issues with this but it does seem to work,
-                    -- if there are no problems in the cargo project.
-                    -- Can also set to `"check"`.
+                    -- command = "check",  -- This causes some lag.
+                    command = "clippy",  -- Might cause even more lag.
+                    -- Can also set to `"check"`, but `clippy` is a superset.
+
+                    -- Testing these, if they affect performance. (No idea, but it doesn't seem to have broken anything.)
+                    extraArgs = {
+                        "--target-dir",
+                        "/tmp/rust-analyzer-check"
+                    }
                 },
             }
         },
@@ -1587,7 +1579,7 @@ require("rust-tools").setup({
     dap = {
         adapter = {
             type = "executable",
-            command = "lldb-vscode",
+            command = "/usr/bin/lldb-vscode-14",  -- This might change as things get updated, I suppose.
             name = "rt_lldb",
         },
     },
@@ -1866,28 +1858,76 @@ nvim_lsp.bashls.setup({
 --================================================================--+
 -- === END - LSP -> CSS & TailwindCSS LangServer  Setup - END === --|  --=>><⚡END⚡>]
 --================================================================--+
---|---------------------------------------------------|
---==================================================--+
--- === START - LSP -> Python LangServer - START === --|  --=>><⚡START⚡>[
---==================================================--+
+--|--------------------------------------------------------|
+--=======================================================--+
+-- === START - LSP -> Python Language Server - START === --|  --=>><⚡START⚡>[
+--=======================================================--+
 
--- nvim_lsp.pyright.setup({
-    -- -- |> Fix diagnostics.
-    -- flags = lsp_flags,
-
-    -- -- |> Attach LSP keybindings & other crap.
-    -- on_attach = aum_general_on_attach,
-
-    -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
-
-    -- -- |> Activate custom handlers.
-    -- handlers = aum_handler_config,
+-- Better than nothing. Occasinally laggy. Occasinally does not provide type info.
+-- nvim_lsp.jedi_language_server.setup({
+--     -- |> `Debounce` and `Incremental Sync` preferences.
+--     flags = lsp_flags,
+--
+--     -- |> Attach LSP Keybindings.
+--     on_attach = aum_general_on_attach,
+--
+--     -- |> Add nvim-cmp and snippet completion capabilities.
+--     capabilities = completion_capabilities,
+--
+--     -- |> `Hover` and `Signature Help` borders.
+--     handlers = aum_handler_config,
+--
+--     -- Help: lsp-config
+--     cmd = { "jedi-language-server" },
+--     filetypes = { "python" },
+--     autostart = false,
+--     single_file_support = true,
+--
+--     settings = {
+--         jedi = {
+--             markupKindPreferred = "markdown",
+--             diagnostics = {
+--                 enable = true
+--             }
+--         }
+--     }
 -- })
 
---==============================================--+
--- === END - LSP -> Python LangServer - END === --|  --=>><⚡END⚡>]
---==============================================--+
+-- Pyright seems better than Jedi.
+nvim_lsp.pyright.setup({
+    -- |> Fix diagnostics.
+    flags = lsp_flags,
+
+    -- |> Attach LSP keybindings & other crap.
+    on_attach = aum_general_on_attach,
+
+    -- |> Add nvim-cmp or snippet completion capabilities.
+    capabilities = completion_capabilities,
+
+    -- |> Activate custom handlers.
+    handlers = aum_handler_config,
+
+    cmd = { "pyright-langserver", "--stdio" },
+    filetypes = { "python" },
+    autostart = false,
+    single_file_support = true,
+
+    settings = {
+        pyright = {
+            disableOrganizeImports = false,
+            analysis = {
+                useLibraryCodeForTypes = true,
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                autoImportCompletions = true,
+            },
+        },
+    },
+})
+
+--===================================================--+
+-- === END - LSP -> Python Language Server - END === --|  --=>><⚡END⚡>]
+--===================================================--+
 --|---------------------------------------------------|
 --==================================================--+
 -- === START - LSP -> Diagnostics Setup - START === --|  --=>><⚡START⚡>[
@@ -1901,14 +1941,14 @@ vim.diagnostic.config({
     --     spacing = 2,
     -- },  -- Bit too intrusive. Just using underline, jump to diagnostics and trouble.nvim is better.
 
-    float = {
+    float = {  -- STATE: Good
         source = "always",
         border = "rounded",
     },
 
     signs = true,
     underline = true,
-    update_in_insert = false,
+    update_in_insert = true,  -- Not too sure about this, but without it, the diagnostics are a bit unresponsive.
     severity_sort = true,
 })
 
@@ -2058,6 +2098,10 @@ require("formatter").setup {
             end
         },
 
+        rust = {
+            require("formatter.filetypes.rust").rustfmt
+        },
+
         lua = {
             require("formatter.filetypes.lua").stylua
         },
@@ -2095,10 +2139,10 @@ require("telescope").setup({
                 prompt_position = "top"
             },
             center = {
-                height = 0.4,
+                height = 0.8,
                 preview_cutoff = 40,
                 prompt_position = "top",
-                width = 0.5
+                width = 0.8
             },
             cursor = {
                 height = 0.9,
@@ -2157,7 +2201,10 @@ require("telescope").setup({
             case_mode = "smart_case"         -- "smart_case", "ignore_case" or "respect_case"
         },
         ["ui-select"] = {
-            require("telescope.themes").get_dropdown{}
+            require("telescope.themes").get_dropdown({
+                width = 0.92,
+                height = 0.8,
+            })
         }
     }
 })
@@ -2193,12 +2240,12 @@ require("dressing").setup({
         relative = "cursor",
 
         -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-        prefer_width = 40,
+        prefer_width = 24,
         width = nil,
         -- min_width and max_width can be a list of mixed types.
         -- min_width = {20, 0.2} means "the greater of 20 columns or 20% of total"
-        max_width = { 140, 0.9 },
-        min_width = { 20, 0.2 },
+        max_width = { 120, 0.9 },
+        min_width = { 20, 0.20 },
 
         win_options = {
             -- Window transparency (0-100)
@@ -2247,16 +2294,16 @@ require("dressing").setup({
         -- Options for fzf selector
         fzf = {
             window = {
-                width = 0.5,
-                height = 0.4,
+                width = 0.86,
+                height = 0.66,
             },
         },
 
         -- Options for fzf_lua selector
         fzf_lua = {
             winopts = {
-                width = 0.5,
-                height = 0.4,
+                width = 0.86,
+                height = 0.66,
             },
         },
 
@@ -2275,10 +2322,10 @@ require("dressing").setup({
             win_options = {
                 winblend = 10,
             },
-            max_width = 80,
-            max_height = 40,
-            min_width = 40,
-            min_height = 10,
+            max_width = 120,
+            max_height = 60,
+            min_width = 60,
+            min_height = 20,
         },
 
         -- Options for built-in selector.
@@ -2299,12 +2346,12 @@ require("dressing").setup({
             -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
             -- the min_ and max_ options can be a list of mixed types.
             -- max_width = {140, 0.8} means "the lesser of 140 columns or 80% of total"
-            width = nil,
+            width = 120,
             max_width = { 140, 0.8 },
-            min_width = { 40, 0.2 },
-            height = nil,
+            min_width = { 80, 0.6 },
+            height = 80,
             max_height = 0.9,
-            min_height = { 10, 0.2 },
+            min_height = { 40, 0.4 },
 
             -- Set to `false` to disable
             mappings = {
@@ -2324,25 +2371,39 @@ require("dressing").setup({
         format_item_override = {},
 
         -- see :help dressing_get_config
-        get_config = nil,
+        -- get_config = nil
+        get_config = function(opts)
+            if opts.kind == "legendary.nvim" then
+                return {
+                    backend = 'telescope',
+                    telescope = {
+                        width = 0.92,
+                        height = 0.8,
+                    }
+                }
+            else
+                return {}
+            end
+        end
+        ,
     },
 })
 -- |> END -> Dressing.nvim Setup   --=>><⚡END⚡>]
 
--- -- |> START -> Zen Mode Setup  --=>><⚡START⚡>[
+-- |> START -> Zen Mode Setup  --=>><⚡START⚡>[
 require("zen-mode").setup({
     window = {
-        backdrop = 1,  -- Shade the backdrop of the Zen window. Set to 1 to keep the same as Normal.
-        width = 0.72,  -- Width of the Zen window (Below 1 values are percentages) (0.74'ish, 110'ish.)
-        height = 0.94,  -- Height of the Zen window (Below 1 values are percentages) (0.9'ish, 42'ish.)
+        backdrop = 0.92,  -- Shade the backdrop of the Zen window. Set to 1 to keep the same as Normal.
+        width = 0.80,  -- Width of the Zen window (Below 1 values are percentages) (0.80'ish, 110'ish.)
+        height = 0.96,  -- Height of the Zen window (Below 1 values are percentages) (0.96'ish, 42'ish.)
         options = {
-            -- signcolumn = "no", -- disable signcolumn
-            -- number = false, -- disable number column
-            -- relativenumber = false, -- disable relative numbers
-            -- cursorline = false, -- disable cursorline
-            -- cursorcolumn = false, -- disable cursor column
-            -- foldcolumn = "0", -- disable fold column
-            -- list = false, -- disable whitespace characters
+            -- signcolumn = "no",       -- Disable signcolumn
+            -- number = false,          -- Disable number column
+            -- relativenumber = false,  -- Disable relative numbers
+            -- cursorline = false,      -- Disable cursorline
+            -- cursorcolumn = false,    -- Disable cursor column
+            -- foldcolumn = "0",        -- Disable fold column
+            -- list = false,            -- Disable whitespace characters
         },
     },
 
@@ -2358,6 +2419,7 @@ require("zen-mode").setup({
     },
 })
 -- |> END -> Zen Mode Setup  --=>><⚡END⚡>]
+
 
 -- |> START -> Alpha-nvim Setup  --=>><⚡START⚡>[
 require("alpha/startup_screen")  -- Lua module external file. (StartupScreen configuration)
@@ -2425,7 +2487,9 @@ require("heirline/aumneline")
 -- |> IndentScope (Almost perfect)
 require("mini.indentscope").setup()
 -- |> CursorWord (Practically perfect)
-require("mini.cursorword").setup()
+require("mini.cursorword").setup({
+    delay = 350
+})
 -- |> AroundIn (Haven't used a lot)
 require("mini.ai").setup()
 -- |> Surround Operations (Very good and nice and great.)
@@ -2532,18 +2596,6 @@ require("live-command").setup({
 })
 -- === |> - Live-Command. (END)
 
--- === |> - Guess indent. (START)
--- require("guess-indent").setup({
---     auto_cmd = true,  -- Set to false to disable automatic execution.
---
---     -- A list of filetypes for which the auto command gets disabled.
---     filetype_exclude = { "netrw", "tutor" },
---
---     -- A list of buffer types for which the auto command gets disabled.
---     buftype_exclude = { "help", "nofile", "terminal", "prompt" },
--- })
--- === |> - Guess indent. (END)
-
 -- === |> - Noice.nvim (START)
 if not g.neovide then
     require("noice").setup({
@@ -2574,9 +2626,9 @@ if not g.neovide then
             -- NOTE: If you enable messages, then the cmdline is enabled automatically.
             -- This is a current Neovim limitation.
             enabled = true,             -- Enables the Noice messages UI.
-            view = "notify",            -- Default view for messages.
-            view_error = "notify",      -- View for errors.
-            view_warn = "notify",       -- View for warnings.
+            view = "mini",              -- Default view for messages.
+            view_error = "mini",        -- View for errors.
+            view_warn = "mini",         -- View for warnings.
             view_history = "messages",  -- View for :messages.
             view_search = false,        -- View for search count messages. Set to `false` to disable.
         },
@@ -2602,7 +2654,7 @@ if not g.neovide then
                         { event = "notify" },
                         { error = true },
                         { warning = true },
-                        { event = "msg_show", kind = { "" } },
+                        { event = "msg_show" },
                         { event = "lsp", kind = "message" },
                     },
                 },
@@ -2617,7 +2669,7 @@ if not g.neovide then
                         { event = "notify" },
                         { error = true },
                         { warning = true },
-                        { event = "msg_show", kind = { "" } },
+                        { event = "msg_show" },
                         { event = "lsp", kind = "message" },
                     },
                 },
@@ -2652,50 +2704,58 @@ if not g.neovide then
             },
 
             override = {
-                -- Override the default lsp markdown formatter with Noice.
+                -- Override the Default LSP Markdown Formatter with Noice.
                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                -- Override the lsp markdown formatter with Noice.
                 ["vim.lsp.util.stylize_markdown"] = true,
-                -- Override cmp documentation with Noice. (Needs the other options to work.)
+                -- Override `nvim-cmp` documentation with Noice. (Needs the other options to work.)
                 ["cmp.entry.get_documentation"] = true,
             },
 
+            -- What does this do exactly? (Testing. TODO/HERENOW)
             hover = {
                 enabled = true,
-                view = nil, -- When nil, use defaults from documentation.
+                view = "hover", -- When nil, use defaults from documentation.
                 -- @type NoiceViewOptions
-                opts = {}, -- Merged with defaults from documentation.
+                opts = {}  -- Merged with defaults from documentation.
             },
 
             signature = {
                 enabled = true,         -- If this is enabled, the nvim-cmp sig-help should be disabled.
-                auto_open = {
+                auto_open = {           -- NOTE: `Signature Help` seems to go away when starting to type characters.
                     enabled = true,
                     trigger = true,     -- Automatically show signature help when typing a trigger character from the LSP.
                     luasnip = true,     -- Will open signature help when jumping to Luasnip insert nodes.
-                    throttle = 50,      -- Debounce lsp signature help request by 50ms.
+                    throttle = 50,      -- Debounce lsp signature help request by 50-ms.
                 },
+
                 view = nil,             -- When nil, use defaults from documentation.
+                
                 -- @type NoiceViewOptions
+                -- Reference: `https://github.com/folke/noice.nvim/blob/main/lua/noice/config/views.lua`
                 opts = {  -- Having some issue with the placement of this window. Config here.
                     view = "popup",
                     relative = "cursor",
-                    anchor = "auto",        -- What options does this take?
-                    position = "auto",      -- What options does this take?
+                    -- NOTE: Having some issue with anchor or position.
+                    anchor = "auto",
+                    position = { row = 2, col = 1 },
                     zindex = 45,
                     enter = false,
+                    
                     size = {
                         width = "auto",
                         height = "auto",
-                        max_height = 8,     -- 8 to 12'ish is good.
-                        max_width = 60,     -- 60 to 80'ish I guess, would be good.
+                        max_height = 16,            -- Still adjusting this.
+                        max_width = 100,            -- Still adjusting this.
                     },
+                    
                     border = {
                         style = "rounded",
                         padding = { 0, 2 },
                     },
+
+                    -- Not sure what linebreak does. I probably want to enable wrap.
                     win_options = {
-                        wrap = true,
+                        wrap = false,
                         linebreak = true,
                     },
                 },  -- Merged with defaults from documentation.
@@ -2704,8 +2764,7 @@ if not g.neovide then
             message = {
                 -- Messages shown by lsp servers.
                 enabled = true,
-                view = "notify",
-                opts = {},
+                view = "mini",
             },
 
             -- Defaults for hover and signature help.
@@ -2746,23 +2805,68 @@ if not g.neovide then
             -- Noice tries to move out of the way of existing floating windows.
             enabled = true,
             -- Add any filetypes here, that shouldn't trigger smart move.
-            excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
+            excluded_filetypes = { "cmp_menu", "cmp_docs", "notify", "zen-mode", "zen_mode" },
         },
 
         -- @type NoicePresets
         presets = {
             -- You can enable a preset by setting it to true, or a table that will override the preset config.
             -- You can also add custom presets that you can enable/disable with `enabled=true`.
-            bottom_search = false,           -- Use a classic bottom cmdline for search.
+            bottom_search = false,          -- Use a classic bottom cmdline for search.
             command_palette = true,         -- Position the cmdline and popupmenu together.
             long_message_to_split = true,   -- Long messages will be sent to a split.
             inc_rename = false,             -- Enables an input dialog for `inc-rename.nvim`.
         },
 
-        throttle = 1000 / 30,  -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
+        throttle = 1000 / 30,  -- How frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
 
         -- @type NoiceConfigViews
-        views = {},     -- @see section on views
+        -- @see section on views
+        views = {
+            mini = {
+                align = "message-right",
+                position = {
+                    row = -2,  -- Lifts the messages away from the status bar, so they don't overlap. If `mini` messages are enabled, -2 should be good.
+                    col = "100%",
+                },
+                win_options = {
+                    winblend = 0,
+                    winhighlight = {
+                        Normal = "AumNoiceMiniNormal",
+                        IncSearch = "AumNoiceMiniIncSearch",
+                        CurSearch = "AumNoiceMiniCurSearch",
+                        Search = "AumNoiceMiniSearch",
+                    }
+                }
+            },
+
+            hover = {
+                relative = "cursor",
+                anchor = "auto",
+                position = { row = 2, col = 1 },
+                zindex = 45,
+                enter = false,
+                
+                size = {
+                    width = "auto",
+                    height = "auto",
+                    max_height = 42,            -- Still adjusting this.
+                    max_width = 100,            -- Still adjusting this.
+                },
+                
+                border = {
+                    style = "rounded",
+                    padding = { 0, 2 },
+                },
+
+                -- Not sure what linebreak does.
+                win_options = {
+                    wrap = false,
+                    linebreak = true,
+                },
+            },
+        },     
+
         -- @type NoiceRouteConfig[]
         routes = {},    -- @see section on routes
         -- @type table<string, NoiceFilter>
@@ -2773,24 +2877,40 @@ if not g.neovide then
 end
 -- === |> - Noice.nvim (END)
 
+-- TODO: Move "Snipper Converter" section to a file somwhere else. Hide this.
 -- === |> - Snipper Converter (START)
--- NOTE: To convert snippets, run the command: `:ConvertSnippets` (It's not working what to do...)
-require("snippet_converter").setup({
-    templates = {{
-        -- name = "aumsnips",  -- Optionally give your template a name to refer to it in the `ConvertSnippets` command.
-        sources = {
-            ultisnips = {
-                vim.fn.stdpath("config") .. "/UltiSnips",       -- This should be ok.
-            },
-        },
-        output = {
-            vscode_luasnip = {  -- This might work out of the box for LuaSnip.
-                vim.fn.stdpath("config") .. "/luasnip_snippets",    -- This should be ok.
-            },
-        }
-    }}
-})
+--
+-- NOTE: To convert snippets, run the command: `:ConvertSnippets`.
+-- NOTE: A good chunk of the converted snippets did not work, so this is kind on useless.
+--       Manually converting UltiSnip syntax to the TextMate or SnipMate like syntax is fast enough.
+-- 
+-- require("snippet_converter").setup({
+--     templates = {{
+--         name = "aumsnips",  -- Optionally give your template a name to refer to it in the `ConvertSnippets` command.
+--         sources = {
+--             ultisnips = {
+--                 vim.fn.stdpath("config") .. "/UltiSnips",
+--             },
+--         },
+--         output = {
+--             vscode_luasnip = {  -- This works for LuaSnip.
+--                 vim.fn.stdpath("config") .. "/luasnip_snippets",
+--             },
+--         }
+--     }}
+-- })
 -- === |> - Snipper Converter (END)
+
+-- Jukit:
+g.jukit_mappings = false
+g.jukit_terminal = "nvimterm"
+g.jukit_shell_cmd = "ipython"
+g.jukit_auto_output_hist = false
+g.jukit_inline_plotting = false
+
+-- Markdown cell coloring:
+g.jukit_enable_textcell_bg_hl = true
+g.jukit_enable_textcell_syntax = true
 
 --========================================--+
 -- === END - 8. Plugin Settings - END === --|  --=>><⚡END⚡>]
@@ -2814,6 +2934,9 @@ vim.cmd([[command! -nargs=0 AumTheme edit /home/aum/.config/nvim/colors/aumnechr
 vim.cmd([[command! -nargs=0 AumLines edit /home/aum/.config/nvim/lua/heirline/aumneline.lua]])
 vim.cmd([[command! -nargs=0 FishConfig edit /home/aum/.config/fish/config.fish]])
 vim.cmd([[command! -nargs=0 KittyConfig edit /home/aum/.config/kitty/kitty.conf]])
+vim.cmd([[command! -nargs=0 AwesomeConfig edit /home/aum/.config/awesome/rc.lua]])
+vim.cmd([[command! -nargs=0 LuaSnipsEditAll edit /home/aum/.config/nvim/snippets/all.lua]])
+vim.cmd([[command! -nargs=0 LuaSnipsEditRust edit /home/aum/.config/nvim/snippets/rust.snippets]])
 
 -- Autogroups and Autocommands:
 
@@ -2846,20 +2969,26 @@ vim.api.nvim_create_autocmd("FileType", {
     group = help_conceal_aumgroup
 })
 
--- |> Enable full conceal in markdown files.
-local markdown_conceal_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
+-- |> Enable (Or disable) full conceal in Markdown, LaTeX, and Org files.
+local writer_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "markdown" },
-    command = 'lua vim.opt.conceallevel = 3',
-    group = markdown_conceal_aumgroup
+    pattern = { "markdown", "tex", "org" },
+    command = "lua vim.opt.conceallevel = 3",  -- Set to 0 to always show conceal characters. (3 for always conceal)
+    group = writer_aumgroup
+})
+-- |> Enable/Disable hard line breaks in Markdown, LaTeX, and Org files.
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "tex", "org" },
+    command = "lua vim.opt.textwidth = 0",
+    group = writer_aumgroup
 })
 
--- |> Highlight yanking. (Seems to work, though occasionally the rendering bugs out.)
-local yank_hl_aumgroup = vim.api.nvim_create_augroup("MyYankHighlight", { clear = true })
-vim.api.nvim_create_autocmd("TextYankPost", {
-    command = "silent! lua vim.highlight.on_yank()",
-    group = yank_hl_aumgroup
-})
+-- |> Highlight yanking. (Would be really nice, but the rendering bugs out and I can't deal with it.)
+-- local yank_hl_aumgroup = vim.api.nvim_create_augroup("MyYankHighlight", { clear = true })
+-- vim.api.nvim_create_autocmd("TextYankPost", {
+--     command = "silent! lua vim.highlight.on_yank({ timeout = 80 })",
+--     group = yank_hl_aumgroup
+-- })
 
 -- |> Search Highlight AutoCommands
 local search_hl_aumgroup = vim.api.nvim_create_augroup("MySearchHL", { clear = true })
@@ -2890,6 +3019,21 @@ vim.api.nvim_create_autocmd("BufRead, BufNew", {
     group = asmsyntax_aumgroup
 })
 
+-- LuaSnip Snippet History Fix (Seems to work really well, I think.)
+local luasnip_fix_augroup = vim.api.nvim_create_augroup("MyLuaSnipHistory", { clear = true })
+vim.api.nvim_create_autocmd("ModeChanged", {
+    pattern = '*',
+    callback = function()
+        if ((vim.v.event.old_mode == 's' and vim.v.event.new_mode == 'n') or vim.v.event.old_mode == 'i')
+            and require('luasnip').session.current_nodes[vim.api.nvim_get_current_buf()]
+            and not require('luasnip').session.jump_active
+        then
+            require('luasnip').unlink_current()
+        end
+    end,
+    group = luasnip_fix_augroup
+})
+
 -- Autocommands to change "commentstring" for specific filetypes. (TODO: Create lua version.)
 -- |> Use "//" instead of "/* */" for 'C' and 'cpp' files.
 vim.cmd([[
@@ -2916,10 +3060,13 @@ augroup END
 ]])
 
 -- |> Set Colorscheme / Theme:
-vim.api.nvim_cmd({ cmd = "colorscheme", args = { "aumnechroma" }}, {})
+vim.api.nvim_cmd({ cmd = "colorscheme", args = { "aumnechroma-theme" }}, {})
 
 -- |> Set Neovide Font:
-vim.cmd([[set guifont=JetBrainsMono\ Nerd\ Font:h20:b]])
+-- NOTE: Awkwardly, Neovide is generally less performant than Kitty.
+vim.o.guifont = "JetBrainsMono Nerd Font:h20:b:#e-subpixelantialias"
+opt.linespace = 2
+vim.g.neovide_scale_factor = 1
 
 --========================================--+
 -- === END - 10. Custom Commands - END === --|  --=>><⚡END⚡>]

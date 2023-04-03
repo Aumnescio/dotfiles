@@ -22,6 +22,7 @@
 -- => nvim-ufo
 -- => nvim-notify
 -- => nvim-ts-rainbow
+-- => Rust-Tools.nvim
 
 -- TODO: Plugins to config...
 -- => FTerm.nvim
@@ -45,84 +46,82 @@ local colors = require("aumnechroma.colors")
 -- === |> - Core Groups (Link Groups) - <| ===
 
 -- 'Normal' needs to be defined first.  (Important) [Otherwise background color will break.]
--- => This one ("NONE") might work better with transparent background,
-set_hl(ns_id, "Normal",                 { fg = colors.text, bg = "NONE" })                      -- STATE: 9.8/10  -- Good
--- => but if terminal backgrounds matches darkcrust color, it's still transparent if set to darkcrust.
--- set_hl(ns_id, "Normal",                 { fg = colors.text, bg = colors.darkcrust })            -- STATE: 9.8/10  -- Good
--- set_hl(ns_id, "Normal",                 { fg = colors.text, bg = colors.crust })                -- STATE: 9.3/10
+-- => "NONE" matches terminal background color. It could be set to something else too, but "NONE" work really consistently.
+set_hl(ns_id, "Normal",                 { fg = colors.text, bg = "NONE" })                                  -- STATE: 9.8/10  -- Good
 
 -- Cursor
-set_hl(ns_id, "AumCursor",              { fg = colors.night, bg = colors.cursor })              -- STATE: 9.2/10
-set_hl(ns_id, "AumCursorLine",          { bg = colors.night })                                  -- STATE: 8.6/10
-set_hl(ns_id, "AumCursorColumn",        { bg = colors.night })                                  -- STATE: 8.6/10
+set_hl(ns_id, "AumCursor",              { fg = colors.night, bg = colors.cursor })                          -- STATE: 9.2/10
+-- set_hl(ns_id, "AumCursorLine",          { bg = colors.night })                                              -- STATE: 8.6/10
+set_hl(ns_id, "AumCursorLine",          { bg = "#120422" })                                                 -- STATE: 9.2/10
+set_hl(ns_id, "AumCursorColumn",        { bg = colors.night })                                              -- STATE: 8.6/10
 
 -- Base things
-set_hl(ns_id, "AumNone",                { fg = "NONE", bg = "NONE" })                           -- STATE: 10/10
-set_hl(ns_id, "AumNormalPri",           { fg = colors.text })                                   -- STATE: 9.3/10
-set_hl(ns_id, "AumNormalSec",           { fg = colors.heaven })                                 -- STATE: 9.3/10
-set_hl(ns_id, "AumNormalTer",           { fg = colors.hail })                                   -- STATE: 9.5/10
-set_hl(ns_id, "AumTitle",               { fg = colors.rosewater })                              -- STATE: 9.2/10 ?
-set_hl(ns_id, "AumWhitespace",          { fg = colors.ghost })                                  -- STATE: 7.2/10
--- set_hl(ns_id, "AumVisual",              { bg = colors.alloy })                                  -- STATE: 8.8/10 (Plain and simple)
+set_hl(ns_id, "AumNone",                { fg = "NONE", bg = "NONE" })                                       -- STATE: 10/10
+set_hl(ns_id, "AumNormalPri",           { fg = colors.text, bg = "NONE" })                                  -- STATE: 9.3/10
+set_hl(ns_id, "AumNormalSec",           { fg = colors.heaven, bg = "NONE" })                                -- STATE: 9.3/10
+set_hl(ns_id, "AumNormalTer",           { fg = colors.hail, bg = "NONE" })                                  -- STATE: 9.5/10
+set_hl(ns_id, "AumTitle",               { fg = colors.rosewater, bg = "NONE" })                             -- STATE: 9.2/10 ?
+set_hl(ns_id, "AumWhitespace",          { fg = colors.ghost, bg = "NONE" })                                 -- STATE: 7.2/10
+-- set_hl(ns_id, "AumVisual",              { bg = colors.alloy })                                              -- STATE: 8.8/10 (Plain and simple)
 set_hl(ns_id, "AumVisual",              { fg = colors.rouge, bg = colors.dusk, bold = true, italic = true, underline = true })  -- STATE: 9.3/10 (Bit fancy, maybe not for everyone.)
-set_hl(ns_id, "AumPmenu",               { link = "AumNormalTer" })                              -- STATE: 9.5/10
-set_hl(ns_id, "AumBorderBase",          { fg = colors.plum })                                   -- STATE: 9.6/10
-set_hl(ns_id, "AumMatch",               { fg = colors.amber, underline = true })                -- STATE: 9.7/10
-set_hl(ns_id, "AumLineNumberActive",    { fg = colors.hail })                                   -- STATE: 9.0/10
-set_hl(ns_id, "AumLineNumberInactive",  { fg = colors.comment })                                -- STATE: 9.0/10
+set_hl(ns_id, "AumPmenu",               { link = "AumNormalTer" })                                          -- STATE: 9.5/10
+set_hl(ns_id, "AumBorderBase",          { fg = colors.plum, bg = "NONE"})                                   -- STATE: 9.6/10
+set_hl(ns_id, "AumMatch",               { fg = colors.amber, underline = true })                            -- STATE: 9.7/10
+set_hl(ns_id, "AumLineNumberActive",    { fg = colors.hail, bg = "NONE" })                                  -- STATE: 9.0/10
+set_hl(ns_id, "AumLineNumberInactive",  { fg = colors.comment, bg = "NONE" })                               -- STATE: 9.0/10
 
 -- Diagnostics
-set_hl(ns_id, "AumWarning",             { fg = colors.peach })                                  -- STATE: 9.0/10
-set_hl(ns_id, "AumError",               { fg = colors.crimson })                                -- STATE: 9.0/10
+set_hl(ns_id, "AumWarning",             { fg = colors.peach, bg = "NONE" })                                 -- STATE: 9.0/10
+set_hl(ns_id, "AumError",               { fg = colors.crimson, bg = "NONE" })                               -- STATE: 9.0/10
 
 -- Code text objects
-set_hl(ns_id, "AumStringBase",          { fg = colors.sage })                                   -- STATE: 9.8/10
-set_hl(ns_id, "AumCharacterBase",       { fg = colors.moss })                                   -- STATE: 9.7/10
-set_hl(ns_id, "AumNumberBase",          { fg = colors.coral })                                  -- STATE: 8.9/10
-set_hl(ns_id, "AumBooleanBase",         { fg = colors.orange, bold = true })                    -- STATE: 9.9/10
-set_hl(ns_id, "AumOperatorBase",        { fg = colors.red })                                    -- STATE: 9.9/10
-set_hl(ns_id, "AumConditionalBase",     { fg = colors.magenta, italic = true })                 -- STATE: ?
-set_hl(ns_id, "AumRepeatBase",          { fg = colors.cobalt, italic = true, bold = true })     -- STATE: ?
-set_hl(ns_id, "AumKeywordBase",         { fg = colors.mauve, bold = true })                     -- STATE: 9.2/10
-set_hl(ns_id, "AumKeywordOperator",     { fg = colors.rose, bold = true })                      -- STATE: 8.8/10
-set_hl(ns_id, "AumKeywordFunction",     { fg = colors.plum, italic = true, bold = true })       -- STATE: 9.0/10
-set_hl(ns_id, "AumKeywordReturn",       { fg = colors.lilac, bold = true })                     -- STATE: 9.0/10
-set_hl(ns_id, "AumVariableBase",        { fg = colors.hail })                                   -- STATE: 9.8/10
-set_hl(ns_id, "AumVariableBuiltin",     { fg = colors.hail, bold = true })                      -- STATE: 9.4/10
-set_hl(ns_id, "AumIdentifierBase",      { fg = colors.pink })                                   -- STATE: ?
-set_hl(ns_id, "AumStatementBase",       { fg = colors.green })                                  -- STATE: ?
-set_hl(ns_id, "AumExceptionBase",       { fg = colors.rouge })                                  -- STATE: ?
-set_hl(ns_id, "AumConstantBase",        { fg = colors.rosewater, bold = true })                 -- STATE: WIP
-set_hl(ns_id, "AumFieldBase",           { fg = colors.azure, bold = false })                    -- STATE: 9.9/10
-set_hl(ns_id, "AumPropertyBase",        { fg = colors.blue })                                   -- STATE: 9.0/10
-set_hl(ns_id, "AumTypeBase",            { fg = colors.sea, bold = true })                       -- STATE: 9.0/10
-set_hl(ns_id, "AumTypeBuiltin",         { fg = colors.sea, bold = false })                      -- STATE: 9.0/10
-set_hl(ns_id, "AumStructureBase",       { fg = colors.yellow })                                 -- STATE: ?
-set_hl(ns_id, "AumFunctionBase",        { fg = colors.marigold, bold = true })                  -- STATE: 9.3/10
-set_hl(ns_id, "AumFunctionCall",        { fg = colors.valencia })                               -- STATE: 8.8/10
-set_hl(ns_id, "AumFunctionMacro",       { fg = colors.rosy })                                   -- STATE: 8.2/10
--- set_hl(ns_id, "AumParameterBase",       { fg = colors.amber })                                  -- STATE: 9.2/10 (Good, but now the same as AumMatch)
-set_hl(ns_id, "AumParameterBase",       { fg = colors.apricot })                                -- STATE: 9.0/10 (Testing)
-set_hl(ns_id, "AumPreprocBase",         { fg = colors.titian })                                 -- STATE: 8.2/10
-set_hl(ns_id, "AumIncludeBase",         { fg = colors.flamingo })                               -- STATE: 9.0/10
-set_hl(ns_id, "AumNamespaceBase",       { fg = colors.lavender })                               -- STATE: ?
-set_hl(ns_id, "AumTagPri",              { fg = colors.plum })                                   -- STATE: 9.0/10
-set_hl(ns_id, "AumTagSec",              { fg = colors.mauve })                                  -- STATE: 8.8/10
-set_hl(ns_id, "AumTagAttributeBase",    { link = "AumFieldBase" })                              -- STATE: ? (TODO)
-set_hl(ns_id, "AumPunctuationPri",      { fg = colors.sky })    -- Delimiters                   -- STATE: 9.2/10
-set_hl(ns_id, "AumPunctuationSec",      { fg = colors.ceru })   -- Brackets                     -- STATE: 9.0/10'ish
-set_hl(ns_id, "AumPunctuationTer",      { fg = colors.teal })   -- Constructors                 -- STATE: 9.0/10'ish
-set_hl(ns_id, "AumRainbowBracket1",     { fg = colors.cyan })                                   -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket2",     { fg = colors.ceru })                                   -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket3",     { fg = colors.sky })                                    -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket4",     { fg = colors.teal })                                   -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket5",     { fg = colors.cyan })                                   -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket6",     { fg = colors.ceru })                                   -- STATE: ?
-set_hl(ns_id, "AumRainbowBracket7",     { fg = colors.sky })                                    -- STATE: ?
-set_hl(ns_id, "AumSpecial",             { fg = colors.titian })                                 -- STATE: 8.8/10
--- set_hl(ns_id, "AumReference",           { fg = colors.lilac })                                  -- STATE: 9.1/10 (Not sure, looks weak in html)
-set_hl(ns_id, "AumReference",           { fg = colors.linkblue })                               -- STATE: 9.3/10
-set_hl(ns_id, "AumCommentBase",         { fg = colors.comment })                                -- STATE: 9.8/10
+set_hl(ns_id, "AumStringBase",          { fg = colors.sage, bg = "NONE" })                                  -- STATE: 9.8/10
+set_hl(ns_id, "AumCharacterBase",       { fg = colors.moss, bg = "NONE" })                                  -- STATE: 9.7/10
+set_hl(ns_id, "AumNumberBase",          { fg = colors.coral, bg = "NONE" })                                 -- STATE: 8.9/10
+set_hl(ns_id, "AumBooleanBase",         { fg = colors.orange, bg = "NONE", bold = true })                   -- STATE: 9.9/10
+set_hl(ns_id, "AumOperatorBase",        { fg = colors.red, bg = "NONE" })                                   -- STATE: 9.9/10
+set_hl(ns_id, "AumConditionalBase",     { fg = colors.magenta, bg = "NONE", italic = true })                -- STATE: ?
+set_hl(ns_id, "AumRepeatBase",          { fg = colors.cobalt, bg = "NONE", italic = true, bold = true })    -- STATE: ?
+set_hl(ns_id, "AumKeywordBase",         { fg = colors.mauve, bg = "NONE", bold = true })                    -- STATE: 9.2/10
+set_hl(ns_id, "AumKeywordOperator",     { fg = colors.rose, bg = "NONE", bold = true })                     -- STATE: 8.8/10
+set_hl(ns_id, "AumKeywordFunction",     { fg = colors.plum, bg = "NONE", italic = true, bold = true })      -- STATE: 9.0/10
+set_hl(ns_id, "AumKeywordReturn",       { fg = colors.lilac, bg = "NONE", bold = true })                    -- STATE: 9.0/10
+set_hl(ns_id, "AumVariableBase",        { fg = colors.hail, bg = "NONE" })                                  -- STATE: 9.8/10
+set_hl(ns_id, "AumVariableBuiltin",     { fg = colors.hail, bg = "NONE", bold = true })                     -- STATE: 9.4/10
+set_hl(ns_id, "AumIdentifierBase",      { fg = colors.pink, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumStatementBase",       { fg = colors.green, bg = "NONE" })                                 -- STATE: ?
+set_hl(ns_id, "AumExceptionBase",       { fg = colors.rouge, bg = "NONE" })                                 -- STATE: ?
+set_hl(ns_id, "AumConstantBase",        { fg = colors.rosewater, bg = "NONE", bold = true })                -- STATE: WIP
+set_hl(ns_id, "AumFieldBase",           { fg = colors.azure, bg = "NONE", bold = false })                   -- STATE: 9.9/10
+set_hl(ns_id, "AumPropertyBase",        { fg = colors.blue, bg = "NONE" })                                  -- STATE: 9.0/10
+set_hl(ns_id, "AumTypeBase",            { fg = colors.sea, bg = "NONE", bold = true })                      -- STATE: 9.0/10
+set_hl(ns_id, "AumTypeBuiltin",         { fg = colors.sea, bg = "NONE", bold = false })                     -- STATE: 9.0/10
+set_hl(ns_id, "AumStructureBase",       { fg = colors.yellow, bg = "NONE" })                                -- STATE: ?
+set_hl(ns_id, "AumFunctionBase",        { fg = colors.marigold, bg = "NONE", bold = true })                 -- STATE: 9.3/10
+set_hl(ns_id, "AumFunctionCall",        { fg = colors.valencia, bg = "NONE" })                              -- STATE: 8.8/10
+set_hl(ns_id, "AumFunctionMacro",       { fg = colors.rosy, bg = "NONE" })                                  -- STATE: 8.2/10
+-- set_hl(ns_id, "AumParameterBase",       { fg = colors.amber, bg = "NONE" })                                 -- STATE: 9.2/10 (Good, but now the same as AumMatch)
+set_hl(ns_id, "AumParameterBase",       { fg = colors.apricot, bg = "NONE" })                               -- STATE: 9.0/10 (Testing)
+set_hl(ns_id, "AumPreprocBase",         { fg = colors.titian, bg = "NONE" })                                -- STATE: 8.2/10
+set_hl(ns_id, "AumIncludeBase",         { fg = colors.flamingo, bg = "NONE" })                              -- STATE: 9.0/10
+set_hl(ns_id, "AumNamespaceBase",       { fg = colors.lavender, bg = "NONE" })                              -- STATE: ?
+set_hl(ns_id, "AumTagPri",              { fg = colors.plum, bg = "NONE" })                                  -- STATE: 9.0/10
+set_hl(ns_id, "AumTagSec",              { fg = colors.mauve, bg = "NONE" })                                 -- STATE: 8.8/10
+set_hl(ns_id, "AumTagAttributeBase",    { link = "AumFieldBase" })                                          -- STATE: ? (TODO)
+set_hl(ns_id, "AumPunctuationPri",      { fg = colors.sky, bg = "NONE" })    -- Delimiters                  -- STATE: 9.2/10
+set_hl(ns_id, "AumPunctuationSec",      { fg = colors.ceru, bg = "NONE" })   -- Brackets                    -- STATE: 9.0/10'ish
+set_hl(ns_id, "AumPunctuationTer",      { fg = colors.teal, bg = "NONE" })   -- Constructors                -- STATE: 9.0/10'ish
+set_hl(ns_id, "AumRainbowBracket1",     { fg = colors.cyan, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket2",     { fg = colors.ceru, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket3",     { fg = colors.sky, bg = "NONE" })                                   -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket4",     { fg = colors.teal, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket5",     { fg = colors.cyan, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket6",     { fg = colors.ceru, bg = "NONE" })                                  -- STATE: ?
+set_hl(ns_id, "AumRainbowBracket7",     { fg = colors.sky, bg = "NONE" })                                   -- STATE: ?
+set_hl(ns_id, "AumSpecial",             { fg = colors.titian, bg = "NONE" })                                -- STATE: 8.8/10
+-- set_hl(ns_id, "AumReference",           { fg = colors.lilac, bg = "NONE" })                              -- STATE: 9.1/10 (Not sure, looks weak in html)
+set_hl(ns_id, "AumReference",           { fg = colors.linkblue, bg = "NONE" })                              -- STATE: 9.3/10
+set_hl(ns_id, "AumCommentBase",         { fg = colors.comment, bg = "NONE" })                               -- STATE: 9.8/10
 
 -- Cursor
 set_hl(ns_id, "Cursor",                 { link = "AumCursor" })
@@ -136,7 +135,8 @@ set_hl(ns_id, "NonText",                { link = "AumWhitespace" })
 set_hl(ns_id, "Whitespace",             { link = "AumWhitespace" })
 set_hl(ns_id, "None",                   { link = "AumNormalPri" })
 set_hl(ns_id, "@none",                  { link = "AumNormalPri" })
-set_hl(ns_id, "NormalNC",               { link = "AumNormalPri" })
+-- NOTE: Even if `NormalNC` has a different `bg` color than `Normal`, it does become transparent when used with Picom.
+set_hl(ns_id, "NormalNC",               { link = "AumNormalPri" })  -- Should be same `bg` color as the base. (Like "Normal") Otherwise it looks really bad. 
 set_hl(ns_id, "SignColumn",             { link = "AumNormalPri" })
 set_hl(ns_id, "ColorColumn",            { link = "AumNormalSec" })
 
@@ -165,10 +165,10 @@ set_hl(ns_id, "text.environment",       { link = "AumIdentifierBase" })     -- T
 set_hl(ns_id, "@text.environment",      { link = "AumIdentifierBase" })     -- TODO: Make unique
 set_hl(ns_id, "text.environment.name",  { link = "AumFieldBase" })          -- TODO: Make unique
 set_hl(ns_id, "@text.environment.name", { link = "AumFieldBase" })          -- TODO: Make unique
-set_hl(ns_id, "text.todo",              { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all todo use the AumTodo.
-set_hl(ns_id, "@text.todo",             { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all todo use the AumTodo.
-set_hl(ns_id, "text.note",              { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all note use the AumNote.
-set_hl(ns_id, "@text.note",             { bg = colors.yellow, fg = colors.night })  -- TODO: Create AumGroup for this and make all note use the AumNote.
+set_hl(ns_id, "text.todo",              { fg = colors.night, bg = colors.yellow,  })  -- TODO: Create AumGroup for this and make all todo's use the AumTodo.
+set_hl(ns_id, "@text.todo",             { fg = colors.night, bg = colors.yellow,  })  -- TODO: Create AumGroup for this and make all todo's use the AumTodo.
+set_hl(ns_id, "text.note",              { fg = colors.night, bg = colors.yellow,  })  -- TODO: Create AumGroup for this and make all note's use the AumNote.
+set_hl(ns_id, "@text.note",             { fg = colors.night, bg = colors.yellow,  })  -- TODO: Create AumGroup for this and make all note's use the AumNote.
 set_hl(ns_id, "text.warning",           { link = "AumWarning" })
 set_hl(ns_id, "@text.warning",          { link = "AumWarning" })
 set_hl(ns_id, "text.danger",            { link = "AumError" })
@@ -439,7 +439,7 @@ set_hl(ns_id, "IncSearch",              { fg = colors.night, bg = colors.yellow,
 
 -- Diagnostics
 set_hl(ns_id, "DiagnosticInfo",                     { link = "AumLineNumberActive" })
-set_hl(ns_id, "DiagnosticHint",                     { fg = colors.peach, sp = colors.peach, underline = true })
+set_hl(ns_id, "DiagnosticHint",                     { fg = colors.peach, bg = "NONE", sp = colors.peach, underline = true })
 set_hl(ns_id, "Error",                              { link = "AumError" })
 set_hl(ns_id, "@error",                             { link = "AumError" })
 set_hl(ns_id, "NvimInternalError",                  { link = "AumError" })
@@ -450,10 +450,10 @@ set_hl(ns_id, "Warning",                            { link = "AumWarning" })
 set_hl(ns_id, "WarningMsg",                         { link = "AumWarning" })
 set_hl(ns_id, "DiagnosticWarn",                     { link = "AumWarning" })
 set_hl(ns_id, "DiagnosticVirtualTextWarn",          { link = "AumWarning" })
-set_hl(ns_id, "DiagnosticUnderlineError",           { fg = colors.text, sp = colors.crimson, underline = true })
-set_hl(ns_id, "DiagnosticUnderlineWarn",            { fg = colors.text, sp = colors.orange, underline = true })
-set_hl(ns_id, "DiagnosticUnderlineInfo",            { fg = colors.text, sp = colors.cyan, underline = true })
-set_hl(ns_id, "DiagnosticUnderlineHint",            { fg = colors.text, sp = colors.hail, underline = true })
+set_hl(ns_id, "DiagnosticUnderlineError",           { fg = colors.text, bg = "NONE", sp = colors.crimson, underline = true })
+set_hl(ns_id, "DiagnosticUnderlineWarn",            { fg = colors.text, bg = "NONE", sp = colors.orange, underline = true })
+set_hl(ns_id, "DiagnosticUnderlineInfo",            { fg = colors.text, bg = "NONE", sp = colors.cyan, underline = true })
+set_hl(ns_id, "DiagnosticUnderlineHint",            { fg = colors.text, bg = "NONE", sp = colors.hail, underline = true })
 
 -- Storageclass
 set_hl(ns_id, "storageclass",                       { link = "AumKeywordBase" })  -- TODO: Make unique. (Some bright'ish purple'ish color.)
@@ -511,18 +511,18 @@ set_hl(ns_id, "TroubleSignOther",                   { link = "AumNormalSec" })
 -- Nvim.cmp (Okay, but TODO/WIP)
 -- NOTE: The custom groups need to be configured in nvim-cmp setup => winhighlight groups.
 -- START: Custom Groups
-set_hl(ns_id, "CmpNormal",                          { link = "AumFieldBase" })      -- STATE: Good
-set_hl(ns_id, "CmpFloatBorder",                     { link = "AumBorderBase" })     -- STATE: Good
-set_hl(ns_id, "CmpCursorLine",                      { link = "AumMatch" })          -- STATE: Good
-set_hl(ns_id, "CmpPmenu",                           { link = "AumPmenu" })          -- STATE: Might not do anything.
-set_hl(ns_id, "CmpSearch",                          { link = "Search" })            -- STATE: Might not do anything.
+set_hl(ns_id, "CmpNormal",                          { link = "AumFieldBase" })              -- STATE: Good
+set_hl(ns_id, "CmpFloatBorder",                     { link = "AumBorderBase" })             -- STATE: Good
+set_hl(ns_id, "CmpCursorLine",                      { link = "AumMatch" })                  -- STATE: Good
+set_hl(ns_id, "CmpPmenu",                           { link = "AumPmenu" })                  -- STATE: Might not do anything.
+set_hl(ns_id, "CmpSearch",                          { link = "Search" })                    -- STATE: Might not do anything.
 
-set_hl(ns_id, "CmpDocNormal",                       { link = "AumNormalTer" })      -- STATE: Good
-set_hl(ns_id, "CmpDocFloatBorder",                  { link = "AumBorderBase" })     -- STATE: Good
-set_hl(ns_id, "CmpDocCursorLine",                   { link = "AumCursorLine" })     -- STATE: Good
-set_hl(ns_id, "CmpDocComment",                      { fg = colors.sea })            -- STATE: Good
-set_hl(ns_id, "CmpDocSearch",                       { link = "Search" })            -- STATE: Good
-set_hl(ns_id, "CmpDocPmenu",                        { link = "AumPmenu" })          -- STATE: Might not do anything.
+set_hl(ns_id, "CmpDocNormal",                       { link = "AumNormalTer" })              -- STATE: Good
+set_hl(ns_id, "CmpDocFloatBorder",                  { link = "AumBorderBase" })             -- STATE: Good
+set_hl(ns_id, "CmpDocCursorLine",                   { link = "AumCursorLine" })             -- STATE: Good
+set_hl(ns_id, "CmpDocComment",                      { fg = colors.sea, bg = "NONE" })       -- STATE: Good
+set_hl(ns_id, "CmpDocSearch",                       { link = "Search" })                    -- STATE: Good
+set_hl(ns_id, "CmpDocPmenu",                        { link = "AumPmenu" })                  -- STATE: Might not do anything.
 -- END: Custom Groups
 
 set_hl(ns_id, "CmpItemMenu",                        { fg = colors.plum })
@@ -558,23 +558,32 @@ set_hl(ns_id, "CmpItemKindMethod",                  { link = "AumFunctionBase" }
 set_hl(ns_id, "CmpItemKindFunction",                { link = "AumFunctionBase" })
 set_hl(ns_id, "CmpItemKindFolder",                  { fg = colors.sea })
 
--- Dressing.nvim
-set_hl(ns_id, "DressingInputNormal",                { fg = colors.red, bg = colors.alloy })     -- Testing and WIP.
-set_hl(ns_id, "DressingInputNormalFloat",           { fg = colors.red, bg = colors.alloy })     -- Testing and WIP.
+-- Dressing.nvim (WIP)
+set_hl(ns_id, "DressingInputNormal",                { fg = colors.snow })     -- Testing and WIP.
+set_hl(ns_id, "DressingInputNormalFloat",           { fg = colors.snow })     -- Testing and WIP.
 set_hl(ns_id, "DressingInputFloatBorder",           { link = "AumBorderBase" })                 -- Testing and WIP.
 set_hl(ns_id, "DressingInputPmenu",                 { link = "AumPmenu" })                      -- Testing and WIP.
 set_hl(ns_id, "DressingInputSearch",                { link = "Search" })                        -- Testing and WIP.
 set_hl(ns_id, "DressingInputVisual",                { link = "AumVisual" })                     -- Testing and WIP.
-set_hl(ns_id, "DressingBuiltinNormal",              { fg = colors.red, bg = colors.alloy })     -- Testing and WIP.
-set_hl(ns_id, "DressingBuiltinNormalFloat",         { fg = colors.red, bg = colors.alloy })     -- Testing and WIP.
+set_hl(ns_id, "DressingBuiltinNormal",              { fg = colors.snow })     -- Testing and WIP.
+set_hl(ns_id, "DressingBuiltinNormalFloat",         { fg = colors.snow })     -- Testing and WIP.
 set_hl(ns_id, "DressingBuiltinFloatBorder",         { link = "AumBorderBase" })                 -- Testing and WIP.
 set_hl(ns_id, "DressingBuiltinPmenu",               { link = "AumPmenu" })                      -- Testing and WIP.
 set_hl(ns_id, "DressingBuiltinSearch",              { link = "Search" })                        -- Testing and WIP.
 set_hl(ns_id, "DressingBuiltinVisual",              { link = "AumVisual" })                     -- Testing and WIP.
 
+-- Heirline.nvim (Okay)
+set_hl(ns_id, "AumBufferline",                      { fg = colors.fadedsnow, bg = colors.darkcrust })
+set_hl(ns_id, "AumBufferlineActive",                { fg = colors.snow, bg = colors.darkcrust })
+set_hl(ns_id, "AumBufferlineInactive",              { fg = colors.fadedsnow, bg = colors.darkcrust })
+set_hl(ns_id, "AumBufferlineBufferNumber",          { fg = colors.fablue, bg = colors.darkcrust })
+
 -- Noice.nvim (Okay, but WIP)
 set_hl(ns_id, "NoiceCursor",                        { link = "AumCursor" })
-set_hl(ns_id, "NoiceMini",                          { bg = "NONE", fg = colors.text })  -- This doesn't really feel like it works.
+set_hl(ns_id, "AumNoiceMiniNormal",                 { fg = colors.text, bg = "NONE" })          -- Needs to be added to Noice setup, `views` -> `mini` -> `winhighlight`
+set_hl(ns_id, "AumNoiceMiniSearch",                 { link = "Search" })                        -- Needs to be added to Noice setup, `views` -> `mini` -> `winhighlight`
+set_hl(ns_id, "AumNoiceMiniCurSearch",              { link = "CurSearch" })                     -- Needs to be added to Noice setup, `views` -> `mini` -> `winhighlight`
+set_hl(ns_id, "AumNoiceMiniIncSearch",              { link = "IncSearch" })                     -- Needs to be added to Noice setup, `views` -> `mini` -> `winhighlight`
 set_hl(ns_id, "NoiceCompletionItemKindDefault",     { link = "CmpItemKind" })
 set_hl(ns_id, "NoiceCompletionItemKindFile",        { link = "CmpItemKindFile" })
 set_hl(ns_id, "NoiceCompletionItemKindField",       { link = "CmpItemKindField" })
@@ -612,9 +621,9 @@ set_hl(ns_id, "NotifyTRACEIcon",        { fg = "#D484FF" })
 
 -- Leap.nvim (Quite good, but little WIP. Labels could be kinda bright magenta maybe, because I avoid that colour otherwise.)
 set_hl(ns_id, "LeapMatch",              { link = "Search" })
-set_hl(ns_id, "LeapLabelPrimary",       { fg = colors.magenta, bold = true, underline = true })
-set_hl(ns_id, "LeapLabelSecondary",     { fg = colors.blue, bold = true, underline = true })
-set_hl(ns_id, "LeapLabelSelected",      { fg = colors.coral, bold = true, underline = true })
+set_hl(ns_id, "LeapLabelPrimary",       { fg = colors.magenta, bold = true, underline = true })             -- STATE: 8.9/10
+set_hl(ns_id, "LeapLabelSecondary",     { fg = colors.blue, bold = true, underline = true })                -- STATE: 9.0/10
+set_hl(ns_id, "LeapLabelSelected",      { fg = colors.coral, bold = true, underline = true })               -- STATE: 9.0/10
 -- set_hl(ns_id, "LeapBackdrop",           {})  -- Not set == Good
 
 -- Telescope.nvim   (STATE: Okay, but WIP)
@@ -638,14 +647,17 @@ set_hl(ns_id, "UfoFoldedBg",            { bg = colors.remnant })                
 -- set_hl(ns_id, "UfoPreviewCursorline",   { link = "AumCursorLine" })                     -- Dunno what this is. Should be fine though.
 -- set_hl(ns_id, "UfoFoldedEllipsis",      { bg = colors.remnant, fg = colors.mauve })     -- Does not really feel like it works.
 
+-- Rust-Tools   (STATE: WIP)
+set_hl(ns_id, "AumRustToolsInlayHint",  { fg = colors.lilac, bg = colors.night })     -- STATE: Testing
+
 -- Misc UI
 set_hl(ns_id, "MatchParen",             { link = "AumMatch" })
 set_hl(ns_id, "StatusLine",             { link = "AumNormalPri" })
 set_hl(ns_id, "StatusLineNC",           { fg = colors.crust, bg = colors.crust })  -- NOTE: If this is the same color as StatusLine, vim places carets ('^') in statusbar.
 set_hl(ns_id, "TabLine",                { link = "AumNormalPri" })
 set_hl(ns_id, "TabLineFill",            { link = "AumNormalPri" })
-set_hl(ns_id, "SpecialKey",             { fg = colors.snow })  -- TODO
-set_hl(ns_id, "Directory",              { fg = colors.sea })  -- TODO
+set_hl(ns_id, "SpecialKey",             { fg = colors.snow, bg = "NONE" })      -- TODO
+set_hl(ns_id, "Directory",              { fg = colors.sea, bg = "NONE" })       -- TODO
 set_hl(ns_id, "Conceal",                { link = "AumSpecial" })
 set_hl(ns_id, "@conceal",               { link = "AumSpecial" })
 
@@ -673,10 +685,10 @@ set_hl(ns_id, "VisualNOS",              { link = "AumVisual" })
 
 -- Pmenu (Pop up menu)
 set_hl(ns_id, "Pmenu",                  { link = "AumPmenu" })                      -- Background and normal text color in popup menu.
-set_hl(ns_id, "PmenuSel",               { bg = colors.red, fg = colors.amber })     -- Does not work for selected in nvim-cmp.
-set_hl(ns_id, "PmenuSbar",              { bg = colors.plum })                       -- Scrollbar.
-set_hl(ns_id, "PmenuThumb",             { bg = colors.plum })                       -- Scrollbar. (Apparently)
-set_hl(ns_id, "WildMenu",               { bg = colors.night, fg = colors.red })     -- Not quite sure what this is.
+set_hl(ns_id, "PmenuSel",               { fg = colors.amber, bg = colors.red })     -- Does not work for selected in nvim-cmp.
+set_hl(ns_id, "PmenuSbar",              { fg = colors.plum, bg = colors.plum })     -- Scrollbar.
+set_hl(ns_id, "PmenuThumb",             { fg = colors.plum, bg = colors.plum })     -- Scrollbar. (Apparently)
+set_hl(ns_id, "WildMenu",               { fg = colors.red, bg = colors.night })     -- Not quite sure what this is.
 -- NOTE: Popup menu selection uses `Visual` highlight group.
 
 -- Message
@@ -685,15 +697,15 @@ set_hl(ns_id, "MoreMsg",                { link = "AumStringBase" })
 set_hl(ns_id, "Question",               { link = "AumCharacterBase" })
 
 -- Spelling
-set_hl(ns_id, "SpellBad",               { sp = colors.red, undercurl = true })
-set_hl(ns_id, "SpellCap",               { sp = colors.blue, undercurl = true })
-set_hl(ns_id, "SpellRare",              { sp = colors.mauve, undercurl = true })
-set_hl(ns_id, "SpellLocal",             { sp = colors.cyan, undercurl = true })
+set_hl(ns_id, "SpellBad",               { sp = colors.red, bg = "NONE", undercurl = true })
+set_hl(ns_id, "SpellCap",               { sp = colors.blue, bg = "NONE", undercurl = true })
+set_hl(ns_id, "SpellRare",              { sp = colors.mauve, bg = "NONE", undercurl = true })
+set_hl(ns_id, "SpellLocal",             { sp = colors.cyan, bg = "NONE", undercurl = true })
 set_hl(ns_id, "spell",                  {})  -- Had some issue with this overwriting string colours. (Empty seems to work fine.)
 set_hl(ns_id, "@spell",                 {})  -- Had some issue with this overwriting string colours. (Empty seems to work fine.)
 
 -- TODO
-set_hl(ns_id, "Todo",                   { bg = colors.yellow, fg = colors.night })
-set_hl(ns_id, "helpNote",               { bg = colors.yellow, fg = colors.night })
+set_hl(ns_id, "Todo",                   { fg = colors.night, bg = colors.yellow })
+set_hl(ns_id, "helpNote",               { fg = colors.night, bg = colors.yellow })
 
 -- |> AumneChroma.nvim Theme  --=>><⚡END⚡>]

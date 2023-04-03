@@ -1,0 +1,35 @@
+#: -- Aumnescio's Keybindings
+
+# `sxhkd` does not work great with pop-os default keybinding system.
+# But works well with Awesome-WM.
+
+#: Reload sxhkd config.
+super + shift + f
+    pkill --signal SIGUSR1 sxhkd && notify-send "sxhkd" "Restarting... Config reloaded."
+
+#: Focus scratchpad. (Launch new one if it does not exist.)
+super + shift + l
+    kitty-scratchpad.sh
+
+# super + shift + k
+#     aum-rofi-kb-find.fish
+
+# super + shift + d
+#     aum-rofi-kb-grep.fish
+
+#: Take screenshot with `maim`.
+super + shift + p
+    aum-screenshot-clip.sh
+
+#: Run prompt.
+super + d
+    rofi -show drun
+
+#: Window focus prompt.
+super + k
+    rofi -show window
+
+#: Use `Tesseract` to extract text from screenshot.
+super + shift + ctrl + p
+    /home/aum/.local/bin/maimract.sh
+

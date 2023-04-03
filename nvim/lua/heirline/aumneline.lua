@@ -287,10 +287,178 @@ local StatusLine = {
 -- === |> - WinBar combined - <| ===
 -- local WinBar = {}
 
--- |> TabLine components
+-- |> Bufferline / Tabline Components
 
--- === |> - TabLine combined - <| ===
--- local TabLine = {}
+-- First part of each buffer tab: The `Buffer Number`.
+-- Example: "1." or "2."
+local TablineBufferNumber = {
+    provider = function(self)
+        return tostring(self.bufnr) .. ". "
+    end,
+    hl = "AumBufferlineBufferNumber",
+}
+
+-- NOTE: Second part of each buffer tab is the `FileIcon` which is already defined above.
+
+-- We redefine the filename component, as we probably only want the tail and not the relative path.
+local TablineFileName = {
+    provider = function(self)
+        local filename = self.filename
+        filename = filename == "" and "[No Name]" or vim.fn.fnamemodify(filename, ":t")
+        return filename
+    end,
+    hl = function(self)
+        return { bold = self.is_active or self.is_visible, italic = true }
+    end,
+}
+
+local TablineFileFlags = {
+    {
+        condition = function(self)
+            return vim.api.nvim_buf_get_option(self.bufnr, "modified")
+        end,
+        provider = "[+]",
+        hl = { fg = colors.green },
+    },
+    {
+        condition = function(self)
+            return not vim.api.nvim_buf_get_option(self.bufnr, "modifiable")
+                or vim.api.nvim_buf_get_option(self.bufnr, "readonly")
+        end,
+        provider = function(self)
+            if vim.api.nvim_buf_get_option(self.bufnr, "buftype") == "terminal" then
+                return "  "
+            else
+                return ""
+            end
+        end,
+        hl = { fg = colors.orange },
+    },
+}
+
+-- Third part of each buffer tab: The `Buffer File Name`.
+-- Here the filename block finally comes together.
+local TablineFileNameBlock = {
+    init = function(self)
+        self.filename = vim.api.nvim_buf_get_name(self.bufnr)
+    end,
+
+    hl = function(self)
+        if self.is_active then
+            return "AumBufferlineActive"  -- Need to create these couple highlight groups.
+        elseif not vim.api.nvim_buf_is_loaded(self.bufnr) then
+            return "AumBufferlineInactive"
+        else
+            return "AumBufferline"
+        end
+    end,
+
+    on_click = {
+        callback = function(_, minwid, _, button)
+            if (button == "m") then  -- Delete buffer on `Mouse Middle Click`.
+                vim.schedule(function()
+                    vim.api.nvim_buf_delete(minwid, { force = false })
+                end)
+            else
+                vim.api.nvim_win_set_buf(0, minwid)
+            end
+        end,
+        minwid = function(self)
+            return self.bufnr
+        end,
+        name = "heirline_tabline_buffer_callback",
+    },
+
+    TablineBufferNumber,
+    FileIcon,               -- Same icon as used in `StatusLine`.
+    TablineFileName,
+    TablineFileFlags,
+}
+
+-- A nice "x" button to close the buffer
+local TablineCloseButton = {
+    condition = function(self)
+        return not vim.api.nvim_buf_get_option(self.bufnr, "modified")
+    end,
+    { provider = " " },
+    {
+        provider = "",
+        hl = { fg = colors.monolith },  -- Add a more grey color and use it here.
+        on_click = {
+            callback = function(_, minwid)
+                vim.schedule(function()
+                    vim.api.nvim_buf_delete(minwid, { force = false })
+                end)
+                vim.cmd.redrawtabline()
+            end,
+            minwid = function(self)
+                return self.bufnr
+            end,
+            name = "heirline_tabline_close_buffer_callback",
+        },
+    },
+}
+
+-- The final touch!
+local TablineBufferBlock = utils.surround({ "", "" }, function(self)
+    if self.is_active then
+        return utils.get_highlight("AumBufferlineActive").bg
+    else
+        return utils.get_highlight("AumBufferlineInactive").bg
+    end
+end, { TablineFileNameBlock, TablineCloseButton })
+
+-- This is the default function used to retrieve buffers.
+local get_bufs = function()
+    return vim.tbl_filter(function(bufnr)
+        return vim.api.nvim_buf_get_option(bufnr, "buflisted")
+    end, vim.api.nvim_list_bufs())
+end
+
+-- Initialize the buflist cache
+local buflist_cache = {}
+
+-- Setup an `autocmd` that updates the `buflist_cache` every time that buffers are added/removed.
+vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
+    callback = function()
+        vim.schedule(function()
+            local buffers = get_bufs()
+
+            for i, v in ipairs(buffers) do
+                buflist_cache[i] = v
+            end
+
+            for i = #buffers + 1, #buflist_cache do
+                buflist_cache[i] = nil
+            end
+
+            -- Check how many buffers we have and set `showtabline` accordingly
+            if #buflist_cache > 1 then
+                vim.o.showtabline = 2  -- Always
+            else
+                vim.o.showtabline = 1  -- Only when `#tabpages` > 1
+            end
+        end)
+    end,
+})
+
+-- === |> - BufferLine / TabLine combined - <| ===
+local BufferLine = utils.make_buflist(
+    TablineBufferBlock,
+
+    { provider = "", hl = { fg = "gray" } },  -- Left truncation, optional (defaults to "<")
+    { provider = "", hl = { fg = "gray" } },  -- Right trunctation, also optional (defaults to ">")
+
+    function()
+        return buflist_cache
+    end,
+
+    false
+)
 
 -- Setup.
-require("heirline").setup(StatusLine)
+require("heirline").setup({
+    statusline = StatusLine,
+    tabline = BufferLine
+})
+

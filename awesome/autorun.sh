@@ -11,7 +11,7 @@ function run() {
 
 #: Keyboard Setup
 setxkbmap us
-xset r rate 192 72
+xset r rate 192 90
 
 #: Audio Setup
 /usr/sbin/alsactl --file /home/aum/.config/alsa-store/asound.state restore
