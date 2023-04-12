@@ -1,0 +1,73 @@
+# TODO: Config the theme. (Semi copy-paste stuff from Neovim `Aumnechroma`)
+theme = "aumnechroma-theme"
+
+
+[editor]
+line-number = "relative"
+cursorline = true
+color-modes = true
+bufferline = "multiple"
+
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+
+[editor.indent-guides]
+render = true
+
+
+[editor.lsp]
+display-signature-help-docs = true
+display-inlay-hints = true
+
+
+# TODO: Config all the rest of the keys.
+[keys.normal]
+l = "command_mode"
+C-p = "command_palette"
+
+u = "undo"
+C-r = "redo"
+
+h = "move_visual_line_down"
+t = "move_visual_line_up"
+H = "half_page_down"
+T = "half_page_up"
+
+q = "move_char_left"
+e = "move_char_right"
+
+n = "move_next_word_start"
+o = "move_prev_word_start"
+
+g = { g = "goto_file_start", o = "goto_line_start", n = "goto_line_end", c = { a = "code_action" }, d = "goto_definition", h = "hover" }
+
+w = "insert_mode"
+W = "insert_at_line_start"
+a = "append_mode"
+A = "insert_at_line_end"
+
+s = "delete_selection_noyank"
+k = "change_selection_noyank"
+
+# TODO, these don't work yet, really.
+p = "paste_before"
+P = "paste_after"
+
+r = "search"
+b = "search_next"
+B = "search_prev"
+
+tab = "indent"
+S-tab = "unindent"
+
+v = "select_mode"
+"esc" = "exit_select_mode"
+
+C-S-p = "file_picker_in_current_directory"
+
+
+

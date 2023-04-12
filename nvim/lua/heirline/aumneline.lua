@@ -82,19 +82,19 @@ local ViModeIndicator = {
             t = "T",
         },
         mode_colors = {
-            n = colors.mauve,
-            i = colors.green,
-            v = colors.amber,
-            V = colors.orange,
-            ["\22"] = colors.cyan,
-            c = colors.cyan,
-            s = colors.magenta,
-            S = colors.magenta,
-            ["\19"] = colors.magenta,
-            R = colors.red,
-            r = colors.red,
-            ["!"] = colors.rose,
-            t = colors.rose,
+            n = colors.fg_purple_01_myrtle_flower,
+            i = colors.fg_green_05_taurus_forest_fern,
+            v = colors.fg_orange_11_amber,
+            V = colors.fg_orange_03_rajah,
+            ["\22"] = colors.fg_cyan_01_verdigris,
+            c = colors.fg_cyan_02_windswept,
+            s = colors.fg_purple_09_lavender_magenta,
+            S = colors.fg_purple_05_lavender_dreamer,
+            ["\19"] = colors.fg_purple_02_purple_sand,
+            R = colors.fg_red_01_infrared,
+            r = colors.fg_red_05_emberglow,
+            ["!"] = colors.fg_purple_08_lovecloud,
+            t = colors.fg_purple_07_petal_plush,
         }
     },
 
@@ -112,7 +112,7 @@ local ViModeIndicator = {
     -- Same goes for the highlight. Now the foreground will change according to the current mode.
     hl = function(self)
         local mode = self.mode:sub(1, 1)  -- Get only the first mode character.
-        return { fg = self.mode_colors[mode], bold = true }
+        return { fg = self.mode_colors[mode], bg = colors.bg_03_night, bold = true }
     end,
 
     -- Re-evaluate the component only on ModeChanged event!
@@ -154,6 +154,7 @@ local FileName = {
         -- options, see `:help filename-modifers`.
         local filename = vim.fn.fnamemodify(self.filename, ":.")
         if filename == "" then return "[No Name]" end
+        
         -- Now, if the filename would occupy more than 1/4th of the available
         -- space, we trim the file path to its initials.
         if not conditions.width_percent_below(#filename, 0.25) then
@@ -162,7 +163,7 @@ local FileName = {
         return filename
     end,
 
-    hl = { fg = colors.heaven },
+    hl = { fg = colors.fg_white_00_icy_landscape },
 }
 
 local FileFlags = {
@@ -172,7 +173,7 @@ local FileFlags = {
         end,
 
         provider = "[+]",
-        hl = { fg = colors.green },
+        hl = { fg = colors.fg_green_05_taurus_forest_fern },
     },
 
     {
@@ -181,7 +182,7 @@ local FileFlags = {
         end,
 
         provider = "",
-        hl = { fg = colors.amber },
+        hl = { fg = colors.fg_orange_11_amber },
     },
 }
 
@@ -189,7 +190,7 @@ local FileNameModifier = {
     hl = function()
         if vim.bo.modified then
             -- use `force` because we need to override the child's hl foreground
-            return { fg = colors.cyan, bold = true, force=true }
+            return { fg = colors.fg_blue_12_fennel_flower, bold = true, force = true }
         end
     end,
 }
@@ -209,7 +210,7 @@ local FileType = {
         return string.upper(vim.bo.filetype)
     end,
 
-    hl = { fg = colors.hail },
+    hl = { fg = colors.fg_white_00_icy_landscape },
 }
 
 -- local FileEncoding = {
@@ -244,7 +245,7 @@ local SearchCount = {
         return 'Search: ' .. searchcount.current .. '/' .. searchcount.total
     end,
 
-    hl = { fg = colors.blue },
+    hl = { fg = colors.fg_blue_00_aero },
 }
 -- END => Searchcount
 -- START => TimeClock
@@ -253,7 +254,7 @@ local TimeClock = {
         return '  ' .. vim.fn.strftime("%H:%M")
     end,
 
-    hl = { fg = colors.mauve },
+    hl = { fg = colors.fg_purple_01_myrtle_flower },
 }
 -- END => TimeClock
 
@@ -267,7 +268,7 @@ local StatuslineMessage= {
         end
     end,
 
-    hl = { fg = colors.plum },
+    hl = { fg = colors.fg_purple_02_purple_sand },
 }
 -- END => StatuslineMessage
 
@@ -291,12 +292,12 @@ local StatusLine = {
 
 -- First part of each buffer tab: The `Buffer Number`.
 -- Example: "1." or "2."
-local TablineBufferNumber = {
-    provider = function(self)
-        return tostring(self.bufnr) .. ". "
-    end,
-    hl = "AumBufferlineBufferNumber",
-}
+-- local TablineBufferNumber = {
+--     provider = function(self)
+--         return tostring(self.bufnr) .. ". "
+--     end,
+--     hl = "AumBufferlineBufferNumber",
+-- }
 
 -- NOTE: Second part of each buffer tab is the `FileIcon` which is already defined above.
 
@@ -318,7 +319,7 @@ local TablineFileFlags = {
             return vim.api.nvim_buf_get_option(self.bufnr, "modified")
         end,
         provider = "[+]",
-        hl = { fg = colors.green },
+        hl = { fg = colors.fg_green_05_taurus_forest_fern },
     },
     {
         condition = function(self)
@@ -332,7 +333,7 @@ local TablineFileFlags = {
                 return ""
             end
         end,
-        hl = { fg = colors.orange },
+        hl = { fg = colors.fg_orange_04_peach_cobbler },
     },
 }
 
@@ -345,7 +346,7 @@ local TablineFileNameBlock = {
 
     hl = function(self)
         if self.is_active then
-            return "AumBufferlineActive"  -- Need to create these couple highlight groups.
+            return "AumBufferlineActive"
         elseif not vim.api.nvim_buf_is_loaded(self.bufnr) then
             return "AumBufferlineInactive"
         else
@@ -369,7 +370,7 @@ local TablineFileNameBlock = {
         name = "heirline_tabline_buffer_callback",
     },
 
-    TablineBufferNumber,
+    -- TablineBufferNumber,
     FileIcon,               -- Same icon as used in `StatusLine`.
     TablineFileName,
     TablineFileFlags,
@@ -383,7 +384,7 @@ local TablineCloseButton = {
     { provider = " " },
     {
         provider = "",
-        hl = { fg = colors.monolith },  -- Add a more grey color and use it here.
+        hl = { fg = colors.bg_09_champion_blue },
         on_click = {
             callback = function(_, minwid)
                 vim.schedule(function()
@@ -400,7 +401,7 @@ local TablineCloseButton = {
 }
 
 -- The final touch!
-local TablineBufferBlock = utils.surround({ "", "" }, function(self)
+local TablineBufferBlock = utils.surround({ "", "" }, function(self)
     if self.is_active then
         return utils.get_highlight("AumBufferlineActive").bg
     else

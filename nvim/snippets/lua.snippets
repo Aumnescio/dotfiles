@@ -1,9 +1,72 @@
+snippet print_text "Normal print."
+	print("$0")
+
+snippet print_var_inspect "Print with `vim.inspect`."
+	print(vim.inspect($0))
+
+snippet print_var_formatted "Print a message and variable."
+	print(string.format("$1: %s", vim.inspect($0)))
+
 snippet use "Packer 'use'."
 	use { "$0" }
 
-# TODO: Make one for use with Legendary
-snippet bindkey "Create a new keybinding."
-	bindkey("$1", "$2", "$0")
-
-snippet map_legendary_key "Create new keybind in Legendary."
+snippet map_legendary_key "Create new keybinding in `Legendary.nvim`."
 	{ "$1",          "$2",            description = "$0",          mode = { 'n', 'v', 'o' },   opts = opts },
+
+snippet func "Lua function."
+	function $1($2)
+		$0
+	end
+
+snippet func_local "Lua function (Local)."
+	local function $1($2)
+		$0
+	end
+
+snippet if "Lua `if`."
+	if $1 then
+		$0
+	end
+
+snippet if_else "Lua `if else`."
+	if $1 then
+		$2
+	else
+		$0
+	end
+
+snippet if__elseif_else "Lua `if elseif else`."
+	if $1 then
+		$2
+	elseif $3 then
+		$4
+	else
+		$0
+	end
+
+snippet get_current_nvim_line "Get the current line from the active Neovim buffer, as a string."
+	local current_line = vim.api.nvim_get_current_line()
+
+snippet cursor_location "Get current `row` and `column` of `Cursor Position`."
+	local cur_row, cur_col = unpack(vim.api.nvim_win_get_cursor(0))
+
+snippet get_character_after_cursor "Get the `character` to the right of `Cursor Position`."
+	local current_line = vim.api.nvim_get_current_line()
+	local char_after_cursor = string.sub(current_line, cur_col + 2, cur_col + 2)
+
+snippet write_nvim_text "Write text into Neovim buffer at `Cursor Position`."
+	vim.api.nvim_buf_set_text(0, cur_row - 1, cur_col, cur_row - 1, cur_col, {"$0"})
+
+snippet write_nvim_text_and_advance_cursor "Write text into Neovim buffer at `Cursor Position`, and place the cursor at the end of the inserted text."
+	local str = "$0"
+	vim.api.nvim_buf_set_text(0, cur_row - 1, cur_col, cur_row - 1, cur_col, { str })
+	vim.api.nvim_win_set_cursor(0, { cur_row, cur_col + string_len(str) })
+
+snippet repterm_exec_norm_function "Function for execution Normal Mode commands properly.."
+	local function exec_norm(str)
+		return vim.cmd(nvim_replace_termcodes(string.format("normal %s", str), true, true, true))
+	end
+
+snippet exec_norm "Execute Normal Mode commands."
+	exec_norm("$0")
+

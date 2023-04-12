@@ -11,6 +11,9 @@ local g             = vim.g
 local opt           = vim.opt
 --  --=>><⚡END⚡>]
 
+-- This probably does nothing.
+g.do_filetype_lua = true
+
 -- | 1. Essential Settings  --=>><⚡START⚡>[
 -- | |> - Hidden                (true)
 -- | |> - Swapfile              (false)
@@ -65,7 +68,8 @@ local opt           = vim.opt
 
 -- | 8. Plugin Settings  --=>><⚡START⚡>[
 -- | |> - Packer                (Plugin Manager)                                    [Installed / STATE: Good]
--- | |> - Treesitter            (Syntax Highlighting)                               [Installed / STATE: Good]
+-- | |> - Treesitter            (Not doing much)                                    [Installed / STATE: Too effin laggy.]
+-- | |> - Polyglot              (Syntax highlighting)                               [Installed / STATE: Testing]
 -- | |> - LSP                   (Native)                                            [Installed / STATE: Good]
 -- | |> - LSP-extras            (trouble, etc)                                      [Installed / STATE: Good]
 -- | |> - Rust Tools            (Rust-LSP stuff)                                    [Installed / STATE: Good]
@@ -113,8 +117,8 @@ local opt           = vim.opt
 
 opt.hidden = true           -- Keeps unsaved buffers open in the background. (Seems to be good as 'true' for some reasons.)
 opt.swapfile = false        -- Not exactly sure what this is. Default is 'true', but off seems good?
-opt.backup = false          -- 'false' is default.
-opt.writebackup = true      -- 'true' is default. Not having this seemed unsafe. (This combo of backups should create backups on save but delete them after successful saves.)
+opt.backup = false          -- `false` is default.
+opt.writebackup = true      -- `true` is default. Not having this seemed unsafe. (This combo of backups should create backups on save but delete them after successful saves.)
 opt.autoread = true         -- Automatically read changed file.
 opt.undofile = true         -- Save undo history for all files.
 
@@ -182,7 +186,7 @@ opt.timeoutlen = 0
 opt.ttimeout = false            -- Makes leaving Insert mode using <Esc> faster, so keys don't fuckup.
 opt.ttimeoutlen = 8
 opt.lazyredraw = false          -- Stop updating screen when running a macro. (If true) (False is more consistently responsive. No freeze.)
-opt.updatetime = 80             -- Some update-rate thing to help smoothness.
+opt.updatetime = 50             -- Some update-rate thing to help smoothness.
 
 -- |> Virtual characters.
 opt.listchars = "eol:↵,space:·,leadmultispace:.,tab:»›,trail:~,extends:❯,precedes:❮"
@@ -206,33 +210,47 @@ opt.cmdwinheight = 10   -- Window height of command line history window. (Activa
 -- => STATE: Good
 
 -- |> Misc
-opt.virtualedit = "all"                     -- Virtual Space => Enabled
-opt.backspace = { "indent", "eol", "start" }  -- Backspace functionality.
+-- opt.virtualedit = ""                         -- Virtual Space => Disabled
+opt.virtualedit = "all"                         -- Virtual Space => Enabled
+opt.backspace = { "indent", "eol", "start" }    -- Backspace functionality.
+opt.inccommand = ""                             -- Disable incremental preview of commands, because this is buggy.      ( "nosplit" to enable. )
 
 -- |> Completion popup settings.
 -- NOTE: nvim-cmp opts effectively include also "noselect" and "noinsert". (noselect and noinsert are not doing anything.)
-opt.completeopt = "menu,menuone,preview,noselect,noinsert"       -- Completion menu settings.
-opt.pumheight = 12          -- Completion popup menu height.
-opt.pumwidth = 18           -- Completion popup menu width.
+opt.completeopt = "menu,menuone,preview,noselect,noinsert"      -- Completion menu settings.    ( Probably quite heavily ignored by `nvim-cmp`. )
+opt.pumheight = 12          -- Completion popup menu height.                                    ( `nvim-cmp` ignores this, apparently. )
+opt.pumwidth = 64           -- Completion popup menu width.                                     ( `nvim-cmp` ignores this, apparently. )
 opt.pumblend = 0            -- Transparency percentage for popup menu. (Prolly prefer no transparency.)
 -- NOTE: Wildmenu seems to be active by default in Neovim.
 
--- |> Indentation Settings. (WIP)
-opt.autoindent = true   -- Automatic indentation.
-opt.smartindent = true  -- More automatic/smart indentation. (Or stupid idk.)
-opt.cindent = false      -- Some c-like indentation rule.
+-- |> Indentation Settings. ( STATE: Okay. ) [ NOTE: Can be overwritten by `polyglot.vim` filetype indentation rules. ]
+opt.autoindent = true       -- Automatic indentation.
+opt.smartindent = true      -- More automatic/smart indentation.
+opt.cindent = false         -- Some c-like indentation rule.        ( AutoCmd enabling this for C / C++ files. )
+opt.copyindent = true       -- Copy indentation characters from previous line.
+opt.preserveindent = false  -- Preserve indent whitespace style.    ( `Tabs` vs `Spaces` I suppose. )
+opt.indentkeys = ""         -- Don't reindent when typing characters.
+
+-- Disable removing whitespace automatically. (In practice this probably does absolutely nothing.)
+local cpo = "aABceFs_I"
+vim.api.nvim_set_option_value('cpoptions', cpo, {})
+
+-- Disable polyglot autoindent.
+g.polyglot_disable = {
+    "autoindent"
+}
 
 -- |> Tabbing settings.
 opt.expandtab = true    -- Covenrt Tabs to Spaces automatically.
 opt.smarttab = true     -- Navigation on indentation by tab-size.
 opt.tabstop = 4         -- Tab-size.
-opt.softtabstop = -1    -- '-1' Automatically inherits 'tabstop' value.
-opt.shiftwidth = 0      -- '0' Automatically inherits 'tabstop' value.
+opt.softtabstop = -1    -- -1 Automatically inherits 'tabstop' value.
+opt.shiftwidth = 0      -- 0 Automatically inherits 'tabstop' value.
 
 -- |> Search settings.
 opt.hlsearch = false    -- No permanent highlight after search.
-opt.incsearch = false   -- Highlight search results while typing. (Generally I really like this, but when using Noice.nvim, this is a lil bugged.)
-                            -- NOTE: The highlights flicker during search, and the whole screen flashes when the first search match is off-screen.
+opt.incsearch = false   -- Highlight search results while typing. ( Generally I really like this, but when using `Noice.nvim`, this is a lil bugged. )
+-- NOTE: The highlights flicker during search, and the whole screen flashes when the first search match is off-screen.
 opt.ignorecase = true   -- Disable Case-sensitivity from search,
 opt.smartcase = true    -- except for when search contains uppercase characters.
 opt.wrapscan = true     -- Toggle searching to wrap from end of buffer to beginning of buffer.
@@ -240,15 +258,16 @@ opt.wrapscan = true     -- Toggle searching to wrap from end of buffer to beginn
 -- |> Folding settings.
 opt.foldenable = true           -- Folding => Enabled
 vim.wo.foldmethod = "manual"    -- Fold Method.
-vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers. (I kind of want to change these.)
+vim.wo.foldmarker = "  --=>><⚡START⚡>[,  --=>><⚡END⚡>]"  -- Fold Markers. (TODO: Change these.)
 vim.wo.foldexpr = "0"           -- Fold expression.
 opt.foldcolumn = "0"            -- Disable fold icons in sign-column.
 opt.foldlevel = 99              -- High value preferred by `nvim-ufo`.
 opt.foldlevelstart = 99         -- Start unfolded => 99
 
 -- |> Scrolling settings.
-opt.scrolloff = 9       -- Vertical scroll offset. (0-12) (NOTE: `neovide --multigrid` doesn't really behave great with scrolloffs)
-opt.sidescrolloff = 2   -- Horizontal scroll offset. (0-20)
+opt.scrolloff = 14      -- Vertical scroll offset.      ( 0-20'ish )                ( NOTE: `neovide --multigrid` doesn't really behave great with scrolloffs. )
+opt.sidescrolloff = 6   -- Horizontal scroll offset.    ( 0-10'ish )
+opt.sidescroll = 24     -- Number of columns to jump for each `horizontal scroll`.  ( At a low number, this is extremely laggy. )
 
 -- |> Split settings.
 opt.splitright = true   -- Split direction right instead of left.
@@ -256,13 +275,11 @@ opt.splitbelow = true   -- Split direction below instead of above.
 
 -- |> Wrap settings.
 opt.wrap = false            -- Base text wrapping. (Virtual)
-opt.linebreak = false       -- Break at specific column instead of last char that fits on screen. (Not good)
+opt.linebreak = false       -- Break at specific column instead of last char that fits on screen.
 opt.breakindent = true      -- When wrapping, visually indent lines.
-opt.breakindentopt = "sbr"  -- "showbreak"
+opt.breakindentopt = "sbr"  -- `showbreak`
 opt.showbreak = "❯ "
--- opt.textwidth = 80          -- Hard break column limit.
-    -- Might cause issues with certain things,
-    -- but I might want this for LaTeX, Markdown, and Org.
+-- opt.textwidth = 80          -- Hard break column limit.      ( Enabled for Markdown in autocmd at bottom of file. )
 
 --===============================================--+
 -- === END - 4. Functionality Settings - END === --|  --=>><⚡END⚡>]
@@ -274,15 +291,12 @@ opt.showbreak = "❯ "
 
 -- => STATE: Good
 
--- This is kinda harsh to set here. (But having it enabled caused an error, I think.)
--- Syntax required for some filetypes such as '.sql' and '.snippets', for now.
--- vim.cmd([[syntax off]])
-opt.cursorline = true      -- Visual Line-highlight Toggle.
-opt.number = false          -- Line Numbers.
-opt.relativenumber = false  -- Relative Line Numbers.
+opt.cursorline = false       -- Visual Line-highlight Toggle.
+opt.number = false           -- Line Numbers.
+opt.relativenumber = false   -- Relative Line Numbers.
 opt.signcolumn = "yes"      -- Signcolumn. (Gutter) (NOTE: 'no' did not fully disable LSP signcolumn.)
 opt.showmatch = false       -- Jump to matching pairs when inserting them. (This is horrible. Do not enable.)
-opt.laststatus = 3          -- 0 = Never, 3 = Global StatusLinn, maybe.
+opt.laststatus = 3          -- 0 = Never, 3 = Global StatusLine, maybe.
 opt.conceallevel = 0        -- Never/Always hide conceal. (0/3)
 opt.concealcursor = ""      -- Options: "nivc" - Empty: Disable conceal on cursorline.
 
@@ -319,8 +333,10 @@ g.neovide_refresh_rate = 165
 g.neovide_refresh_rate_idle = 165
 g.neovide_transparency = 1
 g.neovide_scroll_animation_length = 0.24
-g.neovide_confirm_quit = true
 g.neovide_cursor_unfocused_outline_width = 0.125
+g.neovide_confirm_quit = true
+g.neovide_hide_mouse_when_typing = true
+g.neovide_underline_automatic_scaling = false
 g.neovide_profiler = false
 
 -- |> Cursor Effect.
@@ -348,123 +364,143 @@ g.neovide_curser_animate_command_line = false
 require("packer").startup({function()
 
     -- === |> - Misc / Helper  --=>><⚡START⚡>[
-    use { "wbthomason/packer.nvim" }                                    -- Plugin Manager       (STATE: Good)
-    use { "nvim-lua/plenary.nvim" }                                     -- Helper functions     (STATE: Good)
-    use { "lewis6991/impatient.nvim" }                                  -- Faster Startup       (STATE: Good)
+    use { "wbthomason/packer.nvim" }                                    -- Plugin Manager               ( STATE: Good )
+    use { "nvim-lua/plenary.nvim" }                                     -- Helper functions             ( STATE: Good )
+    use { "lewis6991/impatient.nvim" }                                  -- Faster Startup               ( STATE: Good )
     -- === |> - Misc / Helper  --=>><⚡END⚡>]
 
     -- === |> - Visual / UI  --=>><⚡START⚡>[
-    use { "kyazdani42/nvim-web-devicons" }                              -- Icons                (STATE: Good)
+    use { "kyazdani42/nvim-web-devicons" }                              -- Icons                        ( STATE: Good )
 
     use {
+        -- NOTE: Very very sadly, treesitter highlighting causes major lag in semi-large files.
         "nvim-treesitter/nvim-treesitter",
         run = function() require("nvim-treesitter.install").update({ with_sync = true }) end,
-    }                                                                   -- Treesitter           (STATE: Good)
+    }                                                                   -- Treesitter                   ( STATE: Scuffed. Mostly disabled. )
 
-    -- use { "nvim-treesitter/nvim-treesitter-textobjects" }               -- Textobjects          (STATE: Okay, not used much.) [Maybe out of date right now. (Nov 6th 2022)]
-    -- use { "p00f/nvim-ts-rainbow" }                                      -- Multicolor brackets. (STATE: Some issues)
-    -- use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments  (STATE: Good) [Maybe out of date right now. (Nov 6th 2022)]
-    use { "onsails/lspkind-nvim" }                                      -- Completion Icons     (STATE: Good)
-    use { "stevearc/dressing.nvim" }                                    -- UI Lib               (STATE: Good)
-    use { "MunifTanjim/nui.nvim" }                                      -- UI Lib               (STATE: Good)
-    use { "folke/noice.nvim" }                                          -- UI Thing             (STATE: Good, but a bit experimental and unstable. Does not work with Neovide.)
-    use { "rcarriga/nvim-notify" }                                      -- Notifications        (STATE: Okay)
-    -- use { "nvim-treesitter/nvim-treesitter-context" }                -- Scope Indicator      (STATE: Works, but I fear lag. Also bit clunky visually.)
-    -- use { "nvim-treesitter/playground" }                             -- Inactive             (STATE: Not really used)
+    use { "sheerun/vim-polyglot" }                                      -- Syntax highlighting          ( STATE: Better than treesitter )
+    use { "arzg/vim-rust-syntax-ext" }                                  -- Rust Syntax highlighting     ( STATE: Seems really good. Worry that this might not keep up with new rust syntax. )
+
+    use { "m-demare/hlargs.nvim" }                                      -- Highlight arguments          ( STATE: Good )
+    use { "onsails/lspkind-nvim" }                                      -- Completion Icons             ( STATE: Good )
+    use { "stevearc/dressing.nvim" }                                    -- UI Lib                       ( STATE: Good )
+    use { "MunifTanjim/nui.nvim" }                                      -- UI Lib                       ( STATE: Good )
+    use { "folke/noice.nvim" }                                          -- UI Thing                     ( STATE: Good, but a bit experimental and unstable. Does not work with Neovide. )
+    use { "rcarriga/nvim-notify" }                                      -- Notifications                ( STATE: Okay, not too necessary. )
     -- === |> - Visual / UI  --=>><⚡END⚡>]
 
-    -- === |> - LSP / Tooling  --=>><⚡START⚡>[
-    use { "neovim/nvim-lspconfig" }                                     -- LSP                  (STATE: Good)
-    use { "folke/trouble.nvim" }                                        -- DiagViewer           (STATE: Good)
-    use { "simrat39/rust-tools.nvim" }                                  -- Rust-LS ++           (STATE: Good)
-    use { "ranjithshegde/ccls.nvim" }
-    -- use { "jose-elias-alvarez/nvim-lsp-ts-utils" }                   -- TypeScript-LS ++     (STATE: Good)
+    -- === |> - START - LSP / Tooling
+    use { "neovim/nvim-lspconfig" }                                     -- LSP                          ( STATE: Good )
+    use { "folke/trouble.nvim" }                                        -- DiagViewer                   ( STATE: Good | TODO: Test and config more. )
+    use { "simrat39/rust-tools.nvim" }                                  -- Rust-LS ++                   ( STATE: Good )
+    use { "ranjithshegde/ccls.nvim" }                                   -- C / C++ LangServer           ( STATE: Okay )
+    -- use { "jose-elias-alvarez/nvim-lsp-ts-utils" }                   -- TypeScript-LS ++             ( STATE: Good )
     -- |> Debuggers:
-    -- use { "mfussenegger/nvim-dap" }                                  -- Debugger             (STATE: Unknown)
-    -- use { "rcarriga/nvim-dap-ui" }                                   -- Debug UI             (STATE: Unknown)
-    -- === |> - LSP / Tooling  --=>><⚡END⚡>]
+    -- use { "mfussenegger/nvim-dap" }                                  -- Debugger                     ( STATE: Unknown )
+    -- use { "rcarriga/nvim-dap-ui" }                                   -- Debug UI                     ( STATE: Unknown )
+    -- === |> - END - LSP / Tooling
 
-    -- === |> - Navigation  --=>><⚡START⚡>[
-    use { "ggandor/leap.nvim" }                                         -- Fast Jump            (STATE: Testing)
-    -- === |> - Navigation  --=>><⚡END⚡>]
+    -- === |> - START - Navigation
+    use { "ggandor/leap.nvim" }                                         -- Fast Jump                    ( STATE: Okay )
+    -- === |> - END - Navigation
 
-    -- === |> - Autocompletion  --=>><⚡START⚡>[
-    use { "hrsh7th/nvim-cmp" }                                          -- Autocompletion       (STATE: Good)
-    use { "hrsh7th/cmp-nvim-lsp" }                                      -- Nvim-cmp Ext         (STATE: Good)
-    use { "hrsh7th/cmp-nvim-lua" }                                      -- Nvim-cmp Ext         (STATE: Good)
-    use { "hrsh7th/cmp-buffer" }                                        -- Nvim-cmp Ext         (STATE: Good)
-    use { "hrsh7th/cmp-path" }                                          -- Nvim-cmp Ext         (STATE: Good)
-    use { "hrsh7th/cmp-cmdline" }                                       -- Nvim-cmp Ext         (STATE: Good)
-    use { "hrsh7th/cmp-nvim-lsp-signature-help" }                       -- Nvim-cmp Ext         (STATE: Okay)
-    -- Snippets
-    use { "L3MON4D3/LuaSnip", tag = "v1.*" }                            -- Snippets             (STATE: Good, but needs some work.)
-    use { "saadparwaiz1/cmp_luasnip" }                                  -- LuaSnip Cmp Source   (STATE: Good)
-    -- use { "smjonas/snippet-converter.nvim" }                            -- SnippetConvert       (STATE: Not good enough)
-    -- use { "windwp/nvim-autopairs" }                                  -- Autopairs            (STATE: Issues)
-    -- === |> - Autocompletion  --=>><⚡END⚡>]
+    -- === |> - START - Autocompletion
+    use { "hrsh7th/nvim-cmp" }                                          -- Autocompletion               ( STATE: Good )
+    use { "hrsh7th/cmp-nvim-lsp" }                                      -- Nvim-cmp Ext                 ( STATE: Good )
+    use { "hrsh7th/cmp-nvim-lua" }                                      -- Nvim-cmp Ext                 ( STATE: Good )
+    use { "hrsh7th/cmp-buffer" }                                        -- Nvim-cmp Ext                 ( STATE: Good )
+    use { "hrsh7th/cmp-path" }                                          -- Nvim-cmp Ext                 ( STATE: Good )
+    use { "hrsh7th/cmp-cmdline" }                                       -- Nvim-cmp Ext                 ( STATE: Good )
+    use { "hrsh7th/cmp-nvim-lsp-signature-help" }                       -- Nvim-cmp Ext                 ( STATE: Okay )
+    -- |> Snippets
+    -- NOTE: Moved to `LuaSnip` because `UltiSnips` causes lag.
+    use { "L3MON4D3/LuaSnip", tag = "v1.*" }                            -- Snippets                     ( STATE: Best snippet plugin available, I suppose.  )
+    use { "saadparwaiz1/cmp_luasnip" }                                  -- LuaSnip Cmp Source           ( STATE: Good )
+    -- use { "windwp/nvim-autopairs" }                                  -- Autopairs                    ( STATE: Issues, moving to custom autopairs implementation. )
+    -- === |> - END - Autocompletion
 
-    -- === |> - Statusline, Bufferline, Tabline, Winbar  --=>><⚡START⚡>[
-    use { "rebelot/heirline.nvim" }                                     -- Lines                (STATE: Very good)
-    -- === |> - Statusline, Bufferline, Tabline, Winbar  --=>><⚡END⚡>]
+    -- === |> - START - Statusline, Bufferline, Tabline, Winbar
+    use { "rebelot/heirline.nvim" }                                     -- UI Bars                      ( STATE: Very good )
+    -- === |> - END - Statusline, Bufferline, Tabline, Winbar
 
-    -- === |> - File Explorer  --=>><⚡START⚡>[
-    -- use { "kyazdani42/nvim-tree.lua" }                               -- File Explorer        (STATE: Okay)
+    -- === |> - START - File Explorer
+    -- use { "kyazdani42/nvim-tree.lua" }                               -- File Explorer                ( STATE: Okay )
     -- Looking to test others like "Carbon.nvim"
     -- Also just getting `zoxide` extension for `Telescope` would cover 90% of this.
-    -- === |> - File Explorer  --=>><⚡END⚡>]
+    -- === |> - END - File Explorer
 
-    -- === |> - Terminal (Floating)  --=>><⚡START⚡>[
-    use { "numToStr/FTerm.nvim" }                                       -- FloatingTerminal     (STATE: Fine)
-    -- === |> - Terminal  --=>><⚡END⚡>]
+    -- |> - START - Terminal
+    use { "numToStr/FTerm.nvim" }                                       -- FloatingTerminal             ( STATE: Fine )
+    -- |> - END - Terminal
 
-    -- === |> - Comment Toggling  --=>><⚡START⚡>[
-    use { "numToStr/Comment.nvim" }                                     -- Comment Toggling     (STATE: Testing)
-    -- === |> - Comment Toggling  --=>><⚡END⚡>]
+    -- |> - START - Comment Toggling
+    use { "numToStr/Comment.nvim" }                                     -- Comment Toggling             ( STATE: Seems good. )
+    -- |> - END - Comment Toggling
 
-    -- === |> - Database stuff  --=>><⚡START⚡>[
+    -- |> - START - Database stuff
     -- NOTE: Not using any of these at the moment.
     -- use { "tpope/vim-dadbod" }                                       -- Good for activating SQL queries.
     -- use { "kristijanhusak/vim-dadbod-ui" }                           -- This is okay, but not very necessary.
     -- use { "kristijanhusak/vim-dadbod-completion" }                   -- Having mild issues with this.
-    -- === |> - Database stuff  --=>><⚡END⚡>]
+    -- |> - END - Database stuff
 
-    -- === |> - Fuzzy Finder (Telescope)  --=>><⚡START⚡>[
-    use { "nvim-telescope/telescope.nvim" }                             -- FuzzyFinder          (STATE: Good)
-    use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }    -- Telescope FZF Ext    (STATE: Good)
-    use { "nvim-telescope/telescope-ui-select.nvim" }                   -- Telescope UI Ext     (STATE: Good)
-    -- === |> - Fuzzy Finder (Telescope)  --=>><⚡END⚡>]
+    -- |> - START - Fuzzy Finder (Telescope)
+    use { "nvim-telescope/telescope.nvim" }                             -- FuzzyFinder                  ( STATE: Good )
+    use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }    -- Telescope FZF Ext            ( STATE: Good )
+    use { "nvim-telescope/telescope-ui-select.nvim" }                   -- Telescope UI Ext             ( STATE: Good )
+    -- |> - END - Fuzzy Finder (Telescope)
 
-    -- === |> - Interactive Workflow  --=>><⚡START⚡>[
-    use { "luk400/vim-jukit" }                                          -- Jupyter alternative  (STATE: Good)
-    -- === |> - Interactive Workflow  --=>><⚡END⚡>]
+    -- === |> - START - Interactive Workflow
+    use { "luk400/vim-jukit" }                                          -- Jupyter alternative          ( STATE: TODO: Config and Test )
+    -- === |> - END - Interactive Workflow
 
-    -- === |> - Misc Nice Things  --=>><⚡START⚡>[
-    use { "goolord/alpha-nvim" }                                        -- StartupScreen        (STATE: Good)
-    use { "folke/zen-mode.nvim" }                                       -- Zen-Mode             (STATE: Some lag issues, some toggling issues.)
-    use { "mhartington/formatter.nvim" }                                -- FormatRunner         (STATE: Fine)
-    use { "tpope/vim-repeat" }                                          -- Improved Repeat      (STATE: Good)
-    use { "mhinz/vim-sayonara" }                                        -- Better 'bd'          (STATE: Good)
-    use { "tpope/vim-endwise" }                                         -- Minor extra autocompletion stuff (STATE: Bit unknown)
-    use { "tpope/vim-eunuch" }                                          -- Basic shell commands from vim.   (STATE: Bit unknown)
-    use { "gcmt/wildfire.vim" }                                         -- Expand selection     (STATE: Okay, could be better.)
-    use { "echasnovski/mini.nvim" }                                     -- Cursorword Highlight,      (STATE: Good)
-                                                                        -- & Indent Scope Highlight,  (STATE: Good)
-                                                                        -- & Extra Text Objects,      (STATE: Good)
-                                                                        -- & Surround operations.     (STATE: Good)
-    use { "smjonas/live-command.nvim" }                                 -- Live previews        (STATE: Slow in kitty terminal but good in Neovide.)
-    use { "ZhiyuanLck/smart-pairs" }                                    -- AutoPairs            (STATE: Barely useable.)
-    use { "mrjones2014/legendary.nvim" }                                -- Keymap manager       (STATE: Good)
-    -- use { "beauwilliams/focus.nvim" }                                -- SplitResizing        (STATE: Good)
-    -- use { "anuvyklack/pretty-fold.nvim" }                            -- Pretty folding       (STATE: Good)
-    -- use { "abecodes/tabout.nvim" }                                   -- Tabout               (STATE: Good)
-    -- use { "lervag/vimtex" }                                          -- LaTeX Support        (STATE: Unknown)
-    use { "aklt/plantuml-syntax" }                                      -- PlantUML SyntaxHL    (STATE: Good)
-    use { "NvChad/nvim-colorizer.lua" }                                 -- Colors in editor     (STATE: Fine)
-    use {                                                               -- Folding              (STATE: Testing)
+    -- === |> - START - Misc Nice Things - ===
+    use { "goolord/alpha-nvim" }                                        -- StartupScreen                ( STATE: Good )
+    use { "folke/zen-mode.nvim" }                                       -- Zen-Mode                     ( STATE: Some lag issues, some toggling issues. )
+    use { "mhartington/formatter.nvim" }                                -- FormatRunner                 ( STATE: Fine )
+    use { "tpope/vim-repeat" }                                          -- Improved Repeat              ( STATE: Good )
+    use { "tpope/vim-endwise" }                                         -- Minor Autocompletions        ( STATE: Bit unknown )
+    use { "tpope/vim-eunuch" }                                          -- Shell commands from vim.     ( STATE: Bit unknown )
+    use { "willothy/moveline.nvim", run = "make" }                      -- Line movement functions.     ( STATE: Quite good, not very necessary. )
+    use { "gcmt/wildfire.vim" }                                         -- Expand selection             ( STATE: Better than nothing, but kind of bad. )
+
+    use { "echasnovski/mini.nvim" }                                     -- Cursorword Highlight,        ( STATE: Would be good, if not laggy. )
+                                                                        -- & Indent Scope Highlight,    ( STATE: Would be good, if not laggy. )
+                                                                        -- & Extra Text Objects,        ( STATE: Good )
+                                                                        -- & Surround operations.       ( STATE: Good )
+                                                                        -- & other things.              ( STATE: TODO: Test )
+
+    -- Favourites:
+    use { "chrisgrieser/nvim-spider" }                                  -- Improved Word Motions.                       ( STATE: Very good, but a bit buggy. )
+    use { "mrjones2014/legendary.nvim" }                                -- `Keymap Manager` and `Command Palette`.      ( STATE: Extremely Good )
+
+    -- Folding:
+    -- use { "anuvyklack/pretty-fold.nvim" }                            -- Pretty folding               ( STATE: TODO: Re-enable and test. )
+    use {                                                               -- Folding                      ( STATE: Okay )
         "kevinhwang91/nvim-ufo",
         requires = "kevinhwang91/promise-async"
     }
-    -- === |> - Misc Nice Things  --=>><⚡END⚡>]
+
+    -- Colorization:
+    use { "NvChad/nvim-colorizer.lua" }                                 -- Colors in editor             ( STATE: Fine )
+    use { "aklt/plantuml-syntax" }                                      -- PlantUML SyntaxHL            ( STATE: Good, but really not used much. )
+
+    -- Misc:
+    use { "Saecki/crates.nvim", tag = "v0.3.0" }                        -- Rust Crates Helper           ( STATE: Testing )
+
+    -- Disabled
+    -- use { "beauwilliams/focus.nvim" }                                -- SplitResizing                ( STATE: TODO: Re-enable and test. )
+    -- use { "abecodes/tabout.nvim" }                                   -- Tabout                       ( STATE: TODO: Re-enable and test. )
+    -- use { "lervag/vimtex" }                                          -- LaTeX Support                ( STATE: Unknown )
+    -- use { "smjonas/live-command.nvim" }                              -- Live previews                ( STATE: Would love for this to work, but it is jittery and laggy. )
+
+    -- Treesitter Extras:
+    -- use { "nvim-treesitter/nvim-treesitter-textobjects" }            -- Textobjects                  ( STATE: Okay, not used much. )
+    -- use { "p00f/nvim-ts-rainbow" }                                   -- Multicolor brackets.         ( STATE: Some issues. )
+    -- use { "nvim-treesitter/nvim-treesitter-context" }                -- Scope Indicator              ( STATE: Works, but I fear lag. Also bit clunky visually. )
+    -- use { "nvim-treesitter/playground" }                             -- Inactive                     ( STATE: Not really used. )
+
+    -- === |> - END - Misc Nice Things - ===
 end,
 
 -- Packer commands window opening style. (Floating window with border.)
@@ -495,6 +531,11 @@ require("notify").setup({
 })
 -- |> nvim-notify -> END  --=>><⚡END⚡>]
 
+-- Treesitter can't really handle files above 1000 lines long. (Depends somewhat on parsers.)
+local function ts_disable(_, bufnr)
+    return vim.api.nvim_buf_line_count(bufnr) > 1000
+end
+
 -- |> START - Treesitter Setup  --=>><⚡START⚡>[
 require("nvim-treesitter.configs").setup({
     ensure_installed = {
@@ -502,15 +543,15 @@ require("nvim-treesitter.configs").setup({
         "css", "scss", "html", "javascript", "typescript", "vue", "svelte",
         "lua", "vim", "markdown", "toml", "yaml", "rst", "pug", "json",
         "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
-        "query", "commonlisp", "v", "markdown_inline", "norg",
+        "query", "commonlisp", "v", "markdown_inline", "vimdoc",
     },
 
-    auto_install = true,
+    auto_install = false,
 
     highlight = {
-        enable = true,  -- 'false' will disable the whole extension.
+        enable = false,
         disable = function(lang, bufnr)  -- Disable treesitter in help files. (EXTREME speedup => From 0 fps to 165 fps)
-            if vim.bo.filetype == 'help' then
+            if vim.bo.filetype == "help" or ts_disable(lang, bufnr) then
                 return true
             else
                 return false
@@ -519,13 +560,12 @@ require("nvim-treesitter.configs").setup({
         additional_vim_regex_highlighting = false,
     },
 
-    -- Experimenting with this experimental feature.
     indent = {
-        enable = true
+        enable = false,
     },
 
     rainbow = {
-        enable = false,  -- 'true' has some minor issues. Prefer not to have my crap borked.
+        enable = false,  -- `true` has some minor issues. Prefer not to have my crap borked.
         extended_mode = false,
         max_file_lines = 3000,
     },
@@ -625,57 +665,8 @@ require("nvim-treesitter.configs").setup({
 })
 -- |> END - Treesitter Setup  --=>><⚡END⚡>]
 
--- |> START - UltraFold Setup  --=>><⚡START⚡>]
-local ufo_handler = function(virtText, lnum, endLnum, width, truncate)
-    local newVirtText = {}
-    local suffix = ('  %d '):format(endLnum - lnum)
-    local sufWidth = vim.fn.strdisplaywidth(suffix)
-    local targetWidth = width - sufWidth
-    local curWidth = 0
-    for _, chunk in ipairs(virtText) do
-        local chunkText = chunk[1]
-        local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-        if targetWidth > curWidth + chunkWidth then
-            table.insert(newVirtText, chunk)
-        else
-            chunkText = truncate(chunkText, targetWidth - curWidth)
-            local hlGroup = chunk[2]
-            table.insert(newVirtText, {chunkText, hlGroup})
-            chunkWidth = vim.fn.strdisplaywidth(chunkText)
-            -- str width returned from truncate() may less than 2nd argument, need padding
-            if curWidth + chunkWidth < targetWidth then
-                suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-            end
-            break
-        end
-        curWidth = curWidth + chunkWidth
-    end
-    table.insert(newVirtText, {suffix, 'MoreMsg'})
-    return newVirtText
-end
-
-require("ufo").setup({
-    provider_selector = function(bufnr, filetype, buftype)
-        return { "treesitter", "indent" }
-    end,
-
-    open_fold_hl_timeout = 120,
-
-    fold_virt_text_handler = ufo_handler,
-})
--- |> END - UltraFold Setup  --=>><⚡END⚡>]
-
--- |> START - Smartpairs Setup  --=>><⚡START⚡>[
--- STATE: Not really satisfied.
-require("pairs"):setup({
-    enter = {
-        enable_mapping = false,  -- NOTE: Why is this false exactly? Might be having some issue with binding enter with nvim-cmp and this.
-    },
-})
--- |> END - Smartpairs Setup  --=>><⚡END⚡>]
-
 -- |> START - Leap.nvim Setup  --=>><⚡START⚡>[
--- Bindings are created in good-binds file.
+-- Bindings are created in `good-binds.lua` file.
 -- |> END - Leap.nvim Setup  --=>><⚡END⚡>]
 
 --=============================================--+
@@ -724,6 +715,162 @@ end
 --     luasnip.next_choice()
 -- end
 
+-- === |> - crates.nvim (START)
+-- TODO: Customize keybindings.
+-- Link: "https://github.com/Saecki/crates.nvim"
+require("crates").setup({
+    smart_insert = true,
+    insert_closing_quote = true,
+    avoid_prerelease = true,
+    autoload = true,
+    autoupdate = true,
+    -- autoupdate_throttle = 250,
+    loading_indicator = true,
+    date_format = "%Y-%m-%d",
+    thousands_separator = ".",
+    notification_title = "Crates",
+    -- curl_args = { "-sL", "--retry", "1" },
+    disable_invalid_feature_diagnostic = false,
+
+    text = {
+        loading = "   Loading",
+        version = "   %s",
+        prerelease = "   %s",
+        yanked = "   %s",
+        nomatch = "   No match",
+        upgrade = "   %s",
+        error = "   Error fetching crate",
+    },
+
+    highlight = {
+        loading = "CratesNvimLoading",
+        version = "CratesNvimVersion",
+        prerelease = "CratesNvimPreRelease",
+        yanked = "CratesNvimYanked",
+        nomatch = "CratesNvimNoMatch",
+        upgrade = "CratesNvimUpgrade",
+        error = "CratesNvimError",
+    },
+
+    popup = {
+        autofocus = false,
+        -- hide_on_select = false,
+        copy_register = '"',
+        style = "minimal",
+        border = "none",
+        show_version_date = false,
+        show_dependency_version = true,
+        max_height = 30,
+        min_width = 20,
+        padding = 1,
+
+        text = {
+            title = " %s",
+            pill_left = "",
+            pill_right = "",
+            description = "%s",
+            created_label = " created        ",
+            created = "%s",
+            updated_label = " updated        ",
+            updated = "%s",
+            downloads_label = " downloads      ",
+            downloads = "%s",
+            homepage_label = " homepage       ",
+            homepage = "%s",
+            repository_label = " repository     ",
+            repository = "%s",
+            documentation_label = " documentation  ",
+            documentation = "%s",
+            crates_io_label = " crates.io      ",
+            crates_io = "%s",
+            categories_label = " categories     ",
+            keywords_label = " keywords       ",
+            version = "  %s",
+            prerelease = " %s",
+            yanked = " %s",
+            version_date = "  %s",
+            feature = "  %s",
+            enabled = " %s",
+            transitive = " %s",
+            normal_dependencies_title = " Dependencies",
+            build_dependencies_title = " Build dependencies",
+            dev_dependencies_title = " Dev dependencies",
+            dependency = "  %s",
+            optional = " %s",
+            dependency_version = "  %s",
+            loading = "  ",
+        },
+
+        highlight = {
+            title = "CratesNvimPopupTitle",
+            pill_text = "CratesNvimPopupPillText",
+            pill_border = "CratesNvimPopupPillBorder",
+            description = "CratesNvimPopupDescription",
+            created_label = "CratesNvimPopupLabel",
+            created = "CratesNvimPopupValue",
+            updated_label = "CratesNvimPopupLabel",
+            updated = "CratesNvimPopupValue",
+            downloads_label = "CratesNvimPopupLabel",
+            downloads = "CratesNvimPopupValue",
+            homepage_label = "CratesNvimPopupLabel",
+            homepage = "CratesNvimPopupUrl",
+            repository_label = "CratesNvimPopupLabel",
+            repository = "CratesNvimPopupUrl",
+            documentation_label = "CratesNvimPopupLabel",
+            documentation = "CratesNvimPopupUrl",
+            crates_io_label = "CratesNvimPopupLabel",
+            crates_io = "CratesNvimPopupUrl",
+            categories_label = "CratesNvimPopupLabel",
+            keywords_label = "CratesNvimPopupLabel",
+            version = "CratesNvimPopupVersion",
+            prerelease = "CratesNvimPopupPreRelease",
+            yanked = "CratesNvimPopupYanked",
+            version_date = "CratesNvimPopupVersionDate",
+            feature = "CratesNvimPopupFeature",
+            enabled = "CratesNvimPopupEnabled",
+            transitive = "CratesNvimPopupTransitive",
+            normal_dependencies_title = "CratesNvimPopupNormalDependenciesTitle",
+            build_dependencies_title = "CratesNvimPopupBuildDependenciesTitle",
+            dev_dependencies_title = "CratesNvimPopupDevDependenciesTitle",
+            dependency = "CratesNvimPopupDependency",
+            optional = "CratesNvimPopupOptional",
+            dependency_version = "CratesNvimPopupDependencyVersion",
+            loading = "CratesNvimPopupLoading",
+        },
+
+        -- Hopefully these do not break existing binds. (WIP)
+        keys = {
+            hide = { "q", "<Esc>" },
+            open_url = { "<CR>" },
+            select = { "<CR>" },
+            select_alt = { "s" },
+            toggle_feature = { "<CR>" },
+            copy_value = { "yy" },
+            goto_item = { "gd", "K", "<C-LeftMouse>" },
+            jump_forward = { "<C-i>" },
+            jump_back = { "<C-o>", "<C-RightMouse>" },
+        },
+    },
+
+    src = {
+        insert_closing_quote = true,
+        text = {
+            prerelease = "  pre-release ",
+            yanked = "  yanked ",
+        },
+        coq = {
+            enabled = false,
+            name = "Crates",
+        },
+    },
+
+    null_ls = {
+        enabled = false,
+        name = "Crates",
+    },
+})
+-- === |> - crates.nvim (END)
+
 local luasnip = require("luasnip")
 
 -- |> LuaSnip Config
@@ -751,6 +898,42 @@ require("luasnip.loaders.from_lua").load({ paths = { "./snippets" } })
 -- LuaSnip `add_snippets` function is not working.
 -- require("luasnip/snippets")
 -- |> Loading LuaSnip Snippets - END
+function AumUberEnter()
+    local inside_pairs = false
+    local opening_pair = false
+
+    local current_line = vim.api.nvim_get_current_line()
+
+    local cur_row, cur_col = unpack(vim.api.nvim_win_get_cursor(0))
+
+    local char_before_cursor = string.sub(current_line, cur_col, cur_col)
+    local char_after_cursor = string.sub(current_line, cur_col + 1, cur_col + 1)
+
+    if (char_before_cursor == "(" and char_after_cursor == ")") then
+        inside_pairs = true
+    elseif (char_before_cursor == "[" and char_after_cursor == "]") then
+        inside_pairs = true
+    elseif (char_before_cursor == "{" and char_after_cursor == "}") then
+        inside_pairs = true
+    end
+
+    if (char_before_cursor == "(") then
+        opening_pair = true
+    elseif (char_before_cursor == "[") then
+        opening_pair = true
+    elseif (char_before_cursor == "{") then
+        opening_pair = true
+    end
+
+    if inside_pairs then
+        -- Kind of seems to work, but the buffer kind of flashes. Not visually clean.
+        vim.api.nvim_input("<NL><Esc>==<Up><S-a><NL>")
+    elseif opening_pair then
+        vim.api.nvim_input("<NL>")
+    else
+        vim.api.nvim_input("<NL>")
+    end
+end
 
 -- nvim-cmp setup (Core) - START
 cmp.setup({
@@ -759,11 +942,11 @@ cmp.setup({
         return true
     end,  -- Disables completion in Telescope.
 
-    -- I want this to be either very very fast, or delayed by a good bit, not in-between.
-    performance = {
-        debounce = 20,
-        throttle = 20,
-    },  -- Supposed to increase overall editor performance, at the cost of small completion latency.
+    -- Large values make this absolutely unuseable. As low as possible is good.
+    performance = {  -- STATE: Very good.
+        debounce = 12,
+        throttle = 12,
+    },  -- Supposed to increase overall editor performance, at the cost of completion latency.
 
     preselect = cmp.PreselectMode.None,  -- Disables automatic preselection. (Enabled because of a bug with preselection: It skipped over snippets.)
     -- Alt: cmp.PreselectMode.Item
@@ -775,8 +958,9 @@ cmp.setup({
     },  -- Snippet support. (Very good, I think.)
 
     completion = {
-        -- autocomplete = cmp.TriggerEvent | false,  -- Not sure what this is or how to use it.
-        keyword_length = 2,  -- Only show completion popup after 2 characters have been typed. (Maybe performance increase, compared to lower values.)
+        -- autocomplete = false,  -- This increases performance, but will need to fetch completing manually.
+        -- autocomplete = cmp.triggerEvent,  -- Don't know how to use this.
+        keyword_length = 3,  -- Only show completion popup after 2 characters have been typed. (Maybe performance increase, compared to lower values.)
         -- NOTE: `buffer` source `keyword_length` is set to 3 below, in source section.
         completeopt = "menu,menuone,preview,noselect,noinsert",  -- I don't feel like noinsert is doing anything, but these work.
         -- NOTE: 'noinsert' probably overwritten by `cmp.ConfirmBehavior.Replace` option in keymaps. (Which is fine.)
@@ -795,13 +979,24 @@ cmp.setup({
             winhighlight = "Normal:CmpNormal,FloatBorder:CmpFloatBorder,Pmenu:CmpPmenu,CursorLine:CmpCursorLine,Search:CmpSearch",  -- STATE: Testing
             col_offset = 0,
             side_padding = 0,
+            width = 32,
+            height = 16,
+            max_width = 92,
+            max_height = 22,
         },
         documentation = {
             border = "rounded",
             winhighlight = "Normal:CmpDocNormal,FloatBorder:CmpDocFloatBorder,Pmenu:CmpDocPmenu,CursorLine:CmpDocCursorLineSearch,Search:CmpDocSearch,Comment:CmpDocComment",  -- STATE: Testing
             col_offset = 0,
             side_padding = 0,
+            max_width = 100,
+            max_height = 42,
         }
+    },
+    
+    experimental = {
+        -- Testing. ( Probably prefer this off. )
+        ghost_text = { hl_group = "AumCmpGhostText" }
     },
 
     -- Not sure if I need to swap to this new syntax at some point... (Kinda hope not because my stuff is working very well right now.)
@@ -862,8 +1057,8 @@ cmp.setup({
                 end
             end,
         }),
-        ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
-        ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Replace }), {'i'}),
+        ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Replace }), { "i" }),
+        ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Replace }), { "i" }),
         ["<C-n>"] = cmp.mapping({
             c = function()
                 if cmp.visible() then
@@ -909,7 +1104,7 @@ cmp.setup({
                 if cmp.visible() then
                     cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
                 elseif not cmp.confirm({ select = true }) then
-                    require("pairs.enter").type()
+                    AumUberEnter()
                 else
                     fallback()
                 end
@@ -928,7 +1123,7 @@ cmp.setup({
     formatting = {
         format = lspkind.cmp_format({
             mode = 'symbol',
-            maxwidth = 32,  -- NOTE: Something occasionally goes way beyond this maxwidth limit. Otherwise good width. any
+            maxwidth = 32,
             before = function (entry, vim_item)
                 return vim_item
             end
@@ -949,15 +1144,17 @@ cmp.setup({
         }
     },
 
-    sources = {
-        { name = "luasnip", priority = 90, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
-        -- { name = "nvim_lsp_signature_help", priority = 3 },  -- Disabled because using Noice.nvim for sig-help.
+    sources = cmp.config.sources({  -- STATE: Very good.
+        { name = "luasnip", priority = 20, keyword_length = 1 },  -- Very high prio because I want snippets to practically always be on top.
+        -- Disabled because using Noice.nvim for sig-help.
+        -- -- { name = "nvim_lsp_signature_help", priority = 3 },
         { name = "nvim_lua", priority = 2 },
         { name = "nvim_lsp", priority = 2 },
         { name = "path" },
-        { name = "neorg" },
-        { name = "buffer", keyword_length = 3, priority = 1 },
-    },
+        { name = "crates" },
+        { name = "buffer", keyword_length = 500, priority = 1 },  -- This is probably one of the more laggier sources.
+        -- Very high `keyword_length` stops this from causing lag, but still allows for buffer completion when manually activating the completion popup.
+    }),
 })
 -- nvim-cmp setup (Core) - END <|--
 
@@ -997,15 +1194,15 @@ end
 -- vim.cmd([[
 -- augroup dbui_mappings
 -- autocmd!
-    -- " Dadbod-Completion -> I would like to figure out how to get it to reset on. "
+    -- -- " Dadbod-Completion -> I would like to figure out how to get it to reset on. "
     -- autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'ultisnips', priority = 50 }, { name = 'vim-dadbod-completion', priority = 20 }, { name = 'path' }} })
-    -- " Dadbod-Mappings "
+    -- -- " Dadbod-Mappings "
     -- autocmd FileType dbui nmap <buffer> <Enter> <Plug>(DBUI_SelectLine)
     -- autocmd FileType dbui nmap <buffer> d <Plug>(DBUI_DeleteLine)
     -- autocmd FileType dbui nmap <buffer> <S-r> <Plug>(DBUI_Redraw)
     -- autocmd FileType dbui nmap <buffer> r <Plug>(DBUI_RenameLine)
     -- autocmd FileType dbui nmap <buffer> q <Plug>(DBUI_Quit)
-    -- " Explore help and github more. "
+    -- -- " Explore help and github more. "
 -- augroup END
 -- ]])
 
@@ -1046,29 +1243,27 @@ cmp.setup.cmdline(':', {
 --=========================================--+
 
 -- STATE: Good?
--- Related:
--- - TODO: Install 'aerial.nvim' (?)
 
 -- |> START -> LSP Flags Setup  --=>><⚡START⚡>[
 local lsp_flags = {
     allow_incremental_sync = true,  -- This used to be buggy, but maybe it is fine now.
-    debounce_text_changes = 80  -- 150 is default, and probably is fine. (I wonder if this affects speed of autocompletion. It might.)
+    debounce_text_changes = 200     -- 150 is default, and probably is fine. (This might affect performance and autocompletion latency.)
 }
 -- |> END -> LSP Flags Setup  --=>><⚡END⚡>]
 
 -- |> START -> LSP Attach  --=>><⚡START⚡>[
 local nvim_lsp = require("lspconfig")
 
+-- -> START - LSP-Info Window Border.
+require('lspconfig.ui.windows').default_options.border = "rounded"
+-- -> END - LSP-Info Window Border.
+
 -- LSP Keybindings. (Mostly here)
 local aum_general_on_attach = function(client, bufnr)
-    -- Disable `Semantic Tokens Highlighting`:
-    client.server_capabilities.semanticTokensProvider = nil
-    -- NOTE: It is not good enough yet. (Web 29th March)
-    -- REASON: Colors looking bad and not updating well.
-    -- TODO: These colors would need to be customized very heavily.
-    -- But I'm not even sure if they can be made to look good.
+    -- Toggle `Semantic Tokens Highlighting`:
+    -- client.server_capabilities.semanticTokensProvider = nil      -- Set to `nil` to disable semantic highlights.
 
-    local lsp_opts = { noremap = true, silent = true, buffer=bufnr }
+    local lsp_opts = { noremap = true, silent = true, buffer = bufnr }
     local keymap = vim.keymap.set
 
     -- === - LSP Mappings - ===
@@ -1243,18 +1438,72 @@ end
 -- === END - LSP Keymappings - END === --|  --=>><⚡END⚡>]
 --=====================================--+
 --|--------------------------------------|
---===========================================================--+
--- === - START - Completion Capabilities For LSP - START === --|  --=>><⚡START⚡>[
---===========================================================--+
+--=======================================================--+
+-- === - START - Custom Capabilities For LSP - START === --|  --=>><⚡START⚡>[
+--=======================================================--+
 
--- |> Add this on each server, as "capabilities = completion_capabilities".
+-- |> Add this on each server, as "capabilities = aum_capabilities".
 -- |> NOTE: Though it somehow seemed to work without it.
-local completion_capabilities = require("cmp_nvim_lsp").default_capabilities();
+local aum_capabilities = require("cmp_nvim_lsp").default_capabilities();
 
---=====================================================--+
--- === END - Completion Capabilities For LSP - END === --|  --=>><⚡END⚡>]
---=====================================================--+
---|------------------------------------------------------|
+-- Not sure if this works like this. This is for `nvim-ufo`.    ( Folding does seem to be working. )
+aum_capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
+
+-- |> START - UltraFold Setup  --=>><⚡START⚡>]
+local ufo_handler = function(virtText, lnum, endLnum, width, truncate)
+    local newVirtText = {}
+    local suffix = ('  %d '):format(endLnum - lnum)
+    local sufWidth = vim.fn.strdisplaywidth(suffix)
+    local targetWidth = width - sufWidth
+    local curWidth = 0
+    
+    for _, chunk in ipairs(virtText) do
+        local chunkText = chunk[1]
+        local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+        
+        if targetWidth > curWidth + chunkWidth then
+            table.insert(newVirtText, chunk)
+        else
+            chunkText = truncate(chunkText, targetWidth - curWidth)
+            local hlGroup = chunk[2]
+            table.insert(newVirtText, {chunkText, hlGroup})
+            chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            
+            if curWidth + chunkWidth < targetWidth then
+                suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            end
+            
+            break
+        end
+        
+        curWidth = curWidth + chunkWidth
+    end
+    
+    table.insert(newVirtText, {suffix, 'MoreMsg'})
+    
+    return newVirtText
+end
+
+require("ufo").setup({
+    provider_selector = function(bufnr, filetype, buftype)
+        if filetype == "markdown" then
+            return { "treesitter", "indent" }
+        end
+    end,
+
+    open_fold_hl_timeout = 120,
+
+    fold_virt_text_handler = ufo_handler,
+})
+-- |> END - UltraFold Setup  --=>><⚡END⚡>]
+
+--=================================================--+
+-- === END - Custom Capabilities For LSP - END === --|  --=>><⚡END⚡>]
+--=================================================--+
+--|--------------------------------------------------|
 --===========================================================================--+
 -- === START - LSP Handler, UI Customization & Diagnostics Setup - START === --|  --=>><⚡START⚡>[
 --===========================================================================--+
@@ -1296,7 +1545,7 @@ local aum_handler_config = {
 -- === START - LSP -> ClangD / CCLS / CPP / C++ - Setup - START === --|  --=>><⚡START⚡>[
 --==================================================================--+
 
-local lsp_util = require("lspconfig.util")
+-- local lsp_util = require("lspconfig.util")
 
 -- => 'ccls.nvim' setup (STATE: Good)
 -- require("ccls").setup({
@@ -1329,7 +1578,7 @@ local lsp_util = require("lspconfig.util")
             ---- |> Attach LSP keybindings & other crap.
             --on_attach = aum_general_on_attach,
             ---- |> Add nvim-cmp or snippet completion capabilities.
-            --capabilities = completion_capabilities,
+            --capabilities = aum_capabilities,
             ---- |> Activate custom handlers.
             --handlers = aum_handler_config,
         --},
@@ -1367,7 +1616,7 @@ local lsp_util = require("lspconfig.util")
 --     -- |> Attach LSP keybindings & other crap.
 --     on_attach = aum_general_on_attach,
 --     -- |> Add nvim-cmp or snippet completion capabilities.
---     capabilities = completion_capabilities,
+--     capabilities = aum_capabilities,
 --     -- |> Activate custom handlers.
 --     handlers = aum_handler_config,
 -- })
@@ -1530,7 +1779,7 @@ require("rust-tools").setup({
         on_attach = aum_general_on_attach,
 
         -- |> Add nvim-cmp or snippet completion capabilities.
-        capabilities = completion_capabilities,
+        capabilities = aum_capabilities,
 
         -- |> Activate custom handlers.
         handlers = aum_handler_config,
@@ -1598,13 +1847,14 @@ nvim_lsp.bashls.setup({
     cmd = { "bash-language-server", "start" },
     filetypes = { "sh", "bash" },
     single_file_support = true,
+    autostart = false,
 
     -- |> Fix diagnostics.
     flags = lsp_flags,
     -- |> Attach LSP keybindings & other crap.
     on_attach = aum_general_on_attach,
-    -- |> Add nvim-cmp or snippet completion capabilities.
-    capabilities = completion_capabilities,
+    -- |> Add completion (nvim-cmp, luasnip) and fold capabilities.
+    capabilities = aum_capabilities,
     -- |> Activate custom handlers.
     handlers = aum_handler_config,
 })
@@ -1613,6 +1863,72 @@ nvim_lsp.bashls.setup({
 -- === END - LSP -> Bash LS Setup - END === --|  --=>><⚡END⚡>]
 --==========================================--+
 --|-------------------------------------------|
+--==========================================================--+
+-- === START - LSP -> Lua Language Server Setup - START === --|  --=>><⚡START⚡>[
+--==========================================================--+
+
+nvim_lsp.lua_ls.setup({
+    cmd = { "lua-language-server" },
+    filetypes = { "lua" },
+    single_file_support = true,
+    autostart = false,
+
+    -- |> Fix diagnostics.
+    flags = lsp_flags,
+
+    -- |> Attach LSP keybindings & other crap.
+    on_attach = aum_general_on_attach,
+
+    -- |> Add completion (nvim-cmp, luasnip) and fold capabilities.
+    capabilities = aum_capabilities,
+
+    -- |> Activate custom handlers.
+    handlers = aum_handler_config,
+
+    settings = {
+        Lua = {
+            runtime = {
+                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                version = "LuaJIT",
+            },
+            diagnostics = {
+                -- NOTE: Diagnostics from this server cause a lot of message spam and lag. Not too important for Lua, either.
+                enable = false,
+                -- Get the language server to recognize the `vim` global
+                globals = { "vim" },
+                -- Adjust workspace diagnostics.
+                workspaceDelay = 50000,
+                workspaceEvent = "OnSave",
+                workspaceRate = 50,
+            },
+            workspace = {
+                -- Optionally make the server aware of Neovim runtime files.
+                -- NOTE: I suspect this causes lag.
+                -- library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+                ignoreDir = {
+                    "/plugin/",
+                    "/snippets/",
+                    "/UltiSnips/",
+                },
+                maxPreload = 1000,
+                preloadFileSize = 500,
+            },
+            window = {
+                progressBar = false,
+                statusBar = false,
+            },
+            telemetry = {
+                enable = false,
+            },
+        },
+    }
+})
+
+--======================================================--+
+-- === END - LSP -> Lua Language Server Setup - END === --|  --=>><⚡END⚡>]
+--======================================================--+
+--|-------------------------------------------------------|
 --===============================================================--+
 -- === START - LSP -> JavaScript/TypeScript LS Setup - START === --|  --=>><⚡START⚡>[
 --===============================================================--+
@@ -1625,7 +1941,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = ts_lsp_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
+    -- capabilities = aum_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1654,7 +1970,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
+    -- capabilities = aum_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1684,7 +2000,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
+    -- capabilities = aum_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1720,7 +2036,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
+    -- capabilities = aum_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1786,7 +2102,7 @@ nvim_lsp.bashls.setup({
 --     on_attach = aum_general_on_attach,
 
 --     |> Add nvim-cmp or snippet completion capabilities.
---     capabilities = completion_capabilities,
+--     capabilities = aum_capabilities,
 
 --     |> Activate custom handlers.
 --     handlers = aum_handler_config,
@@ -1798,9 +2114,9 @@ nvim_lsp.bashls.setup({
     -- cmd = { "tailwindcss-language-server", "--stdio" },
 
     -- filetypes = {
-        -- "html", "css", "postcss", "sass", "scss",
-        -- "javascript", "javascriptreact", "typescript", "typescriptreact",
-        -- "vue", "svelte"
+        -- -- "html", "css", "postcss", "sass", "scss",
+        -- -- "javascript", "javascriptreact", "typescript", "typescriptreact",
+        -- -- "vue", "svelte"
     -- },
 
     -- init_options = {
@@ -1848,7 +2164,7 @@ nvim_lsp.bashls.setup({
     -- on_attach = aum_general_on_attach,
 
     -- -- |> Add nvim-cmp or snippet completion capabilities.
-    -- capabilities = completion_capabilities,
+    -- capabilities = aum_capabilities,
 
     -- -- |> Activate custom handlers.
     -- handlers = aum_handler_config,
@@ -1863,37 +2179,7 @@ nvim_lsp.bashls.setup({
 -- === START - LSP -> Python Language Server - START === --|  --=>><⚡START⚡>[
 --=======================================================--+
 
--- Better than nothing. Occasinally laggy. Occasinally does not provide type info.
--- nvim_lsp.jedi_language_server.setup({
---     -- |> `Debounce` and `Incremental Sync` preferences.
---     flags = lsp_flags,
---
---     -- |> Attach LSP Keybindings.
---     on_attach = aum_general_on_attach,
---
---     -- |> Add nvim-cmp and snippet completion capabilities.
---     capabilities = completion_capabilities,
---
---     -- |> `Hover` and `Signature Help` borders.
---     handlers = aum_handler_config,
---
---     -- Help: lsp-config
---     cmd = { "jedi-language-server" },
---     filetypes = { "python" },
---     autostart = false,
---     single_file_support = true,
---
---     settings = {
---         jedi = {
---             markupKindPreferred = "markdown",
---             diagnostics = {
---                 enable = true
---             }
---         }
---     }
--- })
-
--- Pyright seems better than Jedi.
+-- NOTE: Pyright is way than Jedi-LSP.
 nvim_lsp.pyright.setup({
     -- |> Fix diagnostics.
     flags = lsp_flags,
@@ -1901,16 +2187,16 @@ nvim_lsp.pyright.setup({
     -- |> Attach LSP keybindings & other crap.
     on_attach = aum_general_on_attach,
 
-    -- |> Add nvim-cmp or snippet completion capabilities.
-    capabilities = completion_capabilities,
+    -- |> Add completion (nvim-cmp, luasnip) and fold capabilities.
+    capabilities = aum_capabilities,
 
     -- |> Activate custom handlers.
     handlers = aum_handler_config,
 
     cmd = { "pyright-langserver", "--stdio" },
     filetypes = { "python" },
-    autostart = false,
     single_file_support = true,
+    autostart = false,
 
     settings = {
         pyright = {
@@ -1927,6 +2213,31 @@ nvim_lsp.pyright.setup({
 
 --===================================================--+
 -- === END - LSP -> Python Language Server - END === --|  --=>><⚡END⚡>]
+--===================================================--+
+--|----------------------------------------------------|
+--=======================================================--+
+-- === START - LSP -> Markdown Language Server - START === --|  --=>><⚡START⚡>[
+--=======================================================--+
+
+nvim_lsp.marksman.setup({
+    single_file_support = true,
+    autostart = false,
+
+    -- |> Fix diagnostics.
+    flags = lsp_flags,
+
+    -- |> Attach LSP keybindings & other crap.
+    on_attach = aum_general_on_attach,
+
+    -- |> Add completion (nvim-cmp, luasnip) and fold capabilities.
+    capabilities = aum_capabilities,
+
+    -- |> Activate custom handlers.
+    handlers = aum_handler_config,
+})
+
+--===================================================--+
+-- === END - LSP -> Markdown Language Server - END === --|  --=>><⚡END⚡>]
 --===================================================--+
 --|---------------------------------------------------|
 --==================================================--+
@@ -1963,6 +2274,7 @@ require("trouble").setup({
     fold_closed = "",  -- Icon used for closed folds.
     group = true,  -- Group results by file.
     padding = true,  -- Add an extra new line on top of the list.
+
     action_keys = {  -- Key mappings for actions in the trouble list.
         -- Map to {} to remove a mapping, for example:
         -- Close = {},
@@ -1984,12 +2296,14 @@ require("trouble").setup({
         previous = "t",  -- Previous item.  (STATE: Good)
         next = "h"  -- Next item.  (STATE: Good)
     },
+
     indent_lines = true,  -- Add an indent guide below the fold icons.
     auto_open = false,  -- Automatically open the list when you have diagnostics.
     auto_close = false,  -- Automatically close the list when you have no diagnostics.
     auto_preview = true,  -- Automatically preview the location of the diagnostic. <esc> to close preview and go back to last window.
     auto_fold = false,  -- Automatically fold a file trouble list at creation.
     auto_jump = {"lsp_definitions"},  -- For the given modes, automatically jump if there is only a single result.
+
     signs = {
         -- Icons / Text used for a diagnostic.
         error = "",
@@ -2073,7 +2387,6 @@ require("FTerm").setup({  -- STATE: Good (Though in Neovide the colors are wrong
 
 -- STATE: Good for c++. (Run with ':Format')
 -- NOTE: Not sure how required this is, as lsp has format option, too.
--- Not yet configured for other languages than `cpp`.
 
 -- Utilities for creating configurations
 local format_util = require("formatter.util")
@@ -2131,7 +2444,7 @@ require("telescope").setup({
         sorting_strategy = "ascending",  -- Default 'descending'
         selection_strategy = "reset",
         scroll_strategy = "cycle",
-        layout_strategy = "horizontal",
+        layout_strategy = "vertical",
         layout_config = {
             bottom_pane = {
                 height = 25,
@@ -2156,10 +2469,10 @@ require("telescope").setup({
                 width = 0.84
             },
             vertical = {
-                height = 0.8,
-                preview_cutoff = 80,
                 prompt_position = "top",
-                width = 0.8
+                height = 0.88,
+                preview_cutoff = 8,
+                width = 0.82
             }
         },
 
@@ -2202,6 +2515,7 @@ require("telescope").setup({
         },
         ["ui-select"] = {
             require("telescope.themes").get_dropdown({
+                prompt_position = "top",
                 width = 0.92,
                 height = 0.8,
             })
@@ -2228,15 +2542,15 @@ require("dressing").setup({
         prompt_align = "left",
 
         -- When true, <Esc> will close the modal
-        insert_only = true,
+        insert_only = false,
 
         -- When true, input will start in insert mode.
-        start_in_insert = true,
+        start_in_insert = false,
 
         -- These are passed to nvim_open_win
         anchor = "SW",
         border = "rounded",
-        -- 'editor' and 'win' will default to being centered
+        -- -- 'editor' and 'win' will default to being centered
         relative = "cursor",
 
         -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
@@ -2377,8 +2691,8 @@ require("dressing").setup({
                 return {
                     backend = 'telescope',
                     telescope = {
-                        width = 0.92,
-                        height = 0.8,
+                        width = 0.8,
+                        height = 0.76,
                     }
                 }
             else
@@ -2484,15 +2798,15 @@ require("heirline/aumneline")
 -- === |> - Aumneline. (END)
 
 -- === |> - Mini addons. (START)
--- |> IndentScope (Almost perfect)
-require("mini.indentscope").setup()
--- |> CursorWord (Practically perfect)
-require("mini.cursorword").setup({
-    delay = 350
-})
--- |> AroundIn (Haven't used a lot)
+-- NOTE: I don't like `mini.pairs`.
+
+-- |> mini-bufremove            ( Testing. )
+require("mini.bufremove").setup()
+
+-- |> AroundIn                  (Haven't used a lot)
 require("mini.ai").setup()
--- |> Surround Operations (Very good and nice and great.)
+
+-- |> Surround Operations       ( Good. )
 require("mini.surround").setup({
     -- Add custom surroundings to be used on top of builtin ones. For more
     -- information with examples, see `:h MiniSurround.config`.
@@ -2503,62 +2817,67 @@ require("mini.surround").setup({
 
     -- Module mappings. Use `''` (empty string) to disable one.
     mappings = {
-        add = "gsa",  -- Add surrounding in Normal and Visual modes
-        delete = "gsd",  -- Delete surrounding
-        find = "gsn",  -- Find surrounding (to the right)
-        find_left = "gso",  -- Find surrounding (to the left)
-        highlight = "gsh",  -- Highlight surrounding
-        replace = "gsr",  -- Replace surrounding
-        update_n_lines = "gsl",  -- Update `n_lines`
+        add = "gsa",                -- Add surrounding in Normal and Visual mode.
+        delete = "gsd",             -- Delete surrounding.
+        find = "gsn",               -- Find surrounding (to the right).
+        find_left = "gso",          -- Find surrounding (to the left).
+        highlight = "gsh",          -- Highlight surrounding.
+        replace = "gsr",            -- Replace surrounding.
+        update_n_lines = "gsl",     -- Update `n_lines`.
 
-        suffix_next = "b",  -- Suffix to search with 'next' method
-        suffix_last = "B",  -- Suffix to search with 'prev' method
+        suffix_next = "b",          -- Suffix to search with `next` method.
+        suffix_last = "B",          -- Suffix to search with `prev` method.
     },
 
-    -- Number of lines within which surrounding is searched
+    -- Number of lines within which surrounding is searched.
     n_lines = 12,
 
     -- How to search for surrounding (first inside current line, then inside
-    -- neighborhood). One of 'cover', 'cover_or_next', 'cover_or_prev',
-    -- 'cover_or_nearest', 'next', 'prev', 'nearest'. For more details,
+    -- neighborhood). One of `cover`, `cover_or_next`, `cover_or_prev`,
+    -- `cover_or_nearest`, `next`, `prev`, `nearest`. For more details,
     -- see `:h MiniSurround.config`.
     search_method = "cover_or_next",
 })
+
+-- |> CursorWord                ( Perfect, if it didn't lag. )
+-- require("mini.cursorword").setup({
+--     delay = 375
+-- })
+
+-- |> IndentScope               ( Good, except that it might cause lag. )
+-- require("mini.indentscope").setup()
+
 -- === |> - Mini addons. (END)
 
 -- START |> Treesitter context
 -- require("treesitter-context").setup()  -- Disabled because not critical, and I fear it causes lag.
 -- END |> Treesitter context
 
--- === |> - hlargs. (START)
---
--- NOTE: Temporarily disabled because suspected of being out of date.
---
--- require("hlargs").setup({
---     color = '#EF9062',
---     paint_arg_declarations = true,
---     paint_arg_usages = true,
---
---     paint_catch_blocks = {
---         declarations = false,
---         usages = false
---     },
---
---     hl_priority = 10000,
---
---     excluded_argnames = {
---         declarations = {},
---         usages = {
---             python = { 'self', 'cls' },
---             lua = { 'self' }
---         }
---     },
--- })
--- === |> - hlargs. (END)
+-- === |> - HL-Args. (START)
+require("hlargs").setup({
+    color = '#EF9062',
+    paint_arg_declarations = true,
+    paint_arg_usages = true,
+
+    paint_catch_blocks = {
+        declarations = false,
+        usages = false
+    },
+
+    hl_priority = 10000,
+
+    excluded_argnames = {
+        declarations = {},
+        usages = {
+            python = { 'self', 'cls' },
+            lua = { 'self' }
+        }
+    },
+})
+-- === |> - HL-Args. (END)
 
 -- === |> - Colorizer. (START)
 require("colorizer").setup({
-
     filetypes = {
         "lua", "css",
     },
@@ -2568,7 +2887,7 @@ require("colorizer").setup({
         RRGGBBAA = true, -- #RRGGBBAA hex codes
         AARRGGBB = false, -- 0xAARRGGBB hex codes
         RGB = false, -- #RGB hex codes
-        names = false, -- "Name" codes like Blue or blue
+        names = false, -- `Name` codes like Blue or blue
         rgb_fn = false, -- CSS rgb() and rgba() functions
         hsl_fn = false, -- CSS hsl() and hsla() functions
         css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
@@ -2587,14 +2906,6 @@ require("colorizer").setup({
     buftypes = {},
 })
 -- === |> - Colorizer. (END)
-
--- === |> - Live-Command. (START)
-require("live-command").setup({
-    commands = {
-        Norm = { cmd = "norm" },
-    },
-})
--- === |> - Live-Command. (END)
 
 -- === |> - Noice.nvim (START)
 if not g.neovide then
@@ -2691,7 +3002,7 @@ if not g.neovide then
         },
 
         lsp = {
-            progress = {  -- This is nice.
+            progress = {  -- This is nice when it only shows the startup progress. Workspace diagnosis messages can get really spammy.
                 enabled = true,
                 -- Lsp Progress is formatted using the builtins for lsp_progress. See `config.format.builtin`.
                 -- See the section on formatting for more details on how to customize.
@@ -2700,6 +3011,7 @@ if not g.neovide then
                 -- @type NoiceFormat|string
                 format_done = "lsp_progress_done",
                 throttle = 1000 / 30,  -- frequency to update lsp progress message
+                -- throttle = 2000 / 30,  -- frequency to update lsp progress message
                 view = "mini",
             },
 
@@ -2711,7 +3023,7 @@ if not g.neovide then
                 ["cmp.entry.get_documentation"] = true,
             },
 
-            -- What does this do exactly? (Testing. TODO/HERENOW)
+            -- What does this do exactly?
             hover = {
                 enabled = true,
                 view = "hover", -- When nil, use defaults from documentation.
@@ -2744,8 +3056,8 @@ if not g.neovide then
                     size = {
                         width = "auto",
                         height = "auto",
-                        max_height = 16,            -- Still adjusting this.
-                        max_width = 100,            -- Still adjusting this.
+                        max_height = 16,
+                        max_width = 100,
                     },
                     
                     border = {
@@ -2762,9 +3074,15 @@ if not g.neovide then
             },
 
             message = {
-                -- Messages shown by lsp servers.
+                -- Messages shown by LSP servers.
                 enabled = true,
                 view = "mini",
+                filter = {
+                    any = {
+                        { error = true },
+                        { warning = true },
+                    },
+                }
             },
 
             -- Defaults for hover and signature help.
@@ -2850,8 +3168,8 @@ if not g.neovide then
                 size = {
                     width = "auto",
                     height = "auto",
-                    max_height = 42,            -- Still adjusting this.
-                    max_width = 100,            -- Still adjusting this.
+                    max_height = 42,
+                    max_width = 100,
                 },
                 
                 border = {
@@ -2877,29 +3195,13 @@ if not g.neovide then
 end
 -- === |> - Noice.nvim (END)
 
--- TODO: Move "Snipper Converter" section to a file somwhere else. Hide this.
--- === |> - Snipper Converter (START)
---
--- NOTE: To convert snippets, run the command: `:ConvertSnippets`.
--- NOTE: A good chunk of the converted snippets did not work, so this is kind on useless.
---       Manually converting UltiSnip syntax to the TextMate or SnipMate like syntax is fast enough.
--- 
--- require("snippet_converter").setup({
---     templates = {{
---         name = "aumsnips",  -- Optionally give your template a name to refer to it in the `ConvertSnippets` command.
---         sources = {
---             ultisnips = {
---                 vim.fn.stdpath("config") .. "/UltiSnips",
---             },
---         },
---         output = {
---             vscode_luasnip = {  -- This works for LuaSnip.
---                 vim.fn.stdpath("config") .. "/luasnip_snippets",
---             },
---         }
---     }}
--- })
--- === |> - Snipper Converter (END)
+-- === |> - Spider.nvim (START)
+-- NOTE: Keybinds in "good-binds.lua"
+require("spider").setup({
+    -- On `false`, the skip-bugs are way worse. It's practically unuseable.
+	skipInsignificantPunctuation = true
+})
+-- === |> - Spider.nvim (END)
 
 -- Jukit:
 g.jukit_mappings = false
@@ -2928,6 +3230,11 @@ require("keybindings/good-binds")
 -- === START - 10. Custom Commands - START === --|  --=>><⚡START⚡>[
 --=============================================--+
 
+-- NOTE: Creating custom commands in `legendary.nvim`.
+-- Legendary setup is called when requiring `good-binds`.
+
+-- TODO: Move these to Lua and `legendary.nvim`.
+
 vim.cmd([[command! -nargs=0 AumConfig edit /home/aum/.config/nvim/init.lua]])
 vim.cmd([[command! -nargs=0 AumBinds edit /home/aum/.config/nvim/lua/keybindings/good-binds.lua]])
 vim.cmd([[command! -nargs=0 AumTheme edit /home/aum/.config/nvim/colors/aumnechroma.lua]])
@@ -2939,22 +3246,72 @@ vim.cmd([[command! -nargs=0 LuaSnipsEditAll edit /home/aum/.config/nvim/snippets
 vim.cmd([[command! -nargs=0 LuaSnipsEditRust edit /home/aum/.config/nvim/snippets/rust.snippets]])
 
 -- Autogroups and Autocommands:
+-- TODO: Could move Autocommands to a file of their own. ( Only like 100 lines atm though. )
 
--- |> Indent fixing maybe, for C and CPP.
+--===============================================--+
+-- === START - Markdown Autocommands - START === --|
+--===============================================--+
+
+-- |> Enable `Treesitter` for `Markdown` files.         ( If this causes noticeable lag, will disable. )
+local ts_markdown_aumgroup = vim.api.nvim_create_augroup("MyMarkdownTreesitter", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown" },
+    command = "TSEnable highlight markdown",
+    group = ts_markdown_aumgroup
+})
+
+-- |> Enable (Or disable) full conceal in Markdown, LaTeX, and Org files.
+local writer_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "tex", "org" },
+    command = "lua vim.opt.conceallevel = 0",  -- Set to 0 to always show conceal characters. ( 3 to always conceal. )
+    group = writer_aumgroup
+})
+
+-- |> Enable/Disable hard line breaks in Markdown, LaTeX, and Org files.
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "tex", "org" },
+    command = "lua vim.opt.textwidth = 80",
+    group = writer_aumgroup
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "tex", "org" },
+    command = "set indentexpr=",
+    group = writer_aumgroup
+})
+
+--===========================================--+
+-- === END - Markdown Autocommands - END === --|
+--===========================================--+
+--|--------------------------------------------|
+--===========================================--+
+-- === START - Misc Autocommands - START === --|
+--===========================================--+
+
+-- |> Enable extra opts for some filetypes.
+local extra_opts_aumgroup = vim.api.nvim_create_augroup("MyExtraOpts", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "Rust" },
+    command = "EnableExtraOpts",
+    group = extra_opts_aumgroup
+})
+
+-- |> Indent fixing for C and CPP, maybe.
 local cindent_aumgroup = vim.api.nvim_create_augroup("MyCindent", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"c", "cpp", "h", "hpp"},
+    pattern = { "c", "cpp", "h", "hpp" },
     command = "set cindent",
     group = cindent_aumgroup
 })
 
--- |> Disable `mini.indentscope` in help files.
-local indentscope_aumgroup = vim.api.nvim_create_augroup("MyIndentScope", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"help"},
-    command = "lua vim.b.miniindentscope_disable = true",
-    group = indentscope_aumgroup
-})
+-- |> Disable `mini.indentscope` in help files. ( NOTE: Not using `mini.indentscope` anymore. )
+-- local indentscope_aumgroup = vim.api.nvim_create_augroup("MyIndentScope", { clear = true })
+-- vim.api.nvim_create_autocmd("FileType", {
+--     pattern = {"help"},
+--     command = "lua vim.b.miniindentscope_disable = true",
+--     group = indentscope_aumgroup
+-- })
 
 -- |> Fix conceal in help files.
 local help_conceal_aumgroup = vim.api.nvim_create_augroup("MyHelpConceal", { clear = true })
@@ -2969,20 +3326,6 @@ vim.api.nvim_create_autocmd("FileType", {
     group = help_conceal_aumgroup
 })
 
--- |> Enable (Or disable) full conceal in Markdown, LaTeX, and Org files.
-local writer_aumgroup = vim.api.nvim_create_augroup("MyMarkdownConceal", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "markdown", "tex", "org" },
-    command = "lua vim.opt.conceallevel = 3",  -- Set to 0 to always show conceal characters. (3 for always conceal)
-    group = writer_aumgroup
-})
--- |> Enable/Disable hard line breaks in Markdown, LaTeX, and Org files.
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "markdown", "tex", "org" },
-    command = "lua vim.opt.textwidth = 0",
-    group = writer_aumgroup
-})
-
 -- |> Highlight yanking. (Would be really nice, but the rendering bugs out and I can't deal with it.)
 -- local yank_hl_aumgroup = vim.api.nvim_create_augroup("MyYankHighlight", { clear = true })
 -- vim.api.nvim_create_autocmd("TextYankPost", {
@@ -2990,18 +3333,18 @@ vim.api.nvim_create_autocmd("FileType", {
 --     group = yank_hl_aumgroup
 -- })
 
--- |> Search Highlight AutoCommands
-local search_hl_aumgroup = vim.api.nvim_create_augroup("MySearchHL", { clear = true })
-vim.api.nvim_create_autocmd("CmdlineEnter", {
-    pattern = {'/', '\\?'},
-    command = "set hlsearch",
-    group = search_hl_aumgroup
-})
-vim.api.nvim_create_autocmd("CmdlineLeave", {
-    pattern = {'/', '\\?'},
-    command = "set nohlsearch",
-    group = search_hl_aumgroup
-})
+-- |> Search Highlight AutoCommands (Good, but can potentially cause lag. (The highlight, not so much the autocmd itself.))
+-- local search_hl_aumgroup = vim.api.nvim_create_augroup("MySearchHL", { clear = true })
+-- vim.api.nvim_create_autocmd("CmdlineEnter", {
+--     pattern = {'/', '\\?'},
+--     command = "set hlsearch",
+--     group = search_hl_aumgroup
+-- })
+-- vim.api.nvim_create_autocmd("CmdlineLeave", {
+--     pattern = {'/', '\\?'},
+--     command = "set nohlsearch",
+--     group = search_hl_aumgroup
+-- })
 
 -- |> Formatoptions. (Just disable automatic comment leader on newlines.)
 local formatopt_aumgroup = vim.api.nvim_create_augroup("MyFormatOpts", { clear = true })
@@ -3063,9 +3406,8 @@ augroup END
 vim.api.nvim_cmd({ cmd = "colorscheme", args = { "aumnechroma-theme" }}, {})
 
 -- |> Set Neovide Font:
--- NOTE: Awkwardly, Neovide is generally less performant than Kitty.
-vim.o.guifont = "JetBrainsMono Nerd Font:h20:b:#e-subpixelantialias"
-opt.linespace = 2
+vim.o.guifont = "JetBrainsMono Nerd Font:h18:b:#e-antialias"
+opt.linespace = 4
 vim.g.neovide_scale_factor = 1
 
 --========================================--+

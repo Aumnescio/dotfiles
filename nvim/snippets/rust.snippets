@@ -107,8 +107,15 @@ snippet match "Snippet for: 'match' keyword."
 		_ => $0,
 	}
 
+snippet match_comparison "Snippet for: 'match x.cmp(y)'."
+	match $1.cmp($2) {
+    	Ordering::Less => {$3}
+    	Ordering::Greater => {$4}
+    	Ordering::Equal => {$0}
+	}
+
 snippet loop "Snippet for: 'loop' keyword."
-	loop '$1 {
+	'$1 loop {
 		$0
 	}
 
@@ -153,7 +160,6 @@ snippet var_float "Snippet for: f64 variable."
 snippet var_float_mut "Snippet for: Mutable f64 variable."
 	let mut $1: f64 = $0;
 
-# TODO: Name this "var_string".
 snippet var_string "String variable."
 	let $1: String = String::from("$0");
 
@@ -259,7 +265,7 @@ snippet union "Snippet for: 'union' keyword."
 
 snippet unsafe "Snippet for: 'unsafe' keyword."
 	unsafe {
-	$0
+		$0
 	}
 
 snippet use "Snippet for: 'use' keyword."
