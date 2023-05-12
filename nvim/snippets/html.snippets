@@ -1,0 +1,273 @@
+snippet !doctype_html "!DOCTYPE html declaration."
+	<!DOCTYPE html>
+
+snippet !boilerplate_core "Core HTML Boilerplate."
+	<!DOCTYPE html>
+	<html lang="en">
+	<!-- --------------- -->
+	<!-- START => \`HEAD\` -->
+	<!-- --------------- -->
+	<head>
+		<title> ${1:Title} </title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<meta name="description" content="<insert-description-here>" />
+		<link rel="stylesheet" href="/src/style.css">
+	</head>
+	<!-- ------------- -->
+	<!-- END => \`HEAD\` -->
+	<!-- ------------- -->
+	<!-- ==-===-===-== -->
+	<!-- --------------- -->
+	<!-- START => \`BODY\` -->
+	<!-- --------------- -->
+	<body>
+		<!-- ---------------------------- -->
+		<!-- START => \`Core Body Content\` -->
+		<!-- ---------------------------- -->
+
+		<div class="app"></div>$0
+
+		<!-- -------------------------- -->
+		<!-- END => \`Core Body Content\` -->
+		<!-- -------------------------- -->
+		<!-- ===-===-===-=-===-===-=== -->
+		<!-- ------------------------- -->
+		<!-- START => \`Script Section\` -->
+		<!-- ------------------------- -->
+
+		<script type="module" src="/src/main.ts"></script>
+
+		<!-- ----------------------- -->
+		<!-- END => \`Script Section\` -->
+		<!-- ----------------------- -->
+	</body>
+	<!-- ------------- -->
+	<!-- END => \`BODY\` -->
+	<!-- ------------- -->
+	</html>
+	<!-- ----------- -->
+	<!-- End of File -->
+	<!-- ----------- -->
+
+snippet lorem_ipsum "Lorem ipsum paragraph for testing."
+	Voluptates consequuntur adipisci voluptas optio laudantium occaecati sed.
+	Distinctiovoluptas debitis enim.
+	Veniam quae quasi molestiae explicabo iure fugit fugit sunt.$0
+
+snippet html "HTML Tag: `html`"
+	<html>
+		${1:HTML Contents}
+	</html>$0
+
+snippet head "HTML Tag: `head`"
+	<head>
+		${1:Head Contents}
+	</head>$0
+
+snippet title "HTML Tag: `title`"
+	<title> ${0:Title} </title>
+
+snippet meta_charset "HTML Tag: `meta` (Charset UTF-8)"
+	<meta charset="UTF-8" />$0
+
+snippet meta_viewport "HTML Tag: `meta` (Viewport Content `Width` and `Scale`)"
+	<meta name="viewport" content="width=device-width,initial-scale=1" />$0
+
+snippet meta_description "HTML Tag: `meta` (Description)"
+	<meta name="description" content="$0" />
+
+snippet body "HTML Tag: `body`"
+	<body>
+		${1:Body Contents}
+	</body>$0
+
+snippet div_class "HTML Tag: `div`"
+	<div class="$1">$2</div>
+
+snippet horizontal_line "HTML Tag: `hr` (Horizontal Line)"
+	<hr>$0
+
+snippet break_line "HTML Tag: `br` (Break / NewLine)"
+	<br>$0
+
+snippet paragraph_tags "HTML Tag: `p` (Paragraph)"
+	<p>$1</p>$0
+
+snippet quote "HTML Tag: `q` (Quote)"
+	<q>$1</q>$0
+
+snippet blockquote "HTML Tag: `blockquote`"
+	<blockquote>
+		${1:Blockquote Content}
+	</blockquote>$0
+
+snippet heading_1 "HTML Tag: `h1` (Heading 1)"
+	<h1>$1</h1>$0
+
+snippet heading_2 "HTML Tag: `h2` (Heading 2)"
+	<h2>$1</h2>$0
+
+snippet heading_3 "HTML Tag: `h3` (Heading 3)"
+	<h3>$1</h3>$0
+
+snippet heading_4 "HTML Tag: `h4` (Heading 4)"
+	<h4>$1</h4>$0
+
+snippet heading_5 "HTML Tag: `h5` (Heading 5)"
+	<h5>$1</h5>$0
+
+snippet heading_6 "HTML Tag: `h6` (Heading 6)"
+	<h6>$1</h6>$0
+
+snippet style "HTML Attribute: `style` (Inline CSS)"
+	style="${1:color: black};"$0
+
+snippet bold "HTML Tag: `b` (Bold)"
+	<b>${1:text}</b>$0
+
+snippet italic "HTML Tag: `i` (Italic)"
+	<i>${1:text}</i>$0
+
+snippet underline "HTML Tag: `u` (Underline)"
+	<u>${1:text}</u>$0
+
+snippet strong "HTML Tag: `strong`"
+	<strong>${1:text}</strong>$0
+
+snippet emphasis "HTML Tag: `emphasis`"
+	<emphasis>${1:text}</emphasis>$0
+
+snippet subscript "HTML Tag: `sub` (Subscript)"
+	<sub>${1:text}</sub>$0
+
+snippet superscript "HTML Tag: `sup` (Superscript)"
+	<sup>${1:text}</sup>$0
+
+snippet ordered_list "HTML Tag: `ol` (Ordered List)"
+	<ol>
+		<li> ${1:List Item} </li>$2
+	</ol>$0
+
+snippet unordered_list "HTML Tag: `ul` (Unordered List)"
+	<ul>
+		<li> ${1:List Item} </li>$2
+	</ul>$0
+
+snippet list_item "HTML Tag: `li` (List Item)"
+	<li> ${1:List Item} </li>$0
+
+snippet definition_list "HTML Tag: `dl` (Definition List)"
+	<dl>
+		<dt> ${1:Term} </dt>
+		<dd> ${2:Description} </dd>
+	</dl>$0
+
+snippet definition_term "HTML Tag: `dt` (Definition Term)"
+	<dt> ${1:Token to Define} </dt>$0
+
+snippet definition_description "HTML Tag: `dd` (Definition Description)"
+	<dd> ${1:Definition} </dd>$0
+
+snippet table "HTML Tag: `table`"
+	<table>
+		<caption> ${1:Title} </caption>
+		${2:Table Contents}
+	</table>$0
+
+snippet table_row "HTML Tag: `tr` (Table Row)"
+	<tr>
+		${1:Cells}
+	</tr>$0
+
+snippet table_data_cell "HTML Tag: `td` (Table Data Cell)"
+	<td> ${1:Cell Content} </td>$0
+
+snippet table_heading "HTML Tag: `th` (Table Cell Heading)"
+	<th> ${1:Cell Content} </th>$0
+
+snippet colspan_attr "HTML Attribute: `colspan` (For Tables)"
+	colspan="${1:Integer Value}"$0
+
+snippet rowspan_attr "HTML Attribute: `rowspan` (For Tables)"
+	rowspan="${1:Integer Value}"$0
+
+snippet form "HTML Tag: `form`"
+	<form action="${1:URL}" method="${2:post | get}">
+	</form>$0
+
+snippet input_field  "HTML Tag: `input` (Type: Text)"
+	<input type="text" name="${1:name}" size="${2:Integer Value}" maxlength="${3:Integer Value}">$0
+
+snippet input_button  "HTML Tag: `input` (Type: Submit)"
+	<input type="submit" value="${1:Button Text}">$0
+
+snippet input_fileselect_button  "HTML Tag: `input` (Type: File Selection Button)"
+	<input type="file" name="${1:name}">$0
+
+snippet input_radio_button "HTML Tag: `input` (Type: Radio Button)"
+	<input type="radio" name="${1:name}" value="${2:value}">${3:Display Text}$0
+
+snippet input_password "HTML Tag: `input` (Type: Password)"
+	<input type="password" name="${1:name}" size="${2:Integer Value}" maxlength="${3:Integer Value}">$0
+
+snippet textarea "HTML Tag: `textarea`"
+	<textarea rows="${1:Integer Value}" cols="${2:Integer Value}">
+		${3:Display Text}
+	</textarea>$0
+
+snippet select_option_button "HTML Tag: `select`"
+	<select>
+		<option value="${1:value}">$1</option>$0
+	</select>
+
+snippet option "HTML Tag: `option`"
+	<option value="${1:value}">$1</option>$0
+
+snippet fieldset "HTML Tag: `fieldset`"
+	<fieldset>
+		<legend>${1:Title}</legend>
+		${2:Field Title}:<br>
+		${3:Input Field}<br>
+	</fieldset>
+
+snippet a_href_link "HTML Tag: `a` (href/url/link)"
+	<a href="${1:Relative or Absolute URL}" target="_blank"> ${2:Display Text / Description} </a>
+
+snippet image "HTML Tag: `img` (Image)"
+	<img src="${1:Path to Image}" alt="${2:Textual Description of Image}" width="${3:Integer Value}" height="${4:Integer Value}">$0
+
+snippet figure "HTML Tag: `figure`"
+	<figure>
+		${2:Image Link}
+		<figcaption>${1:Figure Description}</figcaption>
+	</figure>$0
+
+snippet video "HTML: Tag: `video`"
+	<video
+		controls
+		src="${1:URL to Video}"
+		poster="${2:URL to Thumbnail}"
+		width="${3:Integer Value}">
+	</video>$0
+
+snippet canvas "HTML Tag: `canvas`"
+	<canvas id="${1:canvas}" width="${2:Integer Value} height="${3:Integer Value}">
+	</canvas>$0
+
+snippet svg "HTML Tag: `svg`"
+	<svg width="${1:Integer Value}" height="${2:Integer Value}">
+		${0:content}
+	</svg>
+
+snippet link_stylesheet "HTML Tag: `link` (CSS Stylesheet Link)."
+	<link rel="stylesheet" href="${1:./app/css/}${0:style.css}">
+
+snippet link_icon "HTML Tag: `link` (Icon Link [`image/svg+xml`])."
+	<link rel="icon" type="image/svg+xml" href="${1:./resources/icon.svg}" />
+
+snippet script "HTML Tag: `script`"
+	<script src="/src/${0:main.ts}}"></script>
+
+snippet script_module "HTML Tag: `script` (Type: Module)"
+	<script type="module" src="/src/${0:main.ts}"></script>

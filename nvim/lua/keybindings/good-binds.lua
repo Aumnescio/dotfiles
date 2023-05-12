@@ -2,19 +2,39 @@
 -- === START - Mappings/Keymaps/Keymappings/Keybindings/Remaps/Shortcuts/Hotkeys/Binds - START === --
 --=================================================================================================--
 
+-- Help Notes:
+--  - Mapping Modes:
+--      - Normal                => `n`
+--      - Insert                => `i`
+--      - Visual                => `x`
+--      - Select                => `s`
+--      - Visual AND Select     => `v`              ( Not a good default for Visual mode. Use `x` (Visual Mode Only) instead. )
+--      - Operator-pending      => `o`
+--      - Command-line          => `c`
+--      - Terminal              => `t`
+--  - For builtin Vim help:     `:help map-modes`
+
 -- Aliases.
-local bindkey = vim.keymap.set
+local bindkey = vim.keymap.set                      -- Newer and better version of `vim.api.nvim_set_keymap()`.
 local opts = { noremap = true, silent = true }
+-- NOTE: Setting `noremap = false` here would cause some keybindings to freeze/crash Neovim.
 
 -- Key:         \ ( Backslash )
 -- Action:      Leader Key.
 vim.g.mapleader = "\\"
 
+-- TODO: Omnicompletion/Omnifunc things.    ( Either disable or config heavily. )
+--  - Disabling for now.
+-- bindkey("i",    "<C-m>",    "<C-n>",    opts)
+-- bindkey("i",    "<C-S-m>",  "<C-p>",    opts)
+
 --========================================--
 -- === START - Marks and tags - START === --
 --========================================--
 
--- => STATE: No idea.
+-- => STATE: No idea. WIP.
+
+-- TODO: Learn how to actually use marks properly.
 
 -- Key:         Shift-m
 -- Action:      Create a mark?
@@ -57,7 +77,9 @@ bindkey("n",    "<Leader><Leader><Leader>`marks", ":marks<CR>",   opts)
 bindkey("n",    "<Leader><Leader><Leader>`jumps", ":jumps<CR>",   opts)
 
 -- Key:         Ctrl-]
--- Action:      Jump to tag?
+-- Action:      Jump to tag.
+-- NOTE:        This probably works and is okay.
+-- TODO:        Move to Legendary.
 bindkey("n",    "<C-]>",     "<C-]>",        opts)
 
 -- Key:         Ctrl-Shift-T
@@ -75,37 +97,52 @@ bindkey("n",    "<C-S-t>",   "<C-S-t>",      opts)
 -- => STATE: Good
 
 -- Key:         Esc
+-- Action:      Cancel | Escape | Return to `Normal Mode`.
+-- TODO:        Move to Legendary.
 bindkey("i",    "<Esc>",    "<Esc>",    opts)
 
 -- Key:         Ctrl-k
+-- Action:      Execute a normal mode command from insert mode. (<C-o>)
+-- TODO:        Move to Legendary.
 bindkey("i",    "<C-k>",    "<C-o>",    opts)
 
 -- Key:         w
+-- Action:      Enter `Insert Mode` behind cursor.
+-- TODO:        Move to Legendary.
 bindkey("n",    "w",        "i",        opts)
 bindkey("o",    "w",        "i",        opts)
 
 -- Key:         a
+-- Action:      Enter `Insert Mode` after cursor. ( Append )
+-- TODO:        Move to Legendary.
 bindkey("n",    "a",        "a",        opts)
 bindkey("o",    "a",        "a",        opts)
 
 -- Key:         Shift-w
+-- Action:      Enter `Insert Mode` at the `Beginning of Line`.
+-- TODO:        Move to Legendary.
 bindkey("n",    "<S-w>",    "<S-i>",    opts)
-bindkey("v",    "<S-w>",    ":normal W",  { silent = false })
+bindkey("x",    "<S-w>",    ":normal W",  { silent = false })
 
 -- Key:         Shift-a
+-- Action:      Enter `Insert Mode` at the `End of Line`.
+-- TODO:        Move to Legendary.
 bindkey("n",    "<S-a>",    "<S-a>",    opts)
-bindkey("v",    "<S-a>",    ":normal A",  { silent = false })
+bindkey("x",    "<S-a>",    ":normal A",  { silent = false })
 
 -- Key:         ie
 -- Action:      Enter insert mode at end of current word.
+-- TODO:        Move to Legendary.
 bindkey("n",    "ie",       "ea",       opts)
 
 -- Key:         ih
--- Action:      Enter insert mode on line below.
+-- Action:      Enter insert mode on the line below cursor.
+-- TODO:        Move to Legendary.
 bindkey({ "n", "o" },    "ih",       "o",        opts)
 
 -- Key:         it
--- Action:      Enter insert mode on line above.
+-- Action:      Enter insert mode on the line above cursor.
+-- TODO:        Move to Legendary.
 bindkey({ "n", "o" },    "it",       "<S-o>",    opts)
 
 --=================================--
@@ -120,60 +157,83 @@ bindkey({ "n", "o" },    "it",       "<S-o>",    opts)
 -- |> NOTE: "noremap = false" in Blackhole mappings leads to instant Crash/Freeze when pressing 'x' or 'd'.
 
 -- Key:         s
+-- Action:      Delete operator.        ( Into `Blackhole Register`. )
+-- TODO:        Move to Legendary.
 bindkey("n",    "s",        '"_d',          opts)
-bindkey("v",    "s",        '"_d',          opts)
+bindkey("x",    "s",        '"_d',          opts)
 bindkey("o",    "s",        '"_d',          opts)
 
 -- Key:         ss / sl
+-- Action:      Delete current line.    ( Into `Blackhole Register`. )
+-- TODO:        Move to Legendary.
 bindkey("n",    "ss",       '"_dd0',        opts)
 bindkey("n",    "sl",       '"_dd0',        opts)
 
 -- Key:         Shift-s
+-- Action:      Delete to `End of Line`.
+-- TODO:        Move to Legendary.
 bindkey("n",    "<S-s>",    '"_<S-d>',      opts)
 
 -- Key:         fj
+-- Action:      Delete character under cursor.
+-- TODO:        Move to Legendary.
 bindkey("n",    "fj",       '"_x',          opts)
 bindkey("o",    "fj",       '"_x',          opts)
 
--- Key:         Ctrl-h         ( NOTE: This is same as Ctrl - <BS> )
--- bindkey("i",    "<C-h>",    "<C-w>",            opts,    "Deleting",    "del_prew_word_insert_one",   "Delete word before the cursor. (Insert)")
+-- Key:         Ctrl-h      ( Insert Mode )
+-- Action:      Free key, probably.
 
 -- Key:         <BS>  ( Backspace )
-bindkey("n",    "<BS>",     "i<C-h><Esc><Right>",  opts)
-bindkey("i",    "<BS>",     "<C-h>",               opts)
-bindkey("v",    "<BS>",     '"_d',                 opts)
+-- Action:      Delete character behind cursor. | Delete selection.
+-- TODO:        Move to Legendary.
+bindkey("n",    "<BS>",     "i<C-h><Esc><Right>",   opts)
+bindkey("i",    "<BS>",     "<C-h>",                opts)
+bindkey("x",    "<BS>",     '"_d',                  opts)
 
 -- Key:         Ctrl - <BS>  ( Backspace )
-bindkey("i",    "<C-BS>",   "<C-w>",               opts)
--- bindkey("n", "<C-BS>", '"_dd0')  -- This does not work, because of it being linked to Ctrl-h. (TODO: Make it work, because can do so in Kitty now.)
--- bindkey("v", "<C-BS>", '"_d')    -- This does not work, because of it being linked to Ctrl-h. (TODO: Make it work, because can do so in Kitty now.)
+-- Action:      Delete word behind cursor. | Delete line under cursor. | Delete selection.
+-- TODO:        Move to Legendary.
+bindkey("i",    "<C-BS>",   "<C-w>",                opts)
+bindkey("n",    "<C-BS>",   '"_dd0',                opts)
+bindkey("x",    "<C-BS>",   '"_d',                  opts)
 
 -- Key:         Shift-i
 -- Action:      Join lines with spaces.
-bindkey({ "n", "o", "v" },    "<S-i>",    "<S-j>",      opts)
+-- TODO:        Move to Legendary.
+bindkey({ "n", "o", "x" },    "<S-i>",    "<S-j>",      opts)
 
 -- Key:         g, Shift-i
 -- Action:      Join lines without spaces.
-bindkey({ "n", "o", "v" },    "g<S-i>",   "g<S-j>",     opts)
+-- TODO:        Move to Legendary.
+bindkey({ "n", "o", "x" },    "g<S-i>",   "g<S-j>",     opts)
 
 --==============================--
 -- === END - Deleting - END === --
 --==============================--
 --|------------------------------|
---======================================================================--
+--========================================================================--
 -- === START - Changing and Replacing text ( Change/Replace ) - START === --
---======================================================================--
+--========================================================================--
 
 -- => STATE: Good
 
 -- Key:         k
-bindkey({ "n", "v" , "o" },     "k",        '"_c',      opts)
+-- Action:      Begin replace operation. ( Delete old word into blackhole register. )
+bindkey({ "n", "o" },   "k",        '"_c',      opts)
 
--- -- Key:         kn
--- bindkey({ "n", "o" },           "kn",       '"_cw',     opts)
---
--- -- Key:         ko
--- bindkey({ "n", "o" },           "ko",       '"_cb',     opts)
+-- TODO: Fill the "search register" properly with the selected word when replacing selection.
+bindkey("x",   "k",        '"_c',      opts)
+
+-- Key:         Shift-d                 ( NOTE: This is ok. )
+-- Action:      Replace word under cursor and prep dot repeat replacement.
+-- NOTE:        Move to legendary.
+bindkey("n",    "<S-d>",    '*<S-n><Cmd>set hlsearch<CR>"_cgn',     opts)
+
+-- Key:         kn
+bindkey({ "n", "o" },       "kn",       '"_cw',     opts)
+
+-- Key:         ko
+bindkey({ "n", "o" },       "ko",       '"_cb',     opts)
 
 -- Key:         kk
 bindkey("n",    "kk",       '"_cc',     opts)
@@ -193,34 +253,25 @@ bindkey("n",    "kao",      '"_cab',     opts)
 -- Key:         c
 bindkey("n",    "c",        "r",        opts)
 bindkey("o",    "c",        "r",        opts)
-bindkey("v",    "c",        "~",        opts)
+bindkey("x",    "c",        "~",        opts)
 
 -- Key:         Shift-c
 bindkey("n",    "<S-c>",    "<S-r>",    opts)
 bindkey("o",    "<S-c>",    "<S-r>",    opts)
 
 -- Key:         u
-bindkey("v",    "u",        "u",        opts)
+bindkey("x",    "u",        "u",        opts)
 
 -- Key:         Shift-u
-bindkey("v",    "<S-u>",    "<S-u>",    opts)
+bindkey("x",    "<S-u>",    "<S-u>",    opts)
 
 -- Key:         gq
-bindkey({"n", "v", "o"},    "gq",       "gq",       opts)
-
--- Key:         Shift-d                 ( NOTE: I really like this. )
--- Action:      Replace word under cursor and prep dot repeat replacement.
-bindkey("n",    "<S-d>",    '*<S-n><Cmd>set hlsearch<CR>"_cgn',     opts)
+bindkey({"n", "x", "o"},    "gq",       "gq",       opts)
 
 -- Key:         gb
 -- Action:      Replace word under cursor and prep dot repeat replacement. (But this don't work.)
 -- NOTE:        On its own this does not really do anything.
-bindkey({"n", "v", "o"},    "gb",       "gn",     opts)
-
--- Key:         kgb
--- Action:      Replace word under cursor and prep dot repeat replacement.
--- NOTE:        Move this elsewhere.
-bindkey({"n", "o"},    "kgb",       '*<S-n><Cmd>set hlsearch<CR>"_cgn',     opts)
+bindkey({"n", "x", "o"},    "gb",       "gn",     opts)
 
 -- Key:         gx
 -- Action:      Open URL under cursor. ( Might also work for opening files like images. )   ( This is quite scuffed. )
@@ -242,26 +293,26 @@ bindkey("n",    "is",               "i<Space><Esc>",   opts)
 
 -- Key:         g
 -- Action:      Do nothing, wait for next key in chord.
-bindkey({"n", "v", "o"},    "g",    "g",   opts)
+bindkey({"n", "x", "o"},    "g",    "g",   opts)
 
 -- Key:         i
 -- Action:      Do nothing, wait for next key in chord. (  Can enter insert too, if not pressing a chord key.)
-bindkey({"n", "o", "v"},    "i",    "i",   opts)
+bindkey({"n", "o", "x"},    "i",    "i",   opts)
 
 -- Key:         z
 -- Action:      Do nothing, wait for next key in chord. ( Can jump to a character, if not pressing chord key. )
-bindkey({"n", "o", "v"},    "z",    "t",   opts)
+bindkey({"n", "o", "x"},    "z",    "t",   opts)
 
 -- Key:         zt
 -- Action:      Jump to `Character`. ( 1 Character before )
-bindkey({"n", "o", "v"},    "zt",    "t",   opts)
+bindkey({"n", "o", "x"},    "zt",    "t",   opts)
 
 -- Key:         zf
 -- Action:      Jump to `Character`. ( On top of. )       ( Same as "j" )
-bindkey({"n", "o", "v"},    "zf",    "f",   opts)
+bindkey({"n", "o", "x"},    "zf",    "f",   opts)
 
 -- Key:         z=
--- Action:      Fix spelling.               
+-- Action:      Fix spelling.
 -- NOTE:        TODO: Move somewhere else.
 bindkey({"n", "o"},    "z=",    "z=",   opts)
 
@@ -328,9 +379,7 @@ bindkey("n",   "<C-S-<Right>>",  "5<C-w><",   opts)
 --========================================--
 
 -- Key:         f
-bindkey("n",    "f",     "d",           opts)
-bindkey("v",    "f",     "d",           opts)
-bindkey("o",    "f",     "d",           opts)
+bindkey({"n", "x", "o"},    "f",     "d",           opts)
 
 -- Key:         ff / fl
 bindkey("n",    "ff",    '0vg_d"_dd',   opts)
@@ -355,17 +404,17 @@ bindkey("o",    "<S-f>", "dg_",         opts)
 bindkey("i",    "<C-w>",        "<Esc><Plug>(wildfire-fuel)",        opts)
 
 -- Key:         v
-bindkey({"n", "v", "o"},    "v",        "v",        opts)
+bindkey({"n", "x", "o"},    "v",        "v",        opts)
 
 -- Key:         Shift-v
 bindkey({"n", "o"},     "<S-v>",    "<S-v>",    opts)
-bindkey("v",            "<S-v>",    "j",        opts)
+bindkey("x",            "<S-v>",    "j",        opts)
 
 -- Key:         Ctrl-v
-bindkey({"n", "v", "o"},    "<C-v>",    "<C-v>",    opts)
+bindkey({"n", "x", "o"},    "<C-v>",    "<C-v>",    opts)
 
 -- Key:         (v)an
-bindkey("v",    "an",        "aw",        opts)
+bindkey("x",    "an",        "aw",        opts)
 
 -- Key:         Ctrl-Shift-v
 -- Action:      free key
@@ -376,7 +425,7 @@ bindkey({"n", "o"},         "gv",       "gv",       opts)
 
 -- Key:         w
 -- Action:      Swap cursor position from end of selection to beginning of selection and vice versa.
-bindkey("v",                "w",        "o",        opts)
+bindkey("x",                "w",        "o",        opts)
 
 --================================--
 -- === END - Visual Selection === --
@@ -392,6 +441,7 @@ bindkey("v",                "w",        "o",        opts)
 
 -- Key:         Ctrl-a
 -- Action:      Select all text in buffer.
+-- TODO:        Move to Legendary.
 bindkey("n",    "<C-a>",  "<S-g><S-v>gg0",   opts)
 
 -- Key:         Ctrl-Shift-e
@@ -403,32 +453,28 @@ bindkey("n",    "<C-a>",  "<S-g><S-v>gg0",   opts)
 -- Key:         s
 -- Action:      Substitute matches of word in yank register inside the selection. (Disabled atm, command below is better.)
 -- Modes:       Visual
--- bindkey("v", "s", ":s/\\%V<C-r>0\\%V//g<Left><Left>", { noremap = true, silent = false })
-
--- Key:         Enter           (Normal)
-bindkey("n",    "<CR>",    "i<CR><Esc>",   opts)
-
--- Key:         Shift-Enter           (NOTE: Does not work in all/most terminals.)
--- Action:      Free Key.
--- Modes:       Normal
--- bindkey("n", "<S-CR>", ":free", { noremap = true, silent = false })
+-- bindkey("x", "s", ":s/\\%V<C-r>0\\%V//g<Left><Left>", { noremap = true, silent = false })
 
 -- Key:         xip
-bindkey("n",    "xip",    "vip",    opts)
+-- Action:      Free key.
+-- bindkey("n",    "xip",    "vip",    opts)
 
 -- Key:         Ctrl-i
--- Action:      Unmappable. Hard bound to Tab. (Neovim Bug)
--- Modes:       All (?)
--- bindkey('n', '<C-i>', 'a', opts)
+-- Action:      Free key.
+bindkey('n', '<C-i>', 'i', opts)
 
--- Key:         m               (Normal)
--- Action:      Start recording macro.
-bindkey("n",    "m",        "q",                            { noremap = true, silent = false })
+-- Key:         Ctrl-Shift-i
+-- Action:      Free key.
+bindkey('n', '<C-S-i>', 'a', opts)
 
--- Key:         Shift-q         (Normal, Visual)
+-- Key:         Ctrl-m          ( Normal Mode )
+-- Action:      Macro operator. ( Requires follow up register, like `q`. )
+bindkey("n",    "<C-m>",        "q",                { noremap = true, silent = false })
+
+-- Key:         Shift-q         ( Normal, Visual )
 -- Action:      Play / repeat macro on 'q'.
-bindkey("n",    "<S-q>",    "@q",                           { noremap = true, silent = false })
-bindkey("v",    "<S-q>",    ":normal @q<CR>",                 { noremap = true, silent = false })
+bindkey("n",    "<S-q>",    "@q",                   { noremap = true, silent = false })
+bindkey("x",    "<S-q>",    ":normal @q<CR>",       { noremap = true, silent = false })
 
 -- Key:         Ctrl-(Shift)-u
 -- bindkey("n",    "<C-u>", "", opts, "Unknown", "unknown_001", "Some issue with binding this key. Not sure what it does. (Normal)")
@@ -486,13 +532,13 @@ bindkey("n", "<Leader>rp", function() require('FTerm').run({'cargo', 'run'}) end
 -- bindkey("n", "<Leader>rqf", ":%DB<CR>", opts)       -- Whole File
 -- bindkey("n", "<Leader>rql", "<S-v>:DB<CR>", opts)   -- Line under Cursor
 bindkey("n", "<Leader>rqp", "vip:DB<CR>", opts)
--- bindkey("v", "<Leader>rq", ":DB<CR>", opts)         -- Visual Selection
+-- bindkey("x", "<Leader>rq", ":DB<CR>", opts)         -- Visual Selection
 
 -- Key:         Leader-Shift-s
 -- Action:      Execute SQL Query. (These seem to work now.)
 -- Modes:       Normal / Visual
 -- bindkey("n", "<Leader><S-s>", "<Plug>(DBUI_ExecuteQuery)", { silent = false })
--- bindkey("v", "<Leader><S-s>", "<Plug>(DBUI_ExecuteQuery)", { silent = false })
+-- bindkey("x", "<Leader><S-s>", "<Plug>(DBUI_ExecuteQuery)", { silent = false })
 
 -- Key:         Leader-Ctrl-
 -- Action:      Save SQL Query.
@@ -529,16 +575,12 @@ bindkey("i", "<C-p>", "")
 
 -- === START - Aum Autopairs Functions - START === --
 
--- Trying to create my own autopairs system:
--- map ( AumParentheses         => If nothing at `CursorLocation + 1`, insert `)`, else, normal functionality.
--- map [ AumSquareBrackets      => If nothing at `CursorLocation + 1`, insert `]`, else, normal functionality.
--- map { AumSquigglyBrackets    => If nothing at `CursorLocation + 1`, insert `}`, else, normal functionality.
--- 
--- map <CR> AumUberEnter
--- Check character at `CursorLocation -1`, if it is not `(` or `{` or `[`:
--- Do normal <CR> things
+-- Trying to create my own autopairs system.
 
 local function AumAutoPairs(pair_start, pair_end)
+    -- True if `pair_start` is a parenthesis type.
+    local pair_is_paren_type = pair_start == "(" or pair_start == "[" or pair_start == "{"
+
     -- Get current line of text.
     local current_line = vim.api.nvim_get_current_line()
 
@@ -548,6 +590,8 @@ local function AumAutoPairs(pair_start, pair_end)
 
     -- Get character after cursor, as substring of the `current_line`, indexed by `cursor position`.
     -- Columns need a `+1` because `get_cursor` is 0-indexed and this is end-exclusive.
+    -- Inclusive `Start-index` and exclusive `End-index`, so they are the same when looking for a single index.
+    local char_before_cursor = string.sub(current_line, cur_col, cur_col)
     local char_after_cursor = string.sub(current_line, cur_col + 1, cur_col + 1)
 
     -- Insert `pair_start` normally.
@@ -560,9 +604,35 @@ local function AumAutoPairs(pair_start, pair_end)
     local shifted_column = cur_col + string.len(pair_start)
     vim.api.nvim_win_set_cursor(0, { cur_row, shifted_column })
 
-    if char_after_cursor == " " or char_after_cursor == "" then
-        -- If the cell to the right of cursor position (`cur_col`) is whitespace:
-        -- Insert `pair_end` at that cell.
+    -- Named boolean states for things.
+    local space_before_cursor           = char_before_cursor == " "
+    local space_after_cursor            = char_after_cursor  == " "
+
+    local nothing_before_cursor         = char_before_cursor == ""
+    local nothing_after_cursor          = char_after_cursor  == ""
+
+    local paren_before_cursor           = char_before_cursor == "("  or char_before_cursor == "["  or char_before_cursor == "{"
+    local paren_after_cursor            = char_after_cursor  == ")"  or char_after_cursor  == "]"  or char_after_cursor  == "}"
+
+    local quote_before_cursor           = char_before_cursor == "'"  or char_before_cursor == '"'
+    local quote_after_cursor            = char_after_cursor  == "'"  or char_after_cursor  == '"'
+
+    local whitespace_before_cursor      = space_before_cursor        or      nothing_before_cursor
+    local whitespace_after_cursor       = space_after_cursor         or      nothing_after_cursor
+    local surrounded_by_whitespace      = whitespace_before_cursor   and     whitespace_after_cursor
+    local surrounded_by_paren_types     = paren_before_cursor        and     paren_after_cursor
+
+    -- Ex: ` | ` or `(|)        ( NOTE: Looks like this is working. )
+    if surrounded_by_whitespace or surrounded_by_paren_types then
+        -- Insert any type of pair.
+        vim.api.nvim_buf_set_text(0, fixed_row, shifted_column, fixed_row, shifted_column, { pair_end })
+    -- Ex: `(|_`
+    elseif pair_is_paren_type and whitespace_after_cursor then
+        -- Insert parentheses type pair-endings.
+        vim.api.nvim_buf_set_text(0, fixed_row, shifted_column, fixed_row, shifted_column, { pair_end })
+    -- Ex: `_|)` but not `_|"`
+    elseif not pair_is_paren_type and whitespace_before_cursor and not quote_after_cursor then
+        -- Insert quote type pair-endings.
         vim.api.nvim_buf_set_text(0, fixed_row, shifted_column, fixed_row, shifted_column, { pair_end })
     end
 end
@@ -634,94 +704,97 @@ require("legendary").setup({
 
         -- Command mode                 ( STATE: Does not work from Legendary. )
         -- Key:         l               (Normal, Visual, Operator)
-        { "l",          ":",            description = "Enter command mode.",                    mode = { "n", "v", "o" },   opts = { noremap = true, silent = false, nowait = true }},
+        { "l",          ":",            description = "Enter command mode.",                    mode = { "n", "x", "o" },   opts = { noremap = true, silent = false, nowait = true }},
 
         -- Up / Down                    ( STATE: Good )
-        -- Key:         t               (Normal, Visual, Operator)
-        { "t",          "k",            description = "Move cursor one line upwards.",          mode = { "n", "v", "o" },   opts = opts },
-        -- Key:         h               (Normal, Visual, Operator)
-        { "h",          "j",            description = "Move cursor one line downwards.",        mode = { "n", "v", "o" },   opts = opts },
-        -- Key:         Shift-t         (Normal, Visual, Operator)
-        { "<S-t>",      "6k",           description = "Move cursor 6 lines upwards.",           mode = { "n", "v", "o" },   opts = opts },
-        -- Key:         Shift-h         (Normal, Visual, Operator)
-        { "<S-h>",      "6j",           description = "Move cursor 6 lines downwards.",         mode = { "n", "v", "o" },   opts = opts },
+        -- Key:         t               ( Normal, Visual, Operator )
+        { "t",          "gk",           description = "Move cursor one line upwards.",          mode = { "n", "x", "o" },   opts = opts },
+        -- Key:         h               ( Normal, Visual, Operator )
+        { "h",          "gj",           description = "Move cursor one line downwards.",        mode = { "n", "x", "o" },   opts = opts },
+        -- Key:         Shift-t         ( Normal, Visual, Operator )
+        { "<S-t>",      "5gk",          description = "Move cursor 5 lines upwards.",           mode = { "n", "x", "o" },   opts = opts },
+        -- Key:         Shift-h         ( Normal, Visual, Operator )
+        { "<S-h>",      "5gj",          description = "Move cursor 5 lines downwards.",         mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Ctrl-t
-        { "<C-t>",      "{",            description = "Move cursor upwards to next paragraph.",         mode = { "n", "v", "o" },   opts = opts },
+        { "<C-t>",      "{",            description = "Move cursor upwards to next paragraph.",         mode = { "n", "x", "o" },   opts = opts },
         { "<C-t>",      "<C-o>o",       description = "Create new line below current and move there.",  mode = { "i" },             opts = opts },
         -- Key:         Ctrl-h
-        { "<C-h>",      "}",            description = "Move cursor downwards to next paragraph.",       mode = { "n", "v", "o" },   opts = opts },
+        { "<C-h>",      "}",            description = "Move cursor downwards to next paragraph.",       mode = { "n", "x", "o" },   opts = opts },
         -- Key:         {
-        { "{",          "}",            description = "Move cursor downwards to next paragraph.",       mode = { "n", "v", "o" },   opts = opts },
+        { "{",          "}",            description = "Move cursor downwards to next paragraph.",       mode = { "n", "x", "o" },   opts = opts },
         -- Key:         }
-        { "}",          "{",            description = "Move cursor upwards to next paragraph.",         mode = { "n", "v", "o" },   opts = opts },
+        { "}",          "{",            description = "Move cursor upwards to next paragraph.",         mode = { "n", "x", "o" },   opts = opts },
         -- Key:         gg              (Normal, Visual, Operator)
-        { "gg",         "0gg",          description = "Move to the first line in the file.",    mode = { "n", "v", "o" },   opts = opts },
+        { "gg",         "0gg",          description = "Move to the first line in the file.",    mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Shift-g         (Normal, Visual, Operator)
-        { "<S-g>",      "0<S-g>",       description = "Move to the last line in the file.",     mode = { "n", "v", "o" },   opts = opts },
+        { "<S-g>",      "0<S-g>",       description = "Move to the last line in the file.",     mode = { "n", "x", "o" },   opts = opts },
 
         -- Left / Right                 ( STATE: Good )
         -- Key:         <Left>          (Normal, Visual, Operator)
-        { "<Left>",     "h",            description = "Move cursor one column left.",           mode = { "n", "v", "o" },   opts = opts },
+        { "<Left>",     "h",            description = "Move cursor one column left.",           mode = { "n", "x", "o" },   opts = opts },
         -- Key:         <Right>         (Normal, Visual, Operator)
-        { "<Right>",    "l",            description = "Move cursor one column right.",          mode = { "n", "v", "o" },   opts = opts },
+        { "<Right>",    "l",            description = "Move cursor one column right.",          mode = { "n", "x", "o" },   opts = opts },
         -- Key:         q               (Normal, Visual, Operator)
-        { "q",          "h",            description = "Move cursor one column left.",           mode = { "n", "v", "o" },   opts = opts },
+        { "q",          "h",            description = "Move cursor one column left.",           mode = { "n", "x", "o" },   opts = opts },
         -- Key:         e               (Normal, Visual, Operator)
-        { "e",          "l",            description = "Move cursor one column right.",          mode = { "n", "v", "o" },   opts = opts },
+        { "e",          "l",            description = "Move cursor one column right.",          mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Ctrl-q          (Insert)
         { "<C-q>",      "<Left>",       description = "Move cursor to the left by one column in insert mode.",      mode = { "i" },     opts = opts },
         -- Key:         Ctrl-e          (Normal, Insert)
         { "<C-e>",      "<Right>",      description = "Move cursor to the right by one column in insert mode.",     mode = { "i" },     opts = opts },
         { "<C-e>",      "<Cmd>Inspect<CR>",     description = "Show treesitter capture groups for textobject under cursor. (Also Semantic Tokens and Extmarks.)",   mode = { "n" },     opts = { noremap = true, silent = false }},
         -- Key:         go
-        { "go",         "0",            description = "Move cursor to start of line.",          mode = { "n", "v", "o" },   opts = opts },
+        { "go",         "0",            description = "Move cursor to start of line.",          mode = { "n", "x", "o" },   opts = opts },
         -- Key:         gn
-        { "gn",         "$",            description = "Move cursor to end of line.",            mode = { "n", "v", "o" },   opts = opts },
+        { "gn",         "$",            description = "Move cursor to end of line.",            mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Ctrl-a
         { "<C-a>",      "<Esc>I",       description = "Move cursor to start of line. (Insert Mode)",    mode = { "i" },     opts = opts },
         -- Key:         Ctrl-s
         { "<C-s>",      "<Esc>A",       description = "Move cursor to end of line. (Insert Mode)",      mode = { "i" },     opts = opts },
         -- Key:         j
-        { "j",          "f",            description = "Move forwards to next matching character.",      mode = { "n", "v", "o" },     opts = opts },
+        { "j",          "f",            description = "Move forwards to next matching character.",      mode = { "n", "x", "o" },     opts = opts },
         -- Key:         Shift-j
-        { "<S-j>",      "<S-f>",        description = "Move backwards to next matching character.",     mode = { "n", "v", "o" },     opts = opts },
+        { "<S-j>",      "<S-f>",        description = "Move backwards to next matching character.",     mode = { "n", "x", "o" },     opts = opts },
         -- Key:         Shift-5  (%)
-        { "%",          "%",            description = "Move to matching brackets.",             mode = { "n", "v", "o" },   opts = opts },
+        { "%",          "%",            description = "Move to matching brackets.",             mode = { "n", "x", "o" },   opts = opts },
         -- Key:         g<S-n>
-        { "g<S-n>",     "<S-e>",        description = "Move forwards to end of word.",          mode = { "n", "v", "o" },   opts = opts },
+        { "g<S-n>",     "<S-e>",        description = "Move forwards to end of word.",          mode = { "n", "x", "o" },   opts = opts },
         -- Key:         g<S-o>
-        { "g<S-o>",     "g<S-e>",       description = "Move backwards to end of word.",         mode = { "n", "v", "o" },   opts = opts },
+        { "g<S-o>",     "g<S-e>",       description = "Move backwards to end of word.",         mode = { "n", "x", "o" },   opts = opts },
 
         -- Word / Back                  ( STATE: Okay )
         -- Key:         n               ( Normal, Visual, Operator )
-        { "n",          "<Cmd>lua require('spider').motion('w')<CR>",       description = "Move cursor one word forward. (Spider Motion)",                  mode = { "n", "x" },            opts = opts },
-        { "n",          "w",                                                description = "Move cursor one word forward. (Operator)",                       mode = { "o" },                 opts = opts },
-        { "n",          "<Cmd>lua require('spider').motion('e')<CR>",       description = "Move cursor to end of word. (Visual Mode)",                      mode = { "v" },                 opts = opts },
+        { "n",          "<Cmd>lua require('spider').motion('w')<CR>",       description = "Move cursor one word forward. (Spider Motion)",                  mode = { "n" },         opts = opts },
+        { "n",          "w",                                                description = "Move cursor one word forward. (Operator)",                       mode = { "o" },         opts = opts },
+        { "n",          "<Cmd>lua require('spider').motion('e')<CR>",       description = "Move cursor to end of word. (Visual Mode)",                      mode = { "x" },         opts = opts },
         -- Key:         o               ( Normal, Visual, Operator )
-        { "o",          "<Cmd>lua require('spider').motion('b')<CR>",       description = "Move cursor one word backward. (Spider motion)",                 mode = { "n", "x" },            opts = opts },
-        { "o",          "b",                                                description = "Move cursor one word backward. (Operator)",                      mode = { "o" },                 opts = opts },
-        { "o",          "<Cmd>lua require('spider').motion('ge')<CR>",      description = "Move cursor to end of previous word. (Visual Mode)",             mode = { "v" },                 opts = opts },
+        { "o",          "<Cmd>lua require('spider').motion('b')<CR>",       description = "Move cursor one word backward. (Spider motion)",                 mode = { "n" },         opts = opts },
+        { "o",          "b",                                                description = "Move cursor one word backward. (Operator)",                      mode = { "o" },         opts = opts },
+        { "o",          "<Cmd>lua require('spider').motion('ge')<CR>",      description = "Move cursor to end of previous word. (Visual Mode)",             mode = { "x" },         opts = opts },
         -- Key:         in              ( Normal, Visual, Operator )
         { "in",         "<S-w>",        description = "Move cursor one super-word forward.",            mode = { "n", "o" },        opts = opts },
-        { "in",         "e",            description = "Move cursor to word end. (Visual Mode)",         mode = { "v" },             opts = opts },
+        { "in",         "e",            description = "Move cursor to word end. (Visual Mode)",         mode = { "x" },             opts = opts },
         -- Key:         io              ( Normal, Visual, Operator )
-        { "io",         "<S-b>",        description = "Move cursor one super-word backward.",           mode = { "n", "v", "o" },   opts = opts },
+        { "io",         "<S-b>",        description = "Move cursor one super-word backward.",           mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Ctrl-n          ( Insert )
         { "<C-n>",      "<C-o>w",       description = "Move cursor one word forward. (Insert Mode)",    mode = { "i" },             opts = opts },
-        -- Key:         Ctrl-o          ( Insert )      ( NOTE: Don't want to overwrite `<C-o>`. )
-        { "<C-o>",      "<C-o>",        description = "Execute next command as a normal mode command. (Insert Mode)",       mode = { "i" },     opts = opts },
+        -- Key:         Ctrl-o          ( Insert )
+        { "<C-o>",      "<C-o>b",       description = "Move cursor one word backward. (Insert Mode)",   mode = { "i" },             opts = opts },
 
         -- Indenting                    ( STATE: Good )
         -- Key:         Tab
         { "<Tab>",      ">>",           description = "Indent current line.",                                   mode = { "n" },     opts = opts },
-        { "<Tab>",      ">",            description = "Indent current selection / block. (Visual Mode)",        mode = { "v" },     opts = opts },
+        { "<Tab>",      ">gv",          description = "Indent current selection / block. (Visual Mode)",        mode = { "x" },     opts = opts },
         -- Key:         Shift-Tab
         { "<S-Tab>",    "<<",           description = "Unindent current line.",                                 mode = { "n" },     opts = opts },
-        { "<S-Tab>",    "<",            description = "Unindent current selection / block. (Visual Mode)",      mode = { "v" },     opts = opts },
+        { "<S-Tab>",    "<gv",          description = "Unindent current selection / block. (Visual Mode)",      mode = { "x" },     opts = opts },
+        { "<S-Tab>",    "<BS>",         description = "Unindent from Insert Mode.",                             mode = { "i" },     opts = opts },
 
         -- Smart Enter                  ( STATE: Good )
-        -- Key:         <CR> ( Enter )  ( Insert )                  ( NOTE: TODO: This should be a anonymous binding, probably. )
+        -- Key:         <CR> ( Enter )  ( Normal, Insert )                  ( NOTE: TODO: This should be a anonymous binding, probably. )
+        { "<CR>",       "i<CR><Esc>",                       description = "Create new line, insert new line character.",            mode = { "n" },     opts = opts },
         -- -- { "<CR>",       "<CR>",                             description = "Smart `<CR>` (Enter) for inserting a new line and accepting autocompletion results.",     mode = { "i" },     opts = opts },
+
         { "<C-CR>",     "o<Esc>k",                          description = "Create new empty line below cursor.",                    mode = { "n" },     opts = opts },
         { "<S-CR>",     "O<Esc>j",                          description = "Create new empty line above cursor.",                    mode = { "n" },     opts = opts },
 
@@ -735,21 +808,22 @@ require("legendary").setup({
 
         -- Moving / Copying Lines       ( STATE: Okay )
         -- Key:         Alt-h
-        { "<A-h>",      "<Cmd>lua require('moveline').down()<CR>",      description = "Move current line down by one.",             mode = { "n" },     opts = opts },
-        { "<A-h>",      "<C-o><Cmd>m+1<CR>",                            description = "Move current line down by one. (Insert)",    mode = { "i" },     opts = opts },
+        { "<A-h>",      "<Cmd>lua require('moveline').down()<CR>",          description = "Move current line down by one.",                         mode = { "n" },     opts = opts },
+        { "<A-h>",      "<C-o><Cmd>m+1<CR>",                                description = "Move current line down by one. (Insert)",                mode = { "i" },     opts = opts },
         -- Key:         Alt-t
-        { "<A-t>",      "<Cmd>lua require('moveline').up()<CR>",        description = "Move current line up by one.",               mode = { "n" },     opts = opts },
-        { "<A-t>",      "<C-o><Cmd>m-2<CR>",                            description = "Move current line up by one. (Insert)",      mode = { "i" },     opts = opts },
+        { "<A-t>",      "<Cmd>lua require('moveline').up()<CR>",            description = "Move current line up by one.",                           mode = { "n" },     opts = opts },
+        { "<A-t>",      "<C-o><Cmd>m-2<CR>",                                description = "Move current line up by one. (Insert)",                  mode = { "i" },     opts = opts },
+        -- NOTE: These copy/duplicate line commands are a bit laggy. But relatively native vim. Not sure if better ways exist. Would be interested in one. But quite a minor thing.
         -- Key:         Alt-Shift-h
-        { "<A-S-h>",    "<Cmd>copy.<CR>",                               description = "Copy current line one line below.",          mode = { "n" },     opts = opts },
-        { "<A-S-h>",    "<ESC><Cmd>copy.<CR>i",                         description = "Copy current line one line below. (Insert)", mode = { "i" },     opts = opts },
+        { "<A-S-h>",    "<Cmd>copy.<CR>",                                   description = "Copy/Duplicate current line one line below.",            mode = { "n" },     opts = opts },
+        { "<A-S-h>",    "<ESC><Cmd>copy.<CR>i<Right>",                      description = "Copy/Duplicate current line one line below. (Insert)",   mode = { "i" },     opts = opts },
         -- Key:         Alt-Shift-t
-        { "<A-S-t>",    "<Cmd>copy.-1<CR>",                             description = "Copy current line one line above.",          mode = { "n" },     opts = opts },
-        { "<A-S-t>",    "<ESC><Cmd>copy.-1<CR>i",                       description = "Copy current line one line above. (Insert)", mode = { "i" },     opts = opts },
+        { "<A-S-t>",    "<Cmd>copy.-1<CR>",                                 description = "Copy/Duplicate current line one line above.",            mode = { "n" },     opts = opts },
+        { "<A-S-t>",    "<ESC><Cmd>copy.-1<CR>i<Right>",                    description = "Copy/Duplicate current line one line above. (Insert)",   mode = { "i" },     opts = opts },
         -- Key:         Alt-h
-        { "<A-h>",      "<Cmd>lua require('moveline').block_down()<CR>",    description = "Move selected block down by one line. (Visual)",     mode = { "v" },     opts = opts },
+        { "<A-h>",      "<Cmd>lua require('moveline').block_down()<CR>",    description = "Move selected block down by one line. (Visual)",         mode = { "x" },     opts = opts },
         -- Key:         Alt-t
-        { "<A-t>",      "<Cmd>lua require('moveline').block_up()<CR>",      description = "Move selected block up by one line. (Visual)",       mode = { "v" },     opts = opts },
+        { "<A-t>",      "<Cmd>lua require('moveline').block_up()<CR>",      description = "Move selected block up by one line. (Visual)",           mode = { "x" },     opts = opts },
 
         -- Buffer Navigation            ( STATE: Okay )
         -- Key:         zn
@@ -761,14 +835,14 @@ require("legendary").setup({
 
         -- Splits                       ( STATE: TODO )
         -- Key:         Ctrl-l          ( Normal )
-        { "<C-l>",                      "<C-w><C-w>",   description = "Cycle through splits/windows.",                  mode = "n",         opts = opts },
+        { "<C-l>",                      "<C-w><C-w>",   description = "Cycle through splits/windows.",                  mode = { "n" },     opts = opts },
         -- Key:         <Leader> Shift-o                ( Normal )
         { "<Leader><S-o>",      "<Cmd>close<CR>",       description = "Close split window without deleting buffer.",    mode = { "n" },     opts = opts },
 
         -- Jumplist                     ( STATE: Okay )
-        -- Key:         Shift-o         (Normal)
+        -- Key:         Shift-o         ( Normal )
         { "<S-o>",      "<C-S-o>",      description = "Move to previous location in jumplist.",     mode = { "n" },     opts = opts },
-        -- Key:         Shift-n         (Normal)
+        -- Key:         Shift-n         ( Normal )
         { "<S-n>",      "<C-S-i>",      description = "Move to next location in jumplist.",         mode = { "n" },     opts = opts },
 
         -- View Focus                   ( STATE: Okay )
@@ -780,31 +854,51 @@ require("legendary").setup({
         -- Change                       ( STATE: TODO )
 
         -- Replace                      ( STATE: TODO )
+        -- Move the normal replace bindings here.
 
         -- Visual                       ( STATE: TODO )
 
         -- Search                       ( STATE: Okay )
         -- Key:         r               ( Normal, Visual, Operator )
-        { "r",          "/",            description = "Initiate search forwards.",              mode = { "n", "v", "o" },   opts = { noremap = true, silent = false, nowait = true } },
+        { "r",          "/",            description = "Initiate search forwards.",              mode = { "n", "x", "o" },   opts = { noremap = true, silent = false, nowait = true } },
         -- Key:         Shift-r         ( Visual )
-        { "<S-r>",      'y/<C-r>"<CR><Cmd>set hlsearch<CR>',    description = "Search for matches of selected pattern.",    mode = { "v" },   opts = opts },
+        { "<S-r>",      'y/<C-r>"<CR><Cmd>set hlsearch<CR>',    description = "Search for matches of selected pattern.",    mode = { "x" },   opts = opts },
         -- Key:         ?               ( Normal, Visual, Operator )
-        { "?",          "?",            description = "Initiate search backwards.",             mode = { "n", "v", "o" },   opts = { noremap = true, silent = false, nowait = true } },
+        { "?",          "?",            description = "Initiate search backwards.",             mode = { "n", "x", "o" },   opts = { noremap = true, silent = false, nowait = true } },
         -- Key:         Shift-8 (* [star])                  ( Normal, Operator )
-        { "*",          "*<S-n><Cmd>set hlsearch<CR>",      description = "Search forwards for word under cursor.",         mode = { "n", "o" },   opts = opts },
+        { "*",          "*<S-n><Cmd>set hlsearch<CR>",      description = "Search forwards for word under cursor.",         mode = { "n", "o" },    opts = opts },
+        { "*",          "*",                                description = "Search forwards for selection. (Visual)",        mode = { "x" },         opts = opts },
         -- Key:         Shift-3 (# [hashtag])               ( Normal, Operator )
-        { "#",          "#<S-n><Cmd>set hlsearch<CR>",      description = "Search backwards for word under cursor.",        mode = { "n", "o" },   opts = opts },
+        { "#",          "#<S-n><Cmd>set hlsearch<CR>",      description = "Search backwards for word under cursor.",        mode = { "n", "o" },    opts = opts },
+        -- Key:         Shift-r                             ( Normal )
+        { "<S-r>",      '/"[^\"]*"<CR><Right>',             description = "Search forwards for next pair of quotes.",       mode = { "n" },         opts = opts },
 
-        -- Search: Next / Previous      ( STATE: Okay )
+        -- Search: Next / Previous      ( STATE: Good )
         -- Key:         b               ( Normal, Visual, Operator )
-        { "b",          "n",            description = "Jump to next search match.",             mode = { "n", "v", "o" },   opts = opts },
+        { "b",          "nzv",          description = "Jump to next search match.",         mode = { "n", "x", "o" },       opts = opts },
+        -- Key:         gb              ( Normal, Visual, Operator )
+        { "gb",         "gn",           description = "Jump to next search match.",         mode = { "n", "x", "o" },       opts = opts },
         -- Key:         Shift-b         ( Normal, Visual, Operator )
-        { "<S-b>",      "<S-n>",        description = "Jump to previous search match.",         mode = { "n", "v", "o" },   opts = opts },
+        { "<S-b>",      "<S-n>zv",      description = "Jump to previous search match.",     mode = { "n", "x", "o" },       opts = opts },
+        -- Key:         g-Shift-b       ( Normal, Visual, Operator )
+        { "g<S-b>",     "g<S-n>",       description = "Jump to previous search match.",     mode = { "n", "x", "o" },       opts = opts },
+
+        -- Custom: Search and Replace   ( STATE: Okay )     ( NOTE: These are interesting. )
+        -- Key:         Shift-k         ( Visual )
+        { '<S-k>',      '"xy:%s/<C-r>x/<C-r>0/g<CR>',       description = 'Globally replace all matches of `Visually Selected Text` with the text currently in `Primary Clipboard Register`.',  mode = { 'x' },   opts = { noremap = true, silent = false } },
+        -- Key:         Ctrl-Shift-k    ( Visual )
+        { "<C-S-k>",    "y:%s/<C-r>0//g<Left><Left>",       description = "Globally replace matches of visually selected text in the current file.",                                            mode = { 'x' },   opts = { noremap = true, silent = false } },
+        -- Key:         Shift-d         ( Visual )
+        { "<S-d>",      ":s/\\%V<C-r>0//g<Left><Left>",     description = "Replace text that matches the contents of the yank register, within the current visual selection.",                  mode = { 'x' },   opts = { noremap = true, silent = false } },
+
+        -- Matchpair jumping
+        -- Key:         m               ( Normal, Visual, Operator )                            ( TODO/NOTE: Need to disable use of 'm' elsewhere. )
+        { "m",          "%",            description = "Jump to matching pairs.",                mode = { "n", "x", "o" },   opts = opts },
 
         -- Copy / Yank                  ( STATE: Okay )
         -- Key:         y               ( Normal, Visual, Operator )
         { "y",          "y",            description = "Initiate Yank / Copy.",                  mode = { "n", "o" },        opts = { noremap = true, silent = false, nowait = true } },
-        { "y",          "y",            description = "Initiate Yank / Copy in Visual Mode.",   mode = { "v" },             opts = { noremap = true, silent = false, nowait = true } },
+        { "y",          "y",           description = "Initiate Yank / Copy in Visual Mode.",   mode = { "x" },             opts = { noremap = true, silent = false, nowait = true } },
         -- Key:         Shift-y         ( Normal, Operator )
         { "<S-y>",      "yg_",          description = "Yank / Copy to end of line. (1)",        mode = { "n", "o" },        opts = { noremap = true, silent = false, nowait = true } },
         -- Key:         ygn             ( Normal, Operator )
@@ -820,57 +914,57 @@ require("legendary").setup({
 
         -- Paste                        ( STATE: Okay )
         -- Key:         p               ( Normal, Visual, Operator )
-        { "p",          "<S-p>",        description = "Paste from clipboard or registers.",         mode = { "n", "v", "o" },       opts = opts },
+        { "p",          "<S-p><Right>==", description = "Paste from clipboard or registers.",     mode = { "n", "x", "o" },   opts = opts },
+        -- Key:         zp              ( Normal, Operator )
+        { "zp",         "gpk",          description = "Paste below from clipboard or registers. (For multi line yanks)",    mode = { "n", "o" },   opts = opts },
         -- Key:         Shift-p         ( Normal )
-        { "<S-p>",      "o<C-o><S-p><Esc>",     description = "Paste below, from clipboard or registers.",     mode = { "n"  },     opts = opts },
-        -- Key:         Ctrl-v          ( Insert )
-        { "<C-v>",      " <BS><C-o><S-p>",  description = "Paste from clipboard in insert mode.",   mode = { "i" },   opts = opts },
+        { "<S-p>",      'o<C-o><S-p><Esc>',     description = "Paste below, from clipboard or registers.",      mode = { "n"  },    opts = opts },
+        -- Key:         Ctrl-v          ( Insert, Visual, Select )      ( Could be better I guess, but this works. )
+        { "<C-v>",      "<C-o><S-p>",   description = "Paste from clipboard in insert mode.",   mode = { "i" },        opts = opts },
+        { "<C-v>",      "<C-o><S-p>a",  description = "Paste from clipboard in select mode.",   mode = { "s" },        opts = opts },
+        { "<C-v>",      "<S-p>",        description = "Paste from clipboard in visual mode.",   mode = { "x" },        opts = opts },
 
         -- Undo / Redo                  ( STATE: WIP )
         -- Key:         u               ( Normal )
         { "u",          "u",            description = "Undo operation.",                        mode = { "n" },             opts = opts },
         -- Key:         Ctrl-Z          ( Normal, Insert, Visual )
         { "<C-z>",      "u",            description = "Undo operation. (Normal Mode Alt)",      mode = { "n" },             opts = opts },
-        { "<C-z>",      "<Esc>",        description = "Exit Visual Mode.",                      mode = { "v" },             opts = opts },
+        { "<C-z>",      "<Esc>",        description = "Exit Visual Mode.",                      mode = { "x" },             opts = opts },
         { "<C-z>",      "<Esc>u",       description = "Undo operation. (Insert Mode)",          mode = { "i" },             opts = opts },
         -- Key:         Ctrl-r          ( Normal, Insert, Operator )
         { "<C-r>",      "<C-r>",        description = "Redo. (Opposite of undo)",               mode = { "n", "i", "o" },   opts = opts },
         -- NOTE: This key is not bound: `<C-r>` ( Visual Mode )
 
         -- Folding
-        -- Key:         zf (Create fold)                        ( Normal, Visual, Operator )
-        { "zf",         "zf",                                   description = "Create new fold. (Mostly for marker mode)",              mode = {"n", "v", "o"},     opts = opts },
-        -- Key:         zh (Open fold)                          ( Normal, Operator )
-        { "zh",         "zo",                                   description = "Open fold.",                 mode = {"n", "o"},          opts = opts },
-        -- Key:         zr (Open fold)                          ( Normal, Operator )
-        { "zr",         require("ufo").openFoldsExceptKinds,    description = "Reduce (Open) fold.",        mode = {"n", "o"},          opts = opts },
-        -- Key:         zR (Open all)                           ( Normal, Operator )
-        { "z<S-r>",     require("ufo").openAllFolds,            description = "Reduce (Open) all folds.",   mode = {"n", "o"},          opts = opts },
-        -- Key:         zc (Close fold)                         ( Normal, Operator )
-        { "zc",         "zc",                                   description = "Close fold.",                mode = {"n", "o"},          opts = opts },
-        -- Key:         zm (Close fold)                         ( Normal, Operator )
-        { "zm",         require("ufo").closeFoldsWith,          description = "Close fold (More).",         mode = {"n", "o"},          opts = opts },
-        -- Key:         zM (Close all)                          ( Normal, Operator )
-        { "z<S-m>",     require("ufo").closeAllFolds,           description = "Close all folds.",           mode = {"n", "o"},          opts = opts },
-        -- Key:         zt (Toggle fold)                        ( Normal, Operator )
-        { "zt",         "za",                                   description = "Toggle folding.",            mode = {"n", "o"},          opts = opts },
-        
-        -- Key:         gf                        ( Normal, Operator )
-        { "zt",         "za",                                   description = "Toggle folding.",            mode = {"n", "o"},          opts = opts },
-        -- Key:         ge                        ( Normal, Operator )
+        -- Key:         zf (Create fold)    ( Normal, Visual, Operator )
+        { "zf",         "zf",               description = "Create new fold. (Mostly for marker mode)",              mode = {"n", "x", "o"},     opts = opts },
+        -- Key:         zh (Open fold)      ( Normal, Operator )
+        { "zh",         "zo",               description = "Open fold.",                 mode = {"n", "o"},          opts = opts },
+        -- Key:         zr (Open fold)      ( Normal, Operator )
+        { "zr",         "zr",               description = "Reduce (Open) fold.",        mode = {"n", "o"},          opts = opts },
+        -- Key:         zR (Open all)       ( Normal, Operator )
+        { "z<S-r>",     "z<S-r>",           description = "Reduce (Open) all folds.",   mode = {"n", "o"},          opts = opts },
+        -- Key:         zc (Close fold)     ( Normal, Operator )
+        { "zc",         "zc",               description = "Close fold.",                mode = {"n", "o"},          opts = opts },
+        -- Key:         zm (Close fold)     ( Normal, Operator )
+        { "zm",         "zm",               description = "Close fold (More).",         mode = {"n", "o"},          opts = opts },
+        -- Key:         zM (Close all)      ( Normal, Operator )
+        { "z<S-m>",     "z<S-m>",           description = "Close all folds.",           mode = {"n", "o"},          opts = opts },
+        -- Key:         zt (Toggle fold)    ( Normal, Operator )
+        { "zt",         "za",               description = "Toggle folding.",            mode = {"n", "o"},          opts = opts },
 
         -- Telescope                    ( STATE: Okay )
         -- Key:         Ctrl-s          ( Normal )
         { "<C-s>",                      "<Cmd>Telescope current_buffer_fuzzy_find<CR>",     description = "Telescope: Fuzzy search (find) current buffer.",         mode = "n",     opts = opts },
-        -- Key:         Ctrl-Shift-p    ( Normal )                                                                           
+        -- Key:         Ctrl-Shift-p    ( Normal )
         { "<C-S-p>",                    "<Cmd>Telescope find_files<CR>",                    description = "Telescope: Fuzzy search (find) files.",                  mode = "n",     opts = opts },
-        -- Key:         Ctrl-Shift-s    ( Normal )                                                                     
+        -- Key:         Ctrl-Shift-s    ( Normal )
         { "<C-S-s>",                    "<Cmd>Telescope buffers<CR>",                       description = "Telescope: Fuzzy search (find) open buffers.",           mode = "n",     opts = opts },
         -- Key:         Ctrl-Shift-f    ( Normal )
         { "<C-S-f>",                    "<Cmd>Telescope live_grep<CR>",                     description = "Telescope: Live grep.",                                  mode = "n",     opts = opts },
         -- Key:         Leader-Tele*    ( Normal )
         { "<Leader><S-t>ele<S-h>i",     "<Cmd>Telescope highlights<CR>",                    description = "Telescope: List and search highlight groups.",           mode = "n",     opts = opts },
-        { "<Leader><S-t>ele<S-o>",      "<Cmd>Telescope oldfiles<CR>",                      description = "Telescope: List and search previosly visited files.",    mode = "n",     opts = opts },
+        { "<Leader><S-t>ele<S-o>",      "<Cmd>TelescopeAumOldFiles<CR>",                    description = "Telescope: List and search previously visited files. (recent)",      mode = "n",     opts = opts },
         { "<Leader><S-t>ele<S-g>",      "<Cmd>Telescope live_grep<CR>",                     description = "Telescope: Live (rip)grep current folder.",              mode = "n",     opts = opts },
         { "<Leader><S-t>ele<S-h>e",     "<Cmd>Telescope help_tags<CR>",                     description = "Telescope: List and search help tags.",                  mode = "n",     opts = opts },
         { "<Leader><S-t>eletreesitter", "<Cmd>Telescope treesitter<CR>",                    description = "Telescope: List and search treesitter symbols.",         mode = "n",     opts = opts },
@@ -882,39 +976,25 @@ require("legendary").setup({
         -- Wildfire                     ( STATE: Okay )
         -- NOTE:                        While these work semi okay, I am kind of looking for better ones.
         -- Key:         Shift-l         ( Normal, Visual, Operator )
-        { "<S-l>",                      "<Plug>(wildfire-fuel)",                description = "Wildfire: Expand selection.",        mode = { "n", "v", "o" },       opts = opts },
+        { "<S-l>",                      "<Plug>(wildfire-fuel)",                description = "Wildfire: Expand selection.",        mode = { "n", "x", "o" },       opts = opts },
         -- Key:         Ctrl-l          ( Visual )
-        { "<C-l>",                      "<Plug>(wildfire-water)",               description = "Wildfire: Shrink selection.",        mode = "v",                     opts = opts },
+        { "<C-l>",                      "<Plug>(wildfire-water)",               description = "Wildfire: Shrink selection.",        mode = { "x" },                 opts = opts },
 
         -- Misc Commands                ( STATE: TODO )
         -- Key:         Leader-l-s-p
-        { "<Leader>lsp",                "<Cmd>LspStart<CR>",                    description = "Start LSP Server.",                  mode = {"n"},                   opts = opts },
-
-        -- Custom: Search and Replace   ( STATE: Okay )     ( NOTE: These are very nice. )
-        -- Key:         Shift-k         ( Visual )
-        { '<S-k>',      '"xy:%s/<C-r>x/<C-r>0/g<CR>',       description = 'Globally replace all matches of `Visually Selected Text` with the text currently in `Primary Clipboard Register`.',  mode = { 'v' },   opts = { noremap = true, silent = false } },
-        -- Key:         Ctrl-Shift-k    ( Visual )
-        { "<C-S-k>",    "y:%s/<C-r>0//g<Left><Left>",       description = "Globally replace matches of visually selected text in the current file.",                                            mode = { 'v' },   opts = { noremap = true, silent = false } },
-        -- Key:         Shift-d         ( Visual )
-        { "<S-d>",      ":s/\\%V<C-r>0//g<Left><Left>",     description = "Replace text that matches the contents of the yank register, within the current visual selection.",                  mode = { 'v' },   opts = { noremap = true, silent = false } },
+        { "<Leader>lsp",                "<Cmd>LspStart<CR>",                    description = "Start LSP Server.",                  mode = { "n" },                 opts = opts },
 
         -- Font Size                    ( STATE: Okay )
         -- Key:         Leader-Leader-f-s
         { "<Leader><Leader>fs",         ":set guifont=JetBrainsMono\\ Nerd\\ Font:h:b<Left><Left>",      description = "Set Font Size to desired value.",   mode = { 'n' },   opts = { noremap = true, silent = false } },
 
-        -- Snippets                     ( STATE: TODO )
-        -- Key:         Leader-s-n-i-p-a-l-l
-        { "<Leader>snipall",            "<Cmd>LuaSnipsEditAll<CR>",     description = "Edit Global Snippets. (LuaSnip)",    mode = {"n"},   opts = opts },
-        -- Key:         Leader-s-n-i-p-r-u-s-t
-        { "<Leader>sniprust",           "<Cmd>LuaSnipsEditRust<CR>",    description = "Edit Rust Snippets. (LuaSnip)",      mode = {"n"},   opts = opts },
-
         -- Zen-Mode                     ( STATE: Fine ) ( NOTE: `true-zen.nvim` is worse than `zen-mode.nvim`. )
         -- Key:         <Leader>z
-        { "<Leader>z",                  "<Cmd>ZenMode<CR>",     description = "Toggle Zen-Mode.",       mode = {"n"},       opts = opts },
+        { "<Leader>z",                  "<Cmd>ZenMode<CR>",     description = "Toggle Zen-Mode.",       mode = { "n" },       opts = opts },
 
         -- Treesitter                   ( STATE: TODO: Test )
-        { "<Leader>tson",               "<Cmd>TSEnable highlight<CR>",      description = "Enable Treesitter highlighting.",    mode = {"n"},   opts = opts },
-        { "<Leader>tsoff",              "<Cmd>TSDisable highlight<CR>",     description = "Disable Treesitter highlighting.",   mode = {"n"},   opts = opts },
+        { "<Leader>tson",               "<Cmd>TSEnable highlight<CR>",      description = "Enable Treesitter highlighting.",    mode = { "n" },   opts = opts },
+        { "<Leader>tsoff",              "<Cmd>TSDisable highlight<CR>",     description = "Disable Treesitter highlighting.",   mode = { "n" },   opts = opts },
 
         -- Jukit                        ( STATE: TODO ) ( Interactive Python Development Workflow )
         { "<Leader>ipystart",           "<Cmd>call jukit#splits#output_and_history()<CR>",          description = "Open IPython Output and History in split windows.",              mode = {"n"},   opts = opts },
@@ -929,22 +1009,111 @@ require("legendary").setup({
 
         -- Misc
         { "g0",         "g0",          description = "Help file overview.",         mode = "n",     opts = opts },
-        
+
         -- Leap.nvim
         -- Key:         d
         { "d",         "<Plug>(leap-forward-to)",       description = "Leap.nvim: Jump forward.",       mode = "n",     opts = opts },
     },
 
     commands = {
+        -- Snippets             ( STATE: Okay, but missing filetypes. )
+        {
+            "EditSnippetsAll",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/all.lua" } }, {})
+            end,
+            description = "Edit/Open Global Snippets(file)."
+        },
+        {
+            "EditSnippetsSnippets",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/snippets.snippets" } }, {})
+            end,
+            description = "Edit/Open `Snippets` Snippets(file)."
+        },
+        {
+            "EditSnippetsRust",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/rust.snippets" } }, {})
+            end,
+            description = "Edit/Open `Rust` Snippets(file)."
+        },
+        {
+            "EditSnippetsLua",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/lua.snippets" } }, {})
+            end,
+            description = "Edit/Open `Lua` Snippets(file)."
+        },
+        {
+            "EditSnippetsNorg",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/norg.snippets" } }, {})
+            end,
+            description = "Edit/Open `Norg` Snippets(file)."
+        },
+        {
+            "EditSnippetsHtml",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/html.snippets" } }, {})
+            end,
+            description = "Edit/Open `HTML` Snippets(file)."
+        },
+        {
+            "EditSnippetsCss",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/css.snippets" } }, {})
+            end,
+            description = "Edit/Open `CSS` Snippets(file)."
+        },
+        {
+            "EditSnippetsTypescript",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/typescript.snippets" } }, {})
+            end,
+            description = "Edit/Open `Typescript` Snippets(file)."
+        },
+        {
+            "EditSnippetsJavascript",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/javascript.snippets" } }, {})
+            end,
+            description = "Edit/Open `Javascript` Snippets(file)."
+        },
+        -- LSP
+        {
+            "AumLspStart",
+            function()
+                vim.api.nvim_cmd({ cmd = "LspStart" },  {})
+            end,
+            description = "Start Language Server."
+        },
+        {
+            "AumLspStop",
+            function()
+                vim.api.nvim_cmd({ cmd = "LspStop" },   {})
+            end,
+            description = "Stop Language Server."
+        },
         {
             "EnableExtraOpts",
             function()
-                vim.api.nvim_cmd({ cmd = "set", args = { "nu" }}, {})
-                vim.api.nvim_cmd({ cmd = "set", args = { "rnu" }}, {})
-                vim.api.nvim_cmd({ cmd = "set", args = { "cursorline" }}, {})
-                vim.api.nvim_cmd({ cmd = "set", args = { "list" }}, {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "nu" } },              {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "rnu" } },             {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "cursorline" } },      {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "list" } },            {})
             end,
-            description = "Enables line numbers, cursorline and listchars."
+            description = "Enables (relative) line numbers, cursorline and listchars."
+        },
+        {
+            "DisableExtraOpts",
+            function()
+                vim.api.nvim_cmd({ cmd = "set", args = { "nonu" } },            {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "nornu" } },           {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "nocursorline" } },    {})
+                vim.api.nvim_cmd({ cmd = "set", args = { "nolist" } },          {})
+            end,
+            description = "Disables line numbers, cursorline and listchars."
         },
     },
 
@@ -967,12 +1136,6 @@ require("legendary").setup({
     },
 })
 -- === END - Legendary Setup - END === --
-
--- Temporary test.
--- -> Binding Ctrl-Key and Ctrl-Shift-Key works properly now, because I configured Kitty. 
--- bindkey("n", "<C-e>",    "n")           
--- bindkey("n", "<C-S-e>",  "N")
--- bindkey("n", "<C-i>",    "j")  -- Differentiated from <Tab>, because Kitty supports this.
 
 --=================================================--
 -- === END - Plugin Specific Keybindings - END === --

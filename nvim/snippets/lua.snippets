@@ -10,8 +10,35 @@ snippet print_var_formatted "Print a message and variable."
 snippet use "Packer 'use'."
 	use { "$0" }
 
+snippet require_setup "Call setup on some file. Used to load plugins."
+	require("${1:plugin_name}").setup({
+		${0:opts}
+	})
+
 snippet map_legendary_key "Create new keybinding in `Legendary.nvim`."
 	{ "$1",          "$2",            description = "$0",          mode = { 'n', 'v', 'o' },   opts = opts },
+
+snippet new_legendary_command "Create a new `legendary.nvim` command."
+	{
+		"$1",
+		function()
+			$0
+		end,
+		description = "$2"
+	},
+
+snippet nvim_cmd "Execute a Neovim Command."
+	vim.api.nvim_cmd({ cmd = "$1", args = { "$0" }}, {})
+
+snippet create_nvim_autocmd "Create a autocmd."
+	local ${1:augroup_name}_aumgroup = vim.api.nvim_create_augroup("My${2:augroup_name}", { clear = true })
+	vim.api.nvim_create_autocmd("${3:TriggerEvent}", {
+		pattern = { '${4:pattern}' },
+		callback = function()
+			${0:code}
+		end,
+		group = $1_aumgroup
+	})
 
 snippet func "Lua function."
 	function $1($2)
@@ -44,29 +71,21 @@ snippet if__elseif_else "Lua `if elseif else`."
 		$0
 	end
 
-snippet get_current_nvim_line "Get the current line from the active Neovim buffer, as a string."
-	local current_line = vim.api.nvim_get_current_line()
+snippet get_current_line "Get the current line from the active Neovim buffer, as a string."
+	vim.api.nvim_get_current_line()
 
-snippet cursor_location "Get current `row` and `column` of `Cursor Position`."
+snippet get_cursor_location_row_col "Get current `row` and `column` of `Cursor Position`."
 	local cur_row, cur_col = unpack(vim.api.nvim_win_get_cursor(0))
 
 snippet get_character_after_cursor "Get the `character` to the right of `Cursor Position`."
 	local current_line = vim.api.nvim_get_current_line()
 	local char_after_cursor = string.sub(current_line, cur_col + 2, cur_col + 2)
 
-snippet write_nvim_text "Write text into Neovim buffer at `Cursor Position`."
+snippet set_buf_text "Write text into Neovim buffer at `Cursor Position`."
 	vim.api.nvim_buf_set_text(0, cur_row - 1, cur_col, cur_row - 1, cur_col, {"$0"})
 
-snippet write_nvim_text_and_advance_cursor "Write text into Neovim buffer at `Cursor Position`, and place the cursor at the end of the inserted text."
+snippet set_buf_text_and_advance_cursor "Write text into Neovim buffer at `Cursor Position`, and place the cursor at the end of the inserted text."
 	local str = "$0"
 	vim.api.nvim_buf_set_text(0, cur_row - 1, cur_col, cur_row - 1, cur_col, { str })
 	vim.api.nvim_win_set_cursor(0, { cur_row, cur_col + string_len(str) })
-
-snippet repterm_exec_norm_function "Function for execution Normal Mode commands properly.."
-	local function exec_norm(str)
-		return vim.cmd(nvim_replace_termcodes(string.format("normal %s", str), true, true, true))
-	end
-
-snippet exec_norm "Execute Normal Mode commands."
-	exec_norm("$0")
 

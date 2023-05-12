@@ -1,6 +1,6 @@
 -- === |> - Heirline / Aumneline - <| ===
 
--- Fully custom and very easy to configure.
+-- Fully custom and easy to configure.
 
 -- |> Colors
 local colors = require("aumnechroma.colors")
@@ -112,7 +112,7 @@ local ViModeIndicator = {
     -- Same goes for the highlight. Now the foreground will change according to the current mode.
     hl = function(self)
         local mode = self.mode:sub(1, 1)  -- Get only the first mode character.
-        return { fg = self.mode_colors[mode], bg = colors.bg_03_night, bold = true }
+        return { fg = self.mode_colors[mode], bold = true }
     end,
 
     -- Re-evaluate the component only on ModeChanged event!
@@ -154,7 +154,7 @@ local FileName = {
         -- options, see `:help filename-modifers`.
         local filename = vim.fn.fnamemodify(self.filename, ":.")
         if filename == "" then return "[No Name]" end
-        
+
         -- Now, if the filename would occupy more than 1/4th of the available
         -- space, we trim the file path to its initials.
         if not conditions.width_percent_below(#filename, 0.25) then
@@ -261,11 +261,8 @@ local TimeClock = {
 -- START => StatuslineMessage
 local StatuslineMessage= {
     provider = function()
-        if require("noice").api.status.mode.has() then
-            return require("noice").api.status.mode.get()
-        else
-            return ''
-        end
+        -- TODO: Add some sort of extra info function thing.
+        return ''
     end,
 
     hl = { fg = colors.fg_purple_02_purple_sand },
@@ -277,6 +274,9 @@ local StatuslineMessage= {
 -- END => LSP Diagnostics
 
 -- === |> - StatusLine combined - <| ===
+
+-- ViModeIndicator = utils.surround({ "", "" }, colors.bg_03_night, { ViModeIndicator })
+
 local StatusLine = {
     Space, ViModeIndicator, Space, FileNameBlock, Space, Align,
     StatuslineMessage, Align,
@@ -463,3 +463,4 @@ require("heirline").setup({
     tabline = BufferLine
 })
 
+-- End of File

@@ -21,6 +21,8 @@ colors.bg_06_dusk                       = "#151028"
 colors.bg_07_dark_knight                = "#18122b"
 colors.bg_08_ghost                      = "#26144a"
 colors.bg_09_champion_blue              = "#646886"
+colors.bg_10_prophet_violet             = "#6c55a8"
+colors.bg_11_trailing_whitespace        = "#000000"
 
 
 -- ###############################################
@@ -29,10 +31,26 @@ colors.bg_09_champion_blue              = "#646886"
 
 -- |> STATE: Potentially Final.
 
--- Primarily for: `Comments`.
+-- Primarily for: `Comments`, `Conceal`.
 colors.special_01_dahlia_purple         = "#7c6cac"
 colors.special_02_coronation_blue       = "#5c4c9c"
 colors.special_03_secretive             = "#493b89"
+
+-- Headings
+colors.special_04_beekeeper             = "#fff7ab"
+colors.special_05_photon_barrier        = "#8ae3f4"
+colors.special_06_illicit_purple        = "#e0a0ff"
+colors.special_07_tanzine               = "#989cf9"
+colors.special_08_dollar_bill           = "#82be64"
+colors.special_09_orange_essential      = "#d1917e"
+
+colors.special_10_noir_fiction          = "#140410"
+colors.special_11_black_glaze           = "#051416"
+colors.special_12_inside                = "#1c1022"
+colors.special_13_corbeau               = "#101221"
+colors.special_14_myrtle                = "#090d09"
+colors.special_15_root_brew             = "#100e0c"
+
 
 -- ###############################################
 -- ##           - Foreground Colors -           ##
@@ -55,6 +73,11 @@ colors.fg_white_09_romantic_cruiser     = "#eadfef"
 colors.fg_white_10_fairy_wings          = "#ffecf2"
 colors.fg_white_11_icy_plains           = "#ced1fb"
 colors.fg_white_12_cold_illusion        = "#b3b8ff"
+colors.fg_white_13_icy_landscape_dim_1  = "#c4cbf9"
+colors.fg_white_14_icy_landscape_dim_2  = "#c0c8f4"
+colors.fg_white_15_icy_landscape_dim_3  = "#bbc4f0"
+colors.fg_white_16_icy_landscape_dim_4  = "#b8c0db"
+colors.fg_white_17_icy_landscape_dim_5  = "#b4bbd8"
 -- |----------------------|
 -- === - END - Whites - ===
 

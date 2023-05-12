@@ -10,8 +10,8 @@ snippet fn_with_return_type "Snippet for: function definition with return value.
 		$0
 	}
 
-snippet string_from "Snippet for: String::from()."
-	String::from("$0")
+snippet string_from "Create a `String` from a `&str`."
+	String::from("$1")$0
 
 snippet vecnew "Snippet for: Vec::new()."
 	Vec::new()$0
@@ -55,12 +55,12 @@ snippet struct_with_new "Snippet for: 'struct' definition with `new()` construct
 		}
 	}
 
-snippet enum "Snippet for: 'enum' keyword."
-	enum $1 {
-		$2,$0
+snippet enum "Keyword: `enum`"
+	enum ${1:EnumName} {
+		${0:EnumMember(OptionalDataType)}
 	}
 
-snippet trait "Snippet for: 'trait' keyword."
+snippet trait "Keyword: `trait`"
 	trait $1 {
 		$0
 	}
@@ -167,10 +167,10 @@ snippet var_string_mut "Snippet for: Mutable String variable."
 	let mut $1: String = "$2".to_string();$0
 
 snippet var_tuple_duo "Two value tuple variable."
-	let $1: ($2, $3) = ($4, $0);
+	let ${1:variable_name}: = (${2:tup.0}, ${3:tup.1});$0
 
 snippet var_tuple_trio "Three value tuple variable."
-	let $1: ($2, $3, $4) = ($5, $6, $0);
+	let ${1:variable_name}: = (${2:tup.0}, ${3:tup.1}, ${4:tup.2});$0
 
 snippet string "Snippet for: 'String' type."
 	String$0

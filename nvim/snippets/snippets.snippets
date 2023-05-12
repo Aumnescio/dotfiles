@@ -1,3 +1,6 @@
 snippet snip_snip "Snippet for: Creating a new snippet."
-	snippet ${1} "${2}."
-	${0}
+	snippet ${1:snip_name} "${2:snip_description}."
+		${0:snip_contents}
+
+snippet tabstop "Tabstop."
+	\${$1:$2}$0

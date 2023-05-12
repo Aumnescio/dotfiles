@@ -4,22 +4,33 @@ set fish_greeting
 
 #: Editor
 set -gx EDITOR nvim
-set -gx MOAR '-colors=16M -style dracula -no-statusbar -no-linenumbers'
+# set -gx MOAR '-colors=16M -style dracula -no-statusbar -no-linenumbers'
 #: Looking for better pager.
-set -gx PAGER moar
-set -gx MANPAGER moar
-# set -gx PAGER /home/linuxbrew/.linuxbrew/bin/moar
-# set -gx MOST_INITFILE /home/aum/.config/most/most.rc
+set -gx PAGER less
+set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
 #: Hope this is not gonna break anything. Testing because of Bevy issue.
 #: It is telling me to do something like this.
 set -gx PKG_CONFIG_PATH "/usr/lib/x86_64-linux-gnu/pkgconfig/"
 
+#: `Pure` fish-prompt colors. Could customize these I suppose.
+#: STATE: Fine
+set --universal pure_color_danger brred
+set --universal pure_color_dark 332244
+set --universal pure_color_info cyan
+set --universal pure_color_light white
+set --universal pure_color_mute red
+set --universal pure_color_normal normal
+set --universal pure_color_primary blue
+set --universal pure_color_success green
+set --universal pure_color_warning yellow
+
 #: Path
 #: Node version manager `fnm`:
+#: - This apparently only needed to be done once.
 # fish_add_path /home/aum/.fnm
 
-#: Fzf
+#: `fzf` defaults configuration.
 set -gx FZF_DEFAULT_COMMAND 'fd --type f --hidden --follow --exclude ".git" --exclude node_modules --exclude ".ccls-cache" --exclude ".output"'
 set -gx FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border'
 set -gx FZF_ALT_C_COMMAND 'fd -H -t d'
@@ -37,6 +48,9 @@ set -gx RUSTDOCFLAGS '--default-theme=ayu'
 if status is-interactive
     #: Commands to run in interactive sessions can go here
 
+    # Async git prompt for `pure-fish/pure`:
+    set -g async_prompt_functions _pure_prompt_git
+
     fish_vi_key_bindings
 
     #: Abbreviations / Aliases:
@@ -44,27 +58,60 @@ if status is-interactive
     abbr --add --global cp 'cp -vi'
     abbr --add --global mv 'mv -vi'
     abbr --add --global md 'mkdir'
+
+    # START - Navigating back to parent directories.
+    abbr --add --global '...' '../..'
+    abbr --add --global '....' '../../..'
+    abbr --add --global '.....' '../../../..'
+    abbr --add --global '......' '../../../../..'
+    abbr --add --global '.......' '../../../../../..'
+    # END - Navigating back to parent directories.
+
+    # START - Code Editor (Mostly Neovim)
     abbr --add --global nv 'nvim'
     abbr --add --global nvs 'nvim (fzf)'
-    abbr --add --global notes 'nvim /home/aum/Secondbrain/notes/temp-notes.md'
-    abbr --add --global fehere 'feh -FYZ ./'
-    abbr --add --global untar 'tar --extract --file'
-    abbr --add --global cheat 'cht.sh --shell'
-    abbr --add --global rodb 'rofi -show kb -modi kb:/home/aum/.config/rofi/custom-modes/rofi-kb-mode.bash'
-    abbr --add --global aumusic 'ncmpcpp'
-    abbr --add --global setkeyboardrepeatrate 'xset r rate 192 90'
-    abbr --add --global fixkeyboardrepeatrate 'xset r rate 192 90'
+    abbr --add --global codi 'codium'
+    abbr --add --global notes 'nvim /home/aum/Secondbrain/Vault/mind-tracking-fleeting-notes.norg'
+    # END - Code Editor
 
+    # NOTE: `untar` should work automatically for the various bzip and gzip versions too.
+    abbr --add --global untar 'tar --extract --verbose --file'
+    abbr --add --global untarbzip 'tar --extract --verbose --bzip2 --file'
+    abbr --add --global untargzip 'tar --extract --verbose --gzip --file'
+    abbr --add --global cheat 'cht.sh --shell'
+    #: This is some old thing. TODO: Test / Remove
+    abbr --add --global rodb 'rofi -show kb -modi kb:/home/aum/.config/rofi/custom-modes/rofi-kb-mode.bash'
+
+    #: Opening Music Player `ncmpcpp`
+    abbr --add --global aumusic 'ncmpcpp'
+
+    #: Setting keyboard repeat rate easily, because it tends to reset sometimes.
+    abbr --add --global setkeyboardrepeatrate 'xset r rate 196 72'
+    abbr --add --global fixkeyboardrepeatrate 'xset r rate 196 72'
+
+    #: Hmm.
     abbr --add --global python 'python3'
 
+    # - START - Image Viewing
     abbr --add --global siv 'sxiv -bft'
+    abbr --add --global fehere 'feh -FYZ ./'
     abbr --add --global icat 'kitty +kitten icat'
+    # - END - Image Viewing
+
+    #: `fd`, `rg` and `xclip` defaults
     abbr --add --global fd 'fd --hidden'
     abbr --add --global rg 'rg -S'
-    abbr --add --global xc 'xclip -sel clip'
-    abbr --add --global atlascreate 'create-atlas.fish'
+    abbr --add --global xclip 'xclip -sel clip'
+
+    #: For showing keypresses of screen.
     abbr --add --global screenkey-drag 'screenkey --mouse --no-systray -p fixed -g $(slop -n -f "%g")'
 
+    #: START => Web Development
+    #: |> browser-sync
+    abbr --add --global browsync 'browser-sync start --server --files "*"'
+    #: END => Web Development
+
+    #: TODO: Probably remove these and `kb`.
     abbr --add --global kbl 'kb list'
     abbr --add --global kbe 'kb edit'
     abbr --add --global kba 'kb add --title'
@@ -72,15 +119,20 @@ if status is-interactive
     abbr --add --global kbd 'kb delete --id'
     abbr --add --global kbg 'kb grep -ivm'
     abbr --add --global kbt 'kb list --tags'
-    abbr --add --global pdfout 'lualatex -output-directory=".output/"'
 
-    abbr --add --global naut 'nautilus . & disown > /dev/null 2>&1'
+    #: START => LaTeX
+    #: Compiling a `.tex` LaTeX file using `lualatex`. (into `.output` dir)
+    abbr --add --global pdfout 'lualatex -output-directory=".output/"'
+    #: END => LaTeX
 
     #: Timed shutdown script
     abbr --add --global aumshutdownsoon '/home/aum/Secondbrain/programming/scripts/aum-timed-shutdown/aumpoweroff.sh'
 
     #: NOTE: Requires the user to click the target window.
     abbr --add --global get_wm_class 'xprop | rg -S "wm_class" | choose 3 | tr -d "\""'
+
+    #: START => C / C++ / Java compilation
+    #   - NOTE: These are dated.
 
     #: For compiling single .cpp file.
     abbr --add --global cppcompile 'g++ -Wall -std=c++20 -o ./exe.out'
@@ -91,6 +143,7 @@ if status is-interactive
 
     #: NOTE: Ran from root of project.
     abbr --add --global cmake-init-cpp '/home/aum/Secondbrain/programming/scripts/aum-cmake-init-scripts/init.sh'
+    #: END => C / C++
 
     #: Vim custom binds for fish shell command line interaction.
     #: On cli "bind --function-names" shows list of available commands.
@@ -102,11 +155,33 @@ if status is-interactive
     bind --mode default n forward-word
     bind --mode default o backward-word
 
-    bind --mode default ss kill-whole-line
     bind --mode default s kill-selection
+    bind --mode default ss kill-whole-line
+    bind --mode default S kill-whole-line
+
+    bind --mode visual e forward-char
+    bind --mode visual q backward-char
+
+    bind --mode visual n forward-word
+    bind --mode visual o backward-word
+
+    bind --mode visual s kill-selection
 
     bind --mode default u undo
     bind --mode default r redo
+
+    bind --mode default --sets-mode visual v begin-selection
+    bind --mode visual --sets-mode default v end-selection
+    bind --mode visual --sets-mode default \e end-selection
+
+    bind --mode default --sets-mode insert w end-selection
+    bind --mode default --sets-mode insert W beginning-of-line
+
+    bind --mode default go beginning-of-line
+    bind --mode default gn end-of-line
+
+    bind --mode visual go beginning-of-line
+    bind --mode visual gn end-of-line
 
     bind --mode insert \cq backward-char
     bind --mode insert \ce forward-single-char
@@ -163,7 +238,7 @@ if status is-interactive
     end
 
     function zd
-        set -l finds (fd --type directory --max-depth 3 --hidden)
+        set -l finds (fd --type directory --max-depth 5)
 
         if [ -z "$finds" ]
             return 0
@@ -179,7 +254,13 @@ if status is-interactive
     end
 
     function zl
-        zi ; exa --grid --all --classify --icons
+        zi
+        # exa --grid --all --classify --icons
+    end
+
+    #: Opening detached `Graphical File Browser` (nautilus) in Current Directory.
+    function naut
+        nohup nautilus --new-window $argv[1] > /dev/null 2>&1 & disown
     end
 
     function reload_fish
@@ -187,9 +268,7 @@ if status is-interactive
     end
 
     # =============================================================================
-    #: Init Starship prompt.
-
-    starship init fish | source
+    #: Init pyenv.
     pyenv init - | source
 end
 

@@ -1,0 +1,96 @@
+/* These settings are mostly imported from AmadeusWM's `dotfiles-hyprland` Firefox configuration. */
+@import "config.css";
+@import "variables.css";
+@import "icons/icons.css";
+@import "urlbar/urlbar.css";
+@import "navbar/navbar.css";
+@import "popup/popup.css";
+@import "interface/interface.css";
+@import "userChrome-tabline.css";
+@import "content/inner-rounded.css";
+
+/******************************************
+ * `userChrome.css` for Firefox Developer Edition.          ( Version `113.0b9` as of `06.08.2023` )
+ * Author: Aumnescio
+ *
+ *  Short Description:
+ *  - Unclutters bullshit,
+ *  - has a clean, minimal style,
+ *  - Very dark with a hint of blue.
+ *  - Uses Vertical Tabs (Tree Style Tabs) instead of the Native Top Tab-Bar.
+ *    - Completely hides the default top tab-toolbar.
+ *  - Hides `Address Bar` by default, and shows the bar on hover without shifting the Web Page Contents.
+ *  - No animation.
+ *  - No bullshit images.
+ *
+ * Helpful things:
+ *  - To use this `userChrome.css` place it in `~/.config/firefox/` first,
+ *    and then symlink the file to `~/.mozilla/firefox/<insert-your-profile-here>/chrome/userChrome.css`.
+ *    - Placing the original file under `~/.config/firefox/` is optional, but the file is then easier to find, edit, and manage.
+ *
+ *  - From the Firefox Web Developer Tools => Settings => Enable:
+ *    - `browser chrome and add-on debugging toolboxes`
+ *    - `remote debugging`
+ *    You can then access the `Browser Toolbox` from the `(More) Tools`-menu to inspect the Firefox UI "Chrome".
+ *
+ *  - To change the `Font Size` in `Firefox Developer Tools` and the `Browser Toolbox`, use <Ctrl + '+'> and <Ctrl + '-'>.
+ *    - `Firefox Developer Tools` forgets the `Ctrl + Mousewheel` zoom, and `Ctrl + Mousewheel` zooming does not work at all in `Browser Toolbox`.
+ *
+ * Helpful resources:
+ *  - ListItemOne
+ *  - ListItemTwo
+ *  - ListItemThree
+ *****************************************/
+
+/* Hide native tab-bar at the top of the window. */
+#TabsToolbar { visibility: collapse !important; }
+
+/********************************************************************************************************/
+/* START - Hide the address/url-bar by default, but show it on hover, without shifting page contents.   */
+/********************************************************************************************************/
+
+/* Address Bar Font Size */
+/* If it's bad size, can change.  */
+#urlbar {
+    font-size: 13.2pt !important;
+}
+
+/* Autohide `NavBar` */
+/* NOTE: This is so extremely good. */
+#nav-bar {
+    /* Customize this value. */
+    /* WIP  */
+    --navbar-margin: -52px !important;
+
+    margin-top: var(--navbar-margin);
+    margin-bottom: 0;
+    z-index: -100;
+    transition: all 0.08s ease !important;
+    opacity: 0;
+}
+
+#navigator-toolbox:focus-within > #nav-bar,
+#navigator-toolbox:hover > #nav-bar
+{
+    margin-top: 0;
+    margin-bottom: var(--navbar-margin);
+    z-index: 100;
+    opacity: 1;
+}
+
+/************************************/
+/* END - Hide the address/url-bar.  */
+/************************************/
+
+/* Hiding `Back Button` and `Forward Button` from address/url-bar.                                  */
+/* NOTE: Reload button hidden by using the Firefox `Customize Toolbar` options.                     */
+/* NOTE: Extra space added to the left of address-bar from Firefox `Customize Toolbar` options.     */
+
+#back-button,
+#forward-button {
+    display: none !important;
+}
+
+/**********************************/
+/***        END OF FILE         ***/
+/**********************************/

@@ -1,0 +1,77 @@
+snippet heading_one_01 "Top Level Neorg Heading."
+	* $0
+
+snippet heading_two_02 "Secondary Neorg Heading."
+	** $0
+
+snippet heading_three_03 "Tertiary Neorg Heading."
+	*** $0
+
+snippet heading_four_04 "Quaternary Neorg Heading."
+	**** $0
+
+snippet heading_five_05 "Quinary Neorg Heading."
+	***** $0
+
+snippet heading_six_06 "Senary Neorg Heading."
+	****** $0
+
+snippet list_one_01 "Top level `Unordered List Item`."
+	- $0
+
+snippet list_two_02 "Secondary `Unordered List Item`."
+	-- $0
+
+snippet list_three_03 "Tertiary `Unordered List Item`."
+	--- $0
+
+snippet list_four_04 "Quaternary `Unordered List Item`."
+	---- $0
+
+snippet list_five_05 "Quinary `Unordered List Item`."
+	----- $0
+
+snippet list_six_06 "Senary `Unordered List Item`."
+	------ $0
+
+snippet link "Syntax for creating a url/link."
+	{${1:link}}[${0:Description}]
+
+snippet link_to_file "Syntax for creating a link to a file."
+	{:${1:base_file_name}:}[${0:Description}]
+
+snippet link_to_marker "Syntax for creating a link to a marker, for example a heading."
+	{# ${1:marker_name}}[${0:Description}]
+
+snippet codeblock_rust "Rust Codeblock."
+	@code rust
+	$0
+	@end
+
+snippet codeblock_lua "Lua Codeblock."
+	@code lua
+	$0
+	@end
+
+snippet codeblock_css "CSS Codeblock."
+	@code css
+	$0
+	@end
+
+snippet codeblock_html "HTML Codeblock."
+	@code html
+	$0
+	@end
+
+snippet todo "todo item."
+	( ) $0
+
+snippet time "time."
+	\`${1:XX}:${2:XX}\`$0
+
+snippet comment "Inline Comment."
+	%$0%
+
+snippet comment_multiline "Multiline Comment."
+	#comment
+	$0

@@ -1,0 +1,23 @@
+snippet import "import"
+	import '${1:file}'$0
+
+snippet import_from "import { thing } from { thing }"
+	import { ${1:object} } from { ${2:module} }$0
+
+snippet !uno_boilerplate "UnoCSS Boilerplate."
+	// File: \`uno.config.ts\`
+	import { defineConfig, presetUno } from 'unocss'
+
+	export default defineConfig({
+		presets: [
+			presetUno(),
+		],
+		rules: [
+			// todo
+		],
+		shortcuts: [
+			// todo
+		],
+	})
+	// End of File
+

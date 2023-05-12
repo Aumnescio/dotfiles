@@ -1,1 +1,1 @@
-/home/linuxbrew/.linuxbrew/opt/fzf/shell/key-bindings.fish
+/home/aum/Repos/fzf/shell/key-bindings.fish
