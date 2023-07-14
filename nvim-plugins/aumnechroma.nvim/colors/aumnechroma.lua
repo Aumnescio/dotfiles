@@ -103,8 +103,10 @@
 
 -- === - START - Configured Plugins - ===
 --
--- => Treesitter
+-- => lazy.nvim
 -- => Packer.nvim
+-- => nvim-treesitter
+-- => nvim-ts-rainbow
 -- => Telescope.nvim
 -- => Nvim-cmp
 -- => Lspkind.nvim
@@ -115,13 +117,20 @@
 -- => hlargs.nvim
 -- => nvim-ufo
 -- => nvim-notify
--- => nvim-ts-rainbow
 -- => Rust-Tools.nvim
 -- => polyglot.vim
 --  - Lua
 --  - Rust
 --  - Markdown
 -- => vim-rust-syntax-ext
+-- => git-signs.nvim
+-- => git-blame.nvim
+-- => hlchunk.nvim
+-- => fidget.nvim
+-- => scrollbar.nvim
+-- => scrollview.nvim
+-- => sentiment.nvim
+-- => wf.nvim
 --
 -- TODO: Plugins to config...
 -- => FTerm.nvim
@@ -156,11 +165,12 @@ set_hl(ns_id, "AumBackgroundQua",       { bg = colors.bg_04_monolith })
 set_hl(ns_id, "AumBackgroundQui",       { bg = colors.bg_05_tristesse })
 set_hl(ns_id, "AumBackgroundSen",       { bg = colors.bg_06_dusk })
 set_hl(ns_id, "AumBackgroundSept",      { bg = colors.bg_07_dark_knight })
+set_hl(ns_id, "AumBackgroundHL",        { fg = colors.fg_purple_04_baby_purple,     bg = colors.bg_05_tristesse,    bold = true })
 
 -- None / Whitespace
 set_hl(ns_id, "AumWhitespace",          { fg = colors.bg_08_ghost,                      bg = "NONE" })
 set_hl(ns_id, "AumTrailingWhitespace",  { fg = colors.fg_red_11_cichlid,                bg = "NONE",    bold = true })
-set_hl(ns_id, "AumNone",                { fg = "NONE",                                  bg = "NONE" })
+set_hl(ns_id, "AumNone",                { fg = colors.fg_white_00_icy_landscape,        bg = "NONE" })
 set_hl(ns_id, "AumIgnore",              { fg = "NONE",                                  bg = "NONE" })
 
 -- Normal'ish text
@@ -189,30 +199,33 @@ set_hl(ns_id, "AumNormalDimmed4",       { fg = colors.fg_white_16_icy_landscape_
 set_hl(ns_id, "AumNormalDimmed5",       { fg = colors.fg_white_17_icy_landscape_dim_5,  bg = "NONE" })
 
 -- TODO / DONE / NOTE / FIXME           ( TODO / WIP )
-set_hl(ns_id, "AumNote",                { fg = colors.fg_yellow_02_egg_yolk,            bg = "NONE",    bold = true })
-set_hl(ns_id, "AumTodo",                { fg = colors.fg_orange_05_coral_sand,          bg = "NONE",    bold = true })
-set_hl(ns_id, "AumFixMe",               { fg = colors.fg_orange_06_caramel_ice,         bg = "NONE",    bold = true })
-set_hl(ns_id, "AumDone",                { fg = colors.fg_green_09_synthetic_mint,       bg = "NONE",    bold = true })
+set_hl(ns_id, "AumNote",                { fg = colors.fg_yellow_02_egg_yolk,            bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumTodo",                { fg = colors.fg_orange_05_coral_sand,          bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumFixMe",               { fg = colors.fg_orange_06_caramel_ice,         bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumDone",                { fg = colors.fg_green_09_synthetic_mint,       bg = "NONE",    italic = true,  bold = true })
 
 -- Cursor
 set_hl(ns_id, "AumCursor",              { fg = colors.bg_03_night,                      bg = colors.fg_yellow_01_apricot_fool })
-set_hl(ns_id, "AumCursorLine",          { link = "AumBackgroundQui" })
-set_hl(ns_id, "AumCursorColumn",        { link = "AumBackgroundQui" })
+set_hl(ns_id, "AumCursorLine",          { bg = "#000000" })
+-- set_hl(ns_id, "AumCursorLine",          { bg = "#080614" })
+set_hl(ns_id, "AumCursorColumn",        { link = "AumCursorLine" })
 
 -- Comments and Special things:
-set_hl(ns_id, "AumComment",             { fg = colors.special_01_dahlia_purple,         bg = "NONE" })
-set_hl(ns_id, "AumCommentSpecial",      { fg = colors.special_02_coronation_blue,       bg = "NONE" })
+set_hl(ns_id, "AumComment",             { fg = colors.special_01_dahlia_purple,         bg = "NONE",    italic = true })
+set_hl(ns_id, "AumCommentSpecial",      { fg = colors.special_02_coronation_blue,       bg = "NONE",    italic = true,  bold = true })
 set_hl(ns_id, "AumConceal",             { fg = colors.special_03_secretive,             bg = "NONE" })
-set_hl(ns_id, "AumLineNumberActive",    { fg = colors.special_02_coronation_blue,       bg = "NONE" })
+set_hl(ns_id, "AumLineNumberActive",    { fg = colors.special_02_coronation_blue,       bg = "NONE",    italic = true  })
 set_hl(ns_id, "AumLineNumberInactive",  { fg = colors.special_03_secretive,             bg = "NONE" })
-set_hl(ns_id, "AumSpecial",             { fg = colors.fg_orange_07_optimist_gold,       bg = "NONE" })
+set_hl(ns_id, "AumSpecial",             { fg = colors.fg_orange_07_optimist_gold,       bg = "NONE",    italic = true  })
 set_hl(ns_id, "AumSelf",                { fg = colors.fg_orange_15_melon_red,           bg = "NONE" })
+set_hl(ns_id, "AumGitBlame",            { fg = colors.bg_08_ghost,                      bg = "NONE",    italic = true })
+set_hl(ns_id, "AumDirectory",           { fg = colors.fg_blue_20_hera_blue,             bg = "NONE", })
 
 -- Selection / Visual
 set_hl(ns_id, "AumVisual",              { fg = colors.fg_red_11_cichlid,                bg = colors.bg_03_night,    bold = true,    italic = true,      underline = true })
 set_hl(ns_id, "AumYankHighlight",       { fg = colors.fg_orange_18_lightning_yellow,    bg = colors.bg_03_night,    bold = true,    underline = true })
-set_hl(ns_id, "AumCursorwordCurrent",   { bg = colors.bg_06_dusk })
-set_hl(ns_id, "AumCursorwordMatches",   { bg = colors.bg_06_dusk })
+set_hl(ns_id, "AumCursorwordCurrent",   { bg = colors.bg_04_monolith })
+set_hl(ns_id, "AumCursorwordMatches",   { bg = colors.bg_04_monolith })
 
 -- Search
 set_hl(ns_id, "AumSearch",              { fg = colors.bg_03_night,                      bg = colors.fg_orange_11_amber,         bold = true })
@@ -223,6 +236,7 @@ set_hl(ns_id, "AumMatch",               { fg = colors.fg_orange_11_amber,  bg = 
 -- User Interface
 set_hl(ns_id, "AumPmenu",               { link = "AumNormalTer" })
 set_hl(ns_id, "AumBorder",              { fg = colors.fg_purple_12_dream_vapor,         bg = "NONE" })
+set_hl(ns_id, "AumBorderFocused",       { fg = colors.fg_purple_17_venetian_night,      bg = "NONE" })
 
 -- Diagnostics
 set_hl(ns_id, "AumError",               { fg = colors.fg_red_00_cardinal,               bg = "NONE" })
@@ -258,23 +272,23 @@ set_hl(ns_id, "AumStatement",           { fg = colors.fg_blue_03_pool_tiles,    
 -- Repeat:
 set_hl(ns_id, "AumRepeat",              { fg = colors.fg_blue_04_moonstone,             bg = "NONE",    italic = true, bold = true })
 set_hl(ns_id, "AumFor",                 { link = "AumRepeat" })
-set_hl(ns_id, "AumIn",                  { link = "AumRepeat" })
+set_hl(ns_id, "AumIn",                  { fg = colors.fg_blue_04_moonstone,             bg = "NONE",    italic = true, bold = false })
 -- Methods:
-set_hl(ns_id, "AumMethod",              { fg = colors.fg_blue_06_kindred,               bg = "NONE" })
-set_hl(ns_id, "AumMethodDef",           { fg = colors.fg_blue_07_rockman,               bg = "NONE" })
-set_hl(ns_id, "AumMethodCall",          { fg = colors.fg_blue_08_widowmaker,            bg = "NONE" })
-set_hl(ns_id, "AumUserMethod",          { fg = colors.fg_blue_09_periwinkle,            bg = "NONE" })      -- STATE: Good
-set_hl(ns_id, "AumLibraryMethod",       { fg = colors.fg_blue_10_blue_sand,             bg = "NONE" })
+set_hl(ns_id, "AumMethod",              { fg = colors.fg_blue_06_kindred,               bg = "NONE",    bold = true  })
+set_hl(ns_id, "AumMethodDef",           { fg = colors.fg_blue_07_rockman,               bg = "NONE",    bold = true  })
+set_hl(ns_id, "AumMethodCall",          { fg = colors.fg_blue_08_widowmaker,            bg = "NONE",    italic = true, bold = true })
+set_hl(ns_id, "AumUserMethod",          { fg = colors.fg_blue_09_periwinkle,            bg = "NONE",    italic = true, bold = true })   -- STATE: Good
+set_hl(ns_id, "AumLibraryMethod",       { fg = colors.fg_blue_10_blue_sand,             bg = "NONE",    italic = true, bold = true })
 -- Reference / Link / Underlined
 set_hl(ns_id, "AumReference",           { fg = colors.fg_blue_11_celeste,               bg = "NONE" })
 set_hl(ns_id, "AumUnderlined",          { fg = colors.fg_blue_12_fennel_flower,         bg = "NONE",    bold = true,    italic = true,  underline = true })
 -- Functions:
 set_hl(ns_id, "AumFunction",            { fg = colors.fg_orange_03_rajah,               bg = "NONE",    bold = true })
-set_hl(ns_id, "AumFunctionCall",        { fg = colors.fg_orange_04_peach_cobbler,       bg = "NONE" })                          -- STATE: Good
+set_hl(ns_id, "AumFunctionCall",        { fg = colors.fg_orange_04_peach_cobbler,       bg = "NONE",    bold = true,    italic = true })    -- STATE: Good
 set_hl(ns_id, "AumFunctionDef",         { fg = colors.fg_orange_09_celebration,         bg = "NONE",    bold = true })
 set_hl(ns_id, "AumFunctionMacro",       { fg = colors.fg_orange_10_golden_apricot,      bg = "NONE" })
 set_hl(ns_id, "AumFunctionBuiltin",     { fg = colors.fg_orange_13_apocalyptic_orange,  bg = "NONE" })
-set_hl(ns_id, "AumLibraryFunction",     { fg = colors.fg_orange_14_papaya_punch,        bg = "NONE" })                          -- STATE: Good
+set_hl(ns_id, "AumLibraryFunction",     { fg = colors.fg_orange_14_papaya_punch,        bg = "NONE",    bold = true })          -- STATE: Good
 -- Parameters:
 set_hl(ns_id, "AumParameter",           { fg = colors.fg_orange_08_xanthous,            bg = "NONE" })
 -- Operators:
@@ -286,19 +300,19 @@ set_hl(ns_id, "AumElseIf",              { fg = colors.fg_purple_22_lical_geode, 
 set_hl(ns_id, "AumElse",                { fg = colors.fg_purple_22_lical_geode,         bg = "NONE",    italic = true, bold = true })
 set_hl(ns_id, "AumLabel",               { fg = colors.fg_purple_17_venetian_night,      bg = "NONE",    bold = true })
 -- Keywords:
-set_hl(ns_id, "AumKeyword",             { fg = colors.fg_orange_19_feather_plume,       bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordLet",          { fg = colors.fg_orange_20_peach_orange,        bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordConst",        { fg = colors.fg_white_01_seashell,             bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordMut",          { fg = colors.fg_yellow_12_rite_of_spring,      bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordOperator",     { fg = colors.fg_red_02_festive_fennec,         bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordBreak",        { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordContinue",     { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordReturn",       { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordAs",           { fg = colors.fg_red_09_fuchsia_blush,          bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordSelf",         { fg = colors.fg_purple_21_forgotten_purple,    bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordFunction",     { fg = colors.fg_purple_23_whisper_lilac,       bg = "NONE",    bold = true })
+set_hl(ns_id, "AumKeyword",             { fg = colors.fg_orange_19_feather_plume,       bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordLet",          { fg = colors.fg_orange_20_peach_orange,        bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordConst",        { fg = colors.fg_white_01_seashell,             bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordMut",          { fg = colors.fg_yellow_12_rite_of_spring,      bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordOperator",     { fg = colors.fg_red_02_festive_fennec,         bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordBreak",        { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordContinue",     { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordReturn",       { fg = colors.fg_red_08_cyclamen,               bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordAs",           { fg = colors.fg_red_09_fuchsia_blush,          bg = "NONE",    italic = true })
+set_hl(ns_id, "AumKeywordSelf",         { fg = colors.fg_purple_21_forgotten_purple,    bg = "NONE",    italic = true,  bold = true })
+set_hl(ns_id, "AumKeywordFunction",     { fg = colors.fg_purple_23_whisper_lilac,       bg = "NONE",    italic = true,  bold = true })
 set_hl(ns_id, "AumKeywordUnsafe",       { fg = colors.fg_red_13_detailed_devil,         bg = "NONE",    bold = true })
-set_hl(ns_id, "AumKeywordAsync",        { fg = colors.fg_orange_12_chocobo_feather,     bg = "NONE",    bold = true })
+set_hl(ns_id, "AumKeywordAsync",        { fg = colors.fg_orange_12_chocobo_feather,     bg = "NONE",    italic = true,  bold = true })
 -- Exceptions:
 set_hl(ns_id, "AumException",           { fg = colors.fg_red_10_candy_bar,              bg = "NONE" })
 -- Namespaces / PreProcs / PreCondits / Includes / Defines / Macros:
@@ -308,7 +322,7 @@ set_hl(ns_id, "AumNamespace",           { fg = colors.fg_purple_03_lavender_crea
 set_hl(ns_id, "AumModule",              { fg = colors.fg_purple_04_baby_purple,         bg = "NONE" })
 set_hl(ns_id, "AumInclude",             { fg = colors.fg_purple_05_lavender_dreamer,    bg = "NONE" })
 set_hl(ns_id, "AumDefine",              { fg = colors.fg_purple_06_iridescent_purple,   bg = "NONE" })
-set_hl(ns_id, "AumMacro",               { fg = colors.fg_purple_25_lighter_purple,      bg = "NONE" })
+set_hl(ns_id, "AumMacro",               { fg = colors.fg_purple_25_lighter_purple,      bg = "NONE",    bold = true })
 set_hl(ns_id, "AumUserMacro",           { link = "AumMacro" })
 set_hl(ns_id, "AumLibraryMacro",        { link = "AumMacro" })
 -- Types:
@@ -336,9 +350,9 @@ set_hl(ns_id, "AumTagTer",              { link = "AumProperty" })       -- STATE
 set_hl(ns_id, "AumTagAttribute",        { link = "AumAttribute" })      -- STATE: TODO: Test
 -- Punctuation and Delimiters
 set_hl(ns_id, "AumPunctuationPri",      { fg = colors.fg_cyan_01_verdigris,             bg = "NONE" })      -- STATE: Good
-set_hl(ns_id, "AumPunctuationSec",      { fg = colors.fg_cyan_02_windswept,             bg = "NONE" })      -- STATE: Good
+set_hl(ns_id, "AumPunctuationSec",      { fg = colors.fg_cyan_02_windswept,             bg = "NONE", bold = true })      -- STATE: Good
 set_hl(ns_id, "AumPunctuationTer",      { fg = colors.fg_cyan_03_shimmering_expanse,    bg = "NONE" })      -- STATE: Good
-set_hl(ns_id, "AumDelimeter",           { fg = colors.fg_cyan_04_thousand_sons,         bg = "NONE" })      -- STATE: Good
+set_hl(ns_id, "AumDelimiter",           { fg = colors.fg_cyan_04_thousand_sons,         bg = "NONE", bold = true })     -- STATE: Good
 set_hl(ns_id, "AumParen",               { fg = colors.fg_cyan_05_ocean_eyes,            bg = "NONE" })      -- STATE: TODO: Test
 set_hl(ns_id, "AumParens",              { fg = colors.fg_cyan_06_blue_bikini,           bg = "NONE" })      -- STATE: TODO: Test
 set_hl(ns_id, "AumBracket",             { fg = colors.fg_cyan_07_libra_morpho,          bg = "NONE" })      -- STATE: TODO: Test
@@ -348,7 +362,7 @@ set_hl(ns_id, "AumBraces",              { fg = colors.fg_cyan_10_lazy_day,      
 set_hl(ns_id, "AumRainbowBracket1",     { link = "AumPunctuationPri" })
 set_hl(ns_id, "AumRainbowBracket2",     { link = "AumPunctuationSec" })
 set_hl(ns_id, "AumRainbowBracket3",     { link = "AumPunctuationTer" })
-set_hl(ns_id, "AumRainbowBracket4",     { link = "AumDelimeter" })
+set_hl(ns_id, "AumRainbowBracket4",     { link = "AumDelimiter" })
 set_hl(ns_id, "AumRainbowBracket5",     { link = "AumParens" })
 set_hl(ns_id, "AumRainbowBracket6",     { link = "AumBrackets" })
 set_hl(ns_id, "AumRainbowBracket7",     { link = "AumBracess" })
@@ -375,6 +389,9 @@ set_hl(ns_id, "NormalNC",               { link = "AumNormalPri" })
 -- Normal in floating window:
 set_hl(ns_id, "NormalFloat",            { link = "AumNormalPri" })
 
+-- Vertical Split Separator
+set_hl(ns_id, "WinSeparator",           { fg = colors.bg_10_prophet_violet,   bg = "NONE" })
+
 -- Floating Windows:
 set_hl(ns_id, "FloatBorder",            { link = "AumBorder" })
 set_hl(ns_id, "FloatShadow",            { link = "AumNone" })
@@ -385,7 +402,7 @@ set_hl(ns_id, "Whitespace",             { link = "AumWhitespace" })
 set_hl(ns_id, "NonText",                { link = "AumWhitespace" })
 set_hl(ns_id, "Conceal",                { link = "AumConceal" })
 set_hl(ns_id, "@conceal",               { link = "AumConceal" })
-set_hl(ns_id, "EndOfBuffer",            { link = "AumNone" })
+set_hl(ns_id, "EndOfBuffer",            { link = "AumWhitespace" })
 set_hl(ns_id, "Noise",                  { link = "AumPunctuationPri" })
 
 -- Columns
@@ -406,12 +423,12 @@ set_hl(ns_id, "DiffDelete",             { fg = colors.fg_red_05_emberglow })
 -- Status/Tab-Line      ( STATE: Good | Statusline and Tabline background colors disabled. )
 -- NOTE: StatusLineNC should be different from StatusLine
 set_hl(ns_id, "StatusLine",             { link = "AumNormalPri" })
-set_hl(ns_id, "StatusLineNC",           { fg = colors.bg_05_tristesse,              bg = colors.bg_05_tristesse })
+set_hl(ns_id, "StatusLineNC",           { fg = colors.bg_05_tristesse,      bg = colors.bg_05_tristesse })
 set_hl(ns_id, "TabLine",                { link = "AumNormalPri" })
 set_hl(ns_id, "TabLineFill",            { link = "AumNormalPri" })
 
 -- Misc
-set_hl(ns_id, "MatchParen",             { link = "AumMatch" })
+set_hl(ns_id, "MatchParen",             { fg = colors.fg_purple_26_omagenta, bg = "NONE", bold = true })
 set_hl(ns_id, "SpecialKey",             { link = "AumSpecial" })
 set_hl(ns_id, "Directory",              { link = "AumDirectory" })      -- TODO: Create Aum-group.
 
@@ -606,16 +623,16 @@ set_hl(ns_id, "@tag.attribute",         { link = "AumTagAttribute" })
 set_hl(ns_id, "_tag.attribute",         { link = "AumTagAttribute" })
 set_hl(ns_id, "@_tag.attribute",        { link = "AumTagAttribute" })
 -- Tag.Delimiter
-set_hl(ns_id, "tag.delimiter",          { link = "AumDelimeter" })
-set_hl(ns_id, "@tag.delimiter",         { link = "AumDelimeter" })
+set_hl(ns_id, "tag.delimiter",          { link = "AumDelimiter" })
+set_hl(ns_id, "@tag.delimiter",         { link = "AumDelimiter" })
 set_hl(ns_id, "_tag.delimiter",         { link = "AumPunctuationPri" })
 set_hl(ns_id, "@_tag.delimiter",        { link = "AumPunctuationPri" })
 
 -- Punctuation.Delimiter
-set_hl(ns_id, "delimiter",              { link = "AumDelimeter" })
-set_hl(ns_id, "@delimiter",             { link = "AumDelimeter" })
-set_hl(ns_id, "punctuation.delimiter",  { link = "AumDelimeter" })
-set_hl(ns_id, "@punctuation.delimiter", { link = "AumDelimeter" })
+set_hl(ns_id, "delimiter",              { link = "AumDelimiter" })
+set_hl(ns_id, "@delimiter",             { link = "AumDelimiter" })
+set_hl(ns_id, "punctuation.delimiter",  { link = "AumDelimiter" })
+set_hl(ns_id, "@punctuation.delimiter", { link = "AumDelimiter" })
 -- Punctuation.Bracket
 set_hl(ns_id, "punctuation.bracket",    { link = "AumPunctuationSec" })
 set_hl(ns_id, "@punctuation.bracket",   { link = "AumPunctuationSec" })
@@ -632,8 +649,8 @@ set_hl(ns_id, "rainbowcol6",            { link = "AumRainbowBracket6" })
 set_hl(ns_id, "rainbowcol7",            { link = "AumRainbowBracket7" })
 
 -- Constructor
-set_hl(ns_id, "constructor",            { link = "AumPunctuationTer" })
-set_hl(ns_id, "@constructor",           { link = "AumPunctuationTer" })
+set_hl(ns_id, "constructor",            { link = "AumFunction" })       -- TODO: Maybe uniqueify and set better color.
+set_hl(ns_id, "@constructor",           { link = "AumFunction" })       -- TODO: Maybe uniqueify and set better color.
 
 -- Function
 set_hl(ns_id, "function",               { link = "AumFunction" })
@@ -732,6 +749,7 @@ set_hl(ns_id, "DiagnosticWarn",                     { link = "AumWarning" })
 set_hl(ns_id, "DiagnosticInfo",                     { link = "AumInfo" })
 set_hl(ns_id, "DiagnosticHint",                     { link = "AumHint" })
 set_hl(ns_id, "DiagnosticOk",                       { link = "AumOk" })
+set_hl(ns_id, "DiagnosticUnnecessary",              { link = "AumNormalDimmed1" })
 -- Diagnostics: Virtual Text
 set_hl(ns_id, "DiagnosticVirtualTextError",         { link = "AumError" })
 set_hl(ns_id, "DiagnosticVirtualTextWarn",          { link = "AumWarning" })
@@ -785,7 +803,72 @@ set_hl(ns_id, "@scope",                             { link = "AumSpecial" })  --
 -- Reference
 set_hl(ns_id, "@reference",                         { link = "AumReference" })
 
--- Trouble.nvim (Okay, but TODO/WIP)
+--=========================================
+-- |> - START - Plugin Color Groups     ===
+--=========================================
+
+-- |> `lazy.nvim`                                   ( STATE: Okay, could be customized more. )
+set_hl(ns_id, "LazyNormal",                         { link = "NormalFloat" })
+set_hl(ns_id, "LazyH1",                             { link = "AumTitleSec" })
+set_hl(ns_id, "LazyH2",                             { link = "AumTitleTer" })
+set_hl(ns_id, "LazyButton",                         { link = "AumBackgroundHL" })
+set_hl(ns_id, "LazyButtonActive",                   { link = "AumVisual" })
+set_hl(ns_id, "LazyComment",                        { link = "AumComment" })
+set_hl(ns_id, "LazyCommit",                         { link = "AumVariableBuiltin" })
+set_hl(ns_id, "LazyCommitIssue",                    { link = "AumNumber" })
+set_hl(ns_id, "LazyCommitScope",                    { link = "AumNormalTer" })
+set_hl(ns_id, "LazyCommitType",                     { link = "AumTitleQui" })
+set_hl(ns_id, "LazyDimmed",                         { link = "AumConceal" })
+set_hl(ns_id, "LazyDir",                            { link = "AumReference" })
+set_hl(ns_id, "LazyNoCond",                         { link = "AumWarning" })
+set_hl(ns_id, "LazyProgressDone",                   { link = "AumConstant" })
+set_hl(ns_id, "LazyProgressTodo",                   { link = "AumLineNumberActive" })
+set_hl(ns_id, "LazyProp",                           { link = "AumConceal" })
+set_hl(ns_id, "LazyReasonCmd",                      { link = "AumFunctionCall" })
+set_hl(ns_id, "LazyReasonEvent",                    { link = "AumConstant" })
+set_hl(ns_id, "LazyReasonFt",                       { link = "AumStringAlt" })
+set_hl(ns_id, "LazyReasonImport",                   { link = "AumIdentifier" })
+set_hl(ns_id, "LazyReasonKeys",                     { link = "AumStatement" })
+set_hl(ns_id, "LazyReasonPlugin",                   { link = "AumSpecial" })
+set_hl(ns_id, "LazyReasonRuntime",                  { link = "AumMacro" })
+set_hl(ns_id, "LazyReasonSource",                   { link = "AumCharacter" })
+set_hl(ns_id, "LazyReasonStart",                    { link = "AumField" })
+set_hl(ns_id, "LazySpecial",                        { link = "AumPunctuationPri" })
+set_hl(ns_id, "LazyTaskError",                      { link = "ErrorMsg" })
+set_hl(ns_id, "LazyTaskOutput",                     { link = "MsgArea" })
+set_hl(ns_id, "LazyUrl",                            { link = "AumUnderlined" })
+set_hl(ns_id, "LazyValue",                          { link = "AumString" })
+
+-- |> `fidget.nvim`                                 ( STATE: Good )
+set_hl(ns_id, "FidgetTitle",                        { link = "AumTitleSec" })
+set_hl(ns_id, "FidgetTask",                         { link = "AumNormalDimmed4" })
+
+-- |> `hlchunk.nvim`                                ( STATE: Good )
+set_hl(ns_id, "AumIndentGuide",                     { link = "AumWhitespace" })
+
+-- |> `wf.nvim`                                     ( STATE: WIP )
+set_hl(ns_id, "WFNormal",                           { link = "AumNormalSec" })
+set_hl(ns_id, "WFFloatBorder",                      { link = "AumBorder" })
+set_hl(ns_id, "WFFloatBorderFocus",                 { link = "AumBorderFocused" })
+set_hl(ns_id, "WFComment",                          { link = "AumComment" })
+set_hl(ns_id, "WFWhichRem",                         { link = "AumError" })
+set_hl(ns_id, "WFWhichOn",                          { link = "AumWarning" })
+set_hl(ns_id, "WFFuzzy",                            { link = "AumMatch" })
+set_hl(ns_id, "WFFuzzyPrompt",                      { link = "AumTitleSec" })
+set_hl(ns_id, "WFFocus",                            { link = "AumTitleQui" })
+set_hl(ns_id, "WFFreeze",                           { link = "AumTitleTer" })
+set_hl(ns_id, "WFWhichObjCounter",                  { link = "TelescopePromptCounter" })
+set_hl(ns_id, "WFWhichDesc",                        { link = "AumNormalDimmed4" })
+set_hl(ns_id, "WFSeparator",                        { link = "AumOperator" })
+set_hl(ns_id, "WFGroup",                            { link = "AumError" })
+set_hl(ns_id, "WFWhichUnique",                      { link = "AumField" })
+set_hl(ns_id, "WFExpandable",                       { link = "AumType" })
+set_hl(ns_id, "WFTitleOutput",                      { link = "AumTitleSen" })
+set_hl(ns_id, "WFTitleWhich",                       { link = "AumInfo" })
+set_hl(ns_id, "WFTitleFuzzy",                       { link = "AumHint" })
+set_hl(ns_id, "WFTitleFreeze",                      { link = "AumError" })
+
+-- |> `trouble.nvim`                                ( STATE: Okay, but TODO/WIP )
 set_hl(ns_id, "TroubleNormal",                      { link = "AumNormalSec" })
 set_hl(ns_id, "TroubleText",                        { link = "AumNormalPri" })
 set_hl(ns_id, "TroublePreview",                     { link = "AumException" })
@@ -809,9 +892,6 @@ set_hl(ns_id, "TroubleSignWarning",                 { link = "AumWarning" })
 set_hl(ns_id, "TroubleSignHint",                    { link = "AumString" })
 set_hl(ns_id, "TroubleSignInformation",             { link = "AumNormalPri" })
 set_hl(ns_id, "TroubleSignOther",                   { link = "AumNormalSec" })
-
--- Testing completion:
---
 
 -- Pmenu (pum)[Builtin Pop Up Menu, Omnicompletion, Omnifunc]
 set_hl(ns_id, "Pmenu",                              { link = "AumPmenu" })      -- `Background` and `Normal` Text Color in `Popup Menu`.
@@ -882,7 +962,7 @@ set_hl(ns_id, "DressingBuiltinSearch",              { link = "Search" })
 set_hl(ns_id, "DressingBuiltinVisual",              { link = "AumVisual" })
 
 -- Heirline.nvim (Okay)
-set_hl(ns_id, "AumBufferline",                      { fg = colors.bg_09_champion_blue,          bg = colors.bg_05_tristesse })
+set_hl(ns_id, "AumBufferline",                      { fg = colors.bg_09_champion_blue,          bg = colors.bg_03_night })
 set_hl(ns_id, "AumBufferlineInactive",              { link = "AumBufferline" })
 set_hl(ns_id, "AumBufferlineActive",                { fg = colors.fg_white_07_hint_of_blue,     bg = colors.bg_07_dark_knight })
 set_hl(ns_id, "AumBufferlineBufferNumber",          { link = "AumMethodCall" })
@@ -928,6 +1008,47 @@ set_hl(ns_id, "NotifyINFOIcon",         { link = "AumInfo" })
 set_hl(ns_id, "NotifyDEBUGIcon",        { link = "AumDebug" })
 set_hl(ns_id, "NotifyTRACEIcon",        { link = "AumDebug" })
 
+-- Scrollbar.nvim
+set_hl(ns_id, "ScrollbarHandle",            { fg = "#241A3E",   bg = "NONE" })  -- `fg`: The scrollbar location indicator. (Handle)
+set_hl(ns_id, "ScrollbarCursor",            { fg = "NONE",      bg = "NONE" })
+set_hl(ns_id, "ScrollbarCursorHandle",      { fg = "NONE",      bg = "NONE" })
+set_hl(ns_id, "ScrollbarSearch",            { link = "AumMatch" })
+set_hl(ns_id, "ScrollbarSearchHandle",      { link = "AumMatch" })
+set_hl(ns_id, "ScrollbarError",             { link = "AumError" })
+set_hl(ns_id, "ScrollbarErrorHandle",       { link = "AumError" })
+set_hl(ns_id, "ScrollbarWarn",              { link = "AumWarning" })
+set_hl(ns_id, "ScrollbarWarnHandle",        { link = "AumWarning" })
+set_hl(ns_id, "ScrollbarInfo",              { link = "AumInfo" })
+set_hl(ns_id, "ScrollbarInfoHandle",        { link = "AumInfo" })
+set_hl(ns_id, "ScrollbarHint",              { link = "AumHint" })
+set_hl(ns_id, "ScrollbarHintHandle",        { link = "AumHint" })
+set_hl(ns_id, "ScrollbarGitAdd",            { link = "AumString" })
+set_hl(ns_id, "ScrollbarGitAddHandle",      { link = "AumStringAlt" })
+set_hl(ns_id, "ScrollbarGitChange",         { link = "AumCharacter" })
+set_hl(ns_id, "ScrollbarGitChangeHandle",   { link = "AumCharacterSpecial" })
+set_hl(ns_id, "ScrollbarGitDelete",         { link = "AumOperator" })
+set_hl(ns_id, "ScrollbarGitDeleteHandle",   { link = "AumOperator" })
+set_hl(ns_id, "ScrollbarMisc",              { fg = "#504080", bg = "NONE" })
+
+-- Scrollview.nvim
+set_hl(ns_id, "ScrollView",                 { link = "AumBackgroundQui" })
+set_hl(ns_id, "ScrollViewCursor",           { fg = colors.bg_01_darkcrust, bg = colors.bg_05_tristesse })
+set_hl(ns_id, "ScrollViewSearch",           { link = "AumSearch" })
+set_hl(ns_id, "ScrollViewFolds",            { link = "AumFolded" })
+set_hl(ns_id, "ScrollViewSpell",            { link = "AumError" })
+set_hl(ns_id, "ScrollViewMarks",            { link = "AumError" })
+set_hl(ns_id, "ScrollViewDiagnosticsError", { link = "AumError" })
+set_hl(ns_id, "ScrollViewDiagnosticsWarn",  { link = "AumWarning" })
+set_hl(ns_id, "ScrollViewDiagnosticsInfo",  { link = "AumInfo" })
+set_hl(ns_id, "ScrollViewDiagnosticsHint",  { link = "AumHint" })
+set_hl(ns_id, "ScrollViewConflictsTop",     { link = "AumOperator" })
+set_hl(ns_id, "ScrollViewConflictsMiddle",  { link = "AumOperator" })
+set_hl(ns_id, "ScrollViewConflictsBottom",  { link = "AumOperator" })
+set_hl(ns_id, "ScrollViewLocList",          { link = "AumWarn" })
+set_hl(ns_id, "ScrollViewQuickFix",         { link = "AumWarn" })
+set_hl(ns_id, "ScrollViewRestricted",       { link = "AumError" })
+set_hl(ns_id, "ScrollViewTextWidth",        { link = "AumError" })
+
 -- Leap.nvim        ( Quite good, but little WIP. Labels could be kinda bright magenta maybe, because I avoid that colour otherwise. )
 set_hl(ns_id, "LeapMatch",              { link = "Search" })
 set_hl(ns_id, "LeapLabelPrimary",       { link = "AumVisual" })
@@ -939,8 +1060,8 @@ set_hl(ns_id, "LeapLabelSelected",      { link = "AumVisual" })
 set_hl(ns_id, "TelescopeNormal",        { link = "AumNormalPri" })      -- Text entered into prompt.
 set_hl(ns_id, "TelescopePromptCounter", { link = "AumComment" })        -- Prompt result count.
 set_hl(ns_id, "TelescopeMatching",      { link = "AumMatch" })          -- Search match highlight.
-set_hl(ns_id, "TelescopeSelection",     { link = "AumCursorLine" })     -- Active selection.
-set_hl(ns_id, "TelescopePreviewLine",   { link = "AumCursorLine" })     -- CursorLine in preview panel.
+set_hl(ns_id, "TelescopeSelection",     { link = "AumBackgroundHL" })   -- Active selection.
+set_hl(ns_id, "TelescopePreviewLine",   { link = "AumBackgroundHL" })   -- CursorLine in preview panel.
 set_hl(ns_id, "TelescopeTitle",         { link = "AumTitlePri" })
 set_hl(ns_id, "TelescopePromptTitle",   { link = "AumTitleSec" })
 set_hl(ns_id, "TelescopeResultsTitle",  { link = "AumTitleTer" })
@@ -949,7 +1070,8 @@ set_hl(ns_id, "TelescopeBorder",        { link = "AumBorder" })
 
 -- Inlay Hints       ( STATE: Acceptable / Maybe WIP )
 -- NOTE: Used by at least `rust-tools` and maybe `tsserver`.
-set_hl(ns_id, "AumInlayHint",  { link = "AumConceal" })
+set_hl(ns_id, "AumInlayHint",                       { link = "AumConceal" })
+set_hl(ns_id, "AumLuaSnipChoiceNodeVirtualText",    { link = "AumSpecial" })
 
 -- LineNr
 set_hl(ns_id, "LineNr",                 { link = "AumLineNumberActive" })
@@ -980,9 +1102,170 @@ set_hl(ns_id, "SpellLocal",             { sp = colors.fg_blue_01_blue_genie,    
 set_hl(ns_id, "spell",                  {})  -- Had some issue with this overwriting string colours. (Empty seems to work fine.)
 set_hl(ns_id, "@spell",                 {})  -- Had some issue with this overwriting string colours. (Empty seems to work fine.)
 
--- ###################################
--- ##           - Neorg  -          ##
--- ###################################
+-- => `Headlines.nvim`
+set_hl(ns_id, "Headline1",                                          { bg = colors.special_10_noir_fiction })
+set_hl(ns_id, "Headline2",                                          { bg = colors.special_11_black_glaze })
+set_hl(ns_id, "Headline3",                                          { bg = colors.special_12_inside })
+set_hl(ns_id, "Headline4",                                          { bg = colors.special_13_corbeau })
+set_hl(ns_id, "Headline5",                                          { bg = colors.special_14_myrtle })
+set_hl(ns_id, "Headline6",                                          { bg = colors.special_15_root_brew })
+set_hl(ns_id, "CodeBlock",                                          { bg = "#000001" })
+set_hl(ns_id, "Dash",                                               { bg = "#000001" })
+set_hl(ns_id, "DoubleDash",                                         { bg = "#000001" })
+set_hl(ns_id, "Quote",                                              { bg = "#000001" })
+
+
+-- ###############################################
+-- ##           - Polyglot Groups  -            ##
+-- ###############################################
+
+-- |> Lua
+-- Lua => Operators
+set_hl(ns_id, "luaSymbolOperator",      { link = "AumOperator" })
+-- Lua => Primitives
+set_hl(ns_id, "luaTable",               { link = "AumField" })
+set_hl(ns_id, "luaString",              { link = "AumString" })
+set_hl(ns_id, "luaCharacter",           { link = "AumCharacter" })
+-- Lua => Functions, Keywords, etc...
+set_hl(ns_id, "luaFunc",                { link = "AumFunction" })
+set_hl(ns_id, "luaFuncCall",            { link = "AumFunctionCall" })
+set_hl(ns_id, "luaFuncKeyword",         { link = "AumKeywordFunction" })
+set_hl(ns_id, "luaFuncArgs",            { link = "AumParameter" })
+set_hl(ns_id, "luaFuncArgName",         { link = "AumParameter" })
+set_hl(ns_id, "luaFuncSig",             { link = "AumParameter" })
+set_hl(ns_id, "luaFuncArgComma",        { link = "AumDelimiter" })
+set_hl(ns_id, "luaLocal",               { link = "AumKeyword" })
+set_hl(ns_id, "luaBuiltIn",             { link = "AumKeyword" })        -- TODO: Uniquefy.
+-- Lua => Control Flow
+set_hl(ns_id, "luaIfThen",              { link = "AumConditional" })
+-- Lua => Punctuation
+set_hl(ns_id, "luaNoise",               { link = "Noise" })
+set_hl(ns_id, "luaComma",               { link = "AumPunctuationPri" })
+set_hl(ns_id, "luaParen",               { link = "AumPunctuationTer" })
+set_hl(ns_id, "luaParens",              { link = "AumPunctuationPri" })
+set_hl(ns_id, "luaBraces",              { link = "AumPunctuationSec" })
+
+-- |> Rust
+-- Rust => Operator
+set_hl(ns_id, "rsOperator",             { link = "AumOperator" })
+set_hl(ns_id, "rsAs",                   { link = "AumKeywordAs" })
+-- Rust => Primitives
+set_hl(ns_id, "rsNumber",               { link = "AumNumber" })
+set_hl(ns_id, "rsFloat",                { link = "AumFloat" })
+set_hl(ns_id, "rsString",               { link = "AumString" })
+set_hl(ns_id, "rsCharacter",            { link = "AumCharacter" })
+set_hl(ns_id, "rsAttribute",            { link = "AumAttribute" })
+set_hl(ns_id, "rsField",                { link = "AumField" })
+set_hl(ns_id, "rsProperty",             { link = "AumProperty" })
+set_hl(ns_id, "rsUse",                  { link = "AumInclude" })
+set_hl(ns_id, "rsModule",               { link = "AumModule" })
+set_hl(ns_id, "rsNamespace",            { link = "AumNamespace" })
+-- Rust => Keywords
+set_hl(ns_id, "rsLet",                  { link = "AumKeywordLet" })
+set_hl(ns_id, "rsMut",                  { link = "AumKeywordMut" })
+set_hl(ns_id, "rsConst",                { link = "AumKeywordConst" })
+set_hl(ns_id, "rsFn",                   { link = "AumKeywordFunction" })
+set_hl(ns_id, "rsReturn",               { link = "AumKeywordReturn" })
+set_hl(ns_id, "rsContinue",             { link = "AumKeywordContinue" })
+set_hl(ns_id, "rsBreak",                { link = "AumKeywordBreak" })
+set_hl(ns_id, "rsSelfValue",            { link = "AumKeywordSelf" })
+set_hl(ns_id, "rsUnsafe",               { link = "AumKeywordUnsafe" })
+-- Rust => Control Flow
+set_hl(ns_id, "rsIf",                   { link = "AumIf" })
+set_hl(ns_id, "rsElseIf",               { link = "AumElseIf" })
+set_hl(ns_id, "rsElse",                 { link = "AumElse" })
+set_hl(ns_id, "rsMatch",                { link = "AumLabel" })
+set_hl(ns_id, "rsRepeat",               { link = "AumRepeat" })
+set_hl(ns_id, "rsFor",                  { link = "AumFor" })
+set_hl(ns_id, "rsIn",                   { link = "AumIn" })
+-- Rust => Declaration / Definitions
+set_hl(ns_id, "rsIdentDef",             { link = "AumIdentifierDef" })
+set_hl(ns_id, "rsUserIdent",            { link = "AumUserIdent" })
+set_hl(ns_id, "rsUnusedIdentDef",       { link = "AumUnusedUserIdent" })
+-- Rust => Functions / Methods / Macros
+set_hl(ns_id, "rsFuncDef",              { link = "AumFunctionDef" })
+set_hl(ns_id, "rsLibraryFunc",          { link = "AumLibraryFunction" })
+set_hl(ns_id, "rsMethod",               { link = "AumMethod" })
+set_hl(ns_id, "rsUserMethod",           { link = "AumUserMethod" })
+set_hl(ns_id, "rsLibraryMethod",        { link = "AumLibraryMethod" })
+set_hl(ns_id, "rsMacro",                { link = "AumMacro" })
+set_hl(ns_id, "rsUserMacro",            { link = "AumUserMacro" })
+set_hl(ns_id, "rsLibraryMacro",         { link = "AumLibraryMacro" })
+-- Rust => Types / Structs / Enums / Traits
+set_hl(ns_id, "rsType",                 { link = "AumType" })
+set_hl(ns_id, "rsTypeDef",              { link = "AumTypeDef" })
+set_hl(ns_id, "rsTypeAlias",            { link = "AumTypeAlias" })
+set_hl(ns_id, "rsUserType",             { link = "AumUserType" })
+set_hl(ns_id, "rsLibraryType",          { link = "AumLibraryType" })
+set_hl(ns_id, "rsForeignType",          { link = "AumForeignType" })
+-- Rust => Comment
+set_hl(ns_id, "rsComment",              { link = "AumComment" })
+set_hl(ns_id, "rsDocComment",           { link = "AumCommentSpecial" })
+-- Rust => Note / Todo / Fixme
+set_hl(ns_id, "rsCommentNote",          { link = "AumNote" })
+set_hl(ns_id, "rsCommentDone",          { link = "AumDone" })
+set_hl(ns_id, "rsCommentTodo",          { link = "AumTodo" })
+set_hl(ns_id, "rsCommentFixme",         { link = "AumFixMe" })
+-- Rust => Delimiters                   ( TODO )
+set_hl(ns_id, "rsNoise",                { link = "Noise" })
+set_hl(ns_id, "rsComma",                { link = "AumDelimiter" })
+set_hl(ns_id, "rsParen",                { link = "AumParen" })
+set_hl(ns_id, "rsParens",               { link = "AumParens" })
+set_hl(ns_id, "rsBracket",              { link = "AumBracket" })
+set_hl(ns_id, "rsBrackets",             { link = "AumBrackets" })
+set_hl(ns_id, "rsBrace",                { link = "AumBrace" })
+set_hl(ns_id, "rsBraces",               { link = "AumBraces" })
+
+-- Markdown
+set_hl(ns_id, "htmlH1",                 { link = "MarkdownH1" })
+set_hl(ns_id, "htmlH2",                 { link = "MarkdownH2" })
+set_hl(ns_id, "htmlH3",                 { link = "MarkdownH3" })
+set_hl(ns_id, "htmlH4",                 { link = "MarkdownH4" })
+set_hl(ns_id, "htmlH5",                 { link = "MarkdownH5" })
+set_hl(ns_id, "htmlH6",                 { link = "MarkdownH6" })
+set_hl(ns_id, "mkdHeading",             { link = "AumPunctuationTer" })
+set_hl(ns_id, "mkdNonListItemBlock",    { link = "AumNormalPri" })
+set_hl(ns_id, "mkdListItem",            { link = "AumPunctuationSec" })
+set_hl(ns_id, "mkdListItemLine",        { link = "AumNormalPri" })
+set_hl(ns_id, "mkdCode",                { link = "AumIdentifier" })
+set_hl(ns_id, "mkdCodeDelimiter",       { link = "AumPunctuationSec" })
+set_hl(ns_id, "mkdLink",                { link = "AumUnderlined" })
+
+
+-- #######################################################
+-- ##           - Treesitter Highlight Groups -         ##
+-- #######################################################
+
+-- |> Treesitter: Rust
+set_hl(ns_id, "@comment.rust",                      { link = "AumComment" })
+set_hl(ns_id, "@operator.rust",                     { link = "AumOperator" })
+set_hl(ns_id, "@variable.rust",                     { link = "AumVariable" })
+set_hl(ns_id, "@field.rust",                        { link = "AumField" })
+set_hl(ns_id, "@character.rust",                    { link = "AumCharacter" })
+set_hl(ns_id, "@string.rust",                       { link = "AumString" })
+set_hl(ns_id, "@string.escape.rust",                { link = "AumCharacterSpecial" })
+set_hl(ns_id, "@keyword.rust",                      { link = "AumKeyword" })
+set_hl(ns_id, "@keyword.function.rust",             { link = "AumKeywordFunction" })
+set_hl(ns_id, "@keyword.operator.rust",             { link = "AumKeywordOperator" })
+set_hl(ns_id, "@function.rust",                     { link = "AumFunction" })
+set_hl(ns_id, "@function.call.rust",                { link = "AumFunctionCall" })
+set_hl(ns_id, "@function.macro.rust",               { link = "AumFunctionMacro" })
+set_hl(ns_id, "@type.rust",                         { link = "AumType" })
+set_hl(ns_id, "@type.builtin.rust",                 { link = "AumTypeBuiltin" })
+set_hl(ns_id, "@include.rust",                      { link = "AumInclude" })
+set_hl(ns_id, "@namespace.rust",                    { link = "AumNamespace" })
+set_hl(ns_id, "@conditional.rust",                  { link = "AumConditional" })
+set_hl(ns_id, "@repeat.rust",                       { link = "AumRepeat" })
+set_hl(ns_id, "@punctuation.delimiter.rust",        { link = "AumDelimiter" })
+set_hl(ns_id, "@punctuation.bracket.rust",          { link = "AumPunctuationSec" })
+
+-- |> Treesitter: Lua       ( TODO )
+-- todo
+
+
+-- ###############################################
+-- ##           - Neorg (Treesitter) -          ##
+-- ###############################################
 
 -- Conceal
 set_hl(ns_id, "@conceal.norg",                          { link = "AumConceal" })
@@ -1105,135 +1388,6 @@ set_hl(ns_id, "@neorg.tags.ranged_verbatim.parameters.word.norg",   { link = "Au
 -- - NOTE: Foreground color has to be empty to allow code blocks to be colored properly.
 set_hl(ns_id, "@neorg.tags.ranged_verbatim.code_block",             { bg = "#000001" })
 
--- => `Headlines.nvim`
-set_hl(ns_id, "Headline1",                                          { bg = colors.special_10_noir_fiction })
-set_hl(ns_id, "Headline2",                                          { bg = colors.special_11_black_glaze })
-set_hl(ns_id, "Headline3",                                          { bg = colors.special_12_inside })
-set_hl(ns_id, "Headline4",                                          { bg = colors.special_13_corbeau })
-set_hl(ns_id, "Headline5",                                          { bg = colors.special_14_myrtle })
-set_hl(ns_id, "Headline6",                                          { bg = colors.special_15_root_brew })
-set_hl(ns_id, "CodeBlock",                                          { bg = "#000001" })
-set_hl(ns_id, "Dash",                                               { bg = "#000001" })
-set_hl(ns_id, "DoubleDash",                                         { bg = "#000001" })
-set_hl(ns_id, "Quote",                                              { bg = "#000001" })
-
-
--- ###############################################
--- ##           - Polyglot Groups  -            ##
--- ###############################################
-
--- |> Lua
--- Lua => Operators
-set_hl(ns_id, "luaSymbolOperator",      { link = "AumOperator" })
--- Lua => Primitives
-set_hl(ns_id, "luaTable",               { link = "AumField" })
-set_hl(ns_id, "luaString",              { link = "AumString" })
-set_hl(ns_id, "luaCharacter",           { link = "AumCharacter" })
--- Lua => Functions, Keywords, etc...
-set_hl(ns_id, "luaFunc",                { link = "AumFunction" })
-set_hl(ns_id, "luaFuncCall",            { link = "AumFunctionCall" })
-set_hl(ns_id, "luaFuncKeyword",         { link = "AumKeywordFunction" })
-set_hl(ns_id, "luaFuncArgs",            { link = "AumParameter" })
-set_hl(ns_id, "luaFuncArgName",         { link = "AumParameter" })
-set_hl(ns_id, "luaFuncSig",             { link = "AumParameter" })
-set_hl(ns_id, "luaFuncArgComma",        { link = "AumDelimiter" })
-set_hl(ns_id, "luaLocal",               { link = "AumKeyword" })
-set_hl(ns_id, "luaBuiltIn",             { link = "AumKeyword" })        -- TODO: Uniquefy.
--- Lua => Control Flow
-set_hl(ns_id, "luaIfThen",              { link = "AumConditional" })
--- Lua => Punctuation
-set_hl(ns_id, "luaNoise",               { link = "Noise" })
-set_hl(ns_id, "luaComma",               { link = "AumPunctuationPri" })
-set_hl(ns_id, "luaParen",               { link = "AumPunctuationTer" })
-set_hl(ns_id, "luaParens",              { link = "AumPunctuationPri" })
-set_hl(ns_id, "luaBraces",              { link = "AumPunctuationSec" })
-
--- |> Rust
--- Rust => Operator
-set_hl(ns_id, "rsOperator",             { link = "AumOperator" })
-set_hl(ns_id, "rsAs",                   { link = "AumKeywordAs" })
--- Rust => Primitives
-set_hl(ns_id, "rsNumber",               { link = "AumNumber" })
-set_hl(ns_id, "rsFloat",                { link = "AumFloat" })
-set_hl(ns_id, "rsString",               { link = "AumString" })
-set_hl(ns_id, "rsCharacter",            { link = "AumCharacter" })
-set_hl(ns_id, "rsAttribute",            { link = "AumAttribute" })
-set_hl(ns_id, "rsField",                { link = "AumField" })
-set_hl(ns_id, "rsProperty",             { link = "AumProperty" })
-set_hl(ns_id, "rsUse",                  { link = "AumInclude" })
-set_hl(ns_id, "rsModule",               { link = "AumModule" })
-set_hl(ns_id, "rsNamespace",            { link = "AumNamespace" })
--- Rust => Keywords
-set_hl(ns_id, "rsLet",                  { link = "AumKeywordLet" })
-set_hl(ns_id, "rsMut",                  { link = "AumKeywordMut" })
-set_hl(ns_id, "rsConst",                { link = "AumKeywordConst" })
-set_hl(ns_id, "rsFn",                   { link = "AumKeywordFunction" })
-set_hl(ns_id, "rsReturn",               { link = "AumKeywordReturn" })
-set_hl(ns_id, "rsContinue",             { link = "AumKeywordContinue" })
-set_hl(ns_id, "rsBreak",                { link = "AumKeywordBreak" })
-set_hl(ns_id, "rsSelfValue",            { link = "AumKeywordSelf" })
-set_hl(ns_id, "rsUnsafe",               { link = "AumKeywordUnsafe" })
--- Rust => Control Flow
-set_hl(ns_id, "rsIf",                   { link = "AumIf" })
-set_hl(ns_id, "rsElseIf",               { link = "AumElseIf" })
-set_hl(ns_id, "rsElse",                 { link = "AumElse" })
-set_hl(ns_id, "rsMatch",                { link = "AumLabel" })
-set_hl(ns_id, "rsRepeat",               { link = "AumRepeat" })
-set_hl(ns_id, "rsFor",                  { link = "AumFor" })
-set_hl(ns_id, "rsIn",                   { link = "AumIn" })
--- Rust => Declaration / Definitions
-set_hl(ns_id, "rsIdentDef",             { link = "AumIdentifierDef" })
-set_hl(ns_id, "rsUserIdent",            { link = "AumUserIdent" })
-set_hl(ns_id, "rsUnusedIdentDef",       { link = "AumUnusedUserIdent" })
--- Rust => Functions / Methods / Macros
-set_hl(ns_id, "rsFuncDef",              { link = "AumFunctionDef" })
-set_hl(ns_id, "rsLibraryFunc",          { link = "AumLibraryFunction" })
-set_hl(ns_id, "rsMethod",               { link = "AumMethod" })
-set_hl(ns_id, "rsUserMethod",           { link = "AumUserMethod" })
-set_hl(ns_id, "rsLibraryMethod",        { link = "AumLibraryMethod" })
-set_hl(ns_id, "rsMacro",                { link = "AumMacro" })
-set_hl(ns_id, "rsUserMacro",            { link = "AumUserMacro" })
-set_hl(ns_id, "rsLibraryMacro",         { link = "AumLibraryMacro" })
--- Rust => Types / Structs / Enums / Traits
-set_hl(ns_id, "rsType",                 { link = "AumType" })
-set_hl(ns_id, "rsTypeDef",              { link = "AumTypeDef" })
-set_hl(ns_id, "rsTypeAlias",            { link = "AumTypeAlias" })
-set_hl(ns_id, "rsUserType",             { link = "AumUserType" })
-set_hl(ns_id, "rsLibraryType",          { link = "AumLibraryType" })
-set_hl(ns_id, "rsForeignType",          { link = "AumForeignType" })
--- Rust => Comment
-set_hl(ns_id, "rsComment",              { link = "AumComment" })
-set_hl(ns_id, "rsDocComment",           { link = "AumCommentSpecial" })
--- Rust => Note / Todo / Fixme
-set_hl(ns_id, "rsCommentNote",          { link = "AumNote" })
-set_hl(ns_id, "rsCommentDone",          { link = "AumDone" })
-set_hl(ns_id, "rsCommentTodo",          { link = "AumTodo" })
-set_hl(ns_id, "rsCommentFixme",         { link = "AumFixMe" })
--- Rust => Delimiters                   ( TODO )
-set_hl(ns_id, "rsNoise",                { link = "Noise" })
-set_hl(ns_id, "rsComma",                { link = "AumDelimeter" })
-set_hl(ns_id, "rsParen",                { link = "AumParen" })
-set_hl(ns_id, "rsParens",               { link = "AumParens" })
-set_hl(ns_id, "rsBracket",              { link = "AumBracket" })
-set_hl(ns_id, "rsBrackets",             { link = "AumBrackets" })
-set_hl(ns_id, "rsBrace",                { link = "AumBrace" })
-set_hl(ns_id, "rsBraces",               { link = "AumBraces" })
-
--- Markdown
-set_hl(ns_id, "htmlH1",                 { link = "MarkdownH1" })
-set_hl(ns_id, "htmlH2",                 { link = "MarkdownH2" })
-set_hl(ns_id, "htmlH3",                 { link = "MarkdownH3" })
-set_hl(ns_id, "htmlH4",                 { link = "MarkdownH4" })
-set_hl(ns_id, "htmlH5",                 { link = "MarkdownH5" })
-set_hl(ns_id, "htmlH6",                 { link = "MarkdownH6" })
-set_hl(ns_id, "mkdHeading",             { link = "AumPunctuationTer" })
-set_hl(ns_id, "mkdNonListItemBlock",    { link = "AumNormalPri" })
-set_hl(ns_id, "mkdListItem",            { link = "AumPunctuationSec" })
-set_hl(ns_id, "mkdListItemLine",        { link = "AumNormalPri" })
-set_hl(ns_id, "mkdCode",                { link = "AumIdentifier" })
-set_hl(ns_id, "mkdCodeDelimiter",       { link = "AumPunctuationSec" })
-set_hl(ns_id, "mkdLink",                { link = "AumUnderlined" })
-
 
 -- ###################################################
 -- ##           - LSP Semantic Tokens  -            ##
@@ -1277,5 +1431,4 @@ set_hl(ns_id, "@lsp.mod.declaration",                       {})
 set_hl(ns_id, "@lsp.typemod.variable.declaration",          {})
 set_hl(ns_id, "@lsp.typemod.typeAlias.declaration",         {})
 
--- |> AumneChroma.nvim Theme  --=>><⚡END⚡>]
-
+-- End of File

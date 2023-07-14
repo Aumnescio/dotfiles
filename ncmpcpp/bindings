@@ -19,7 +19,7 @@ def_key ">"
 def_key "<"
     previous
 
-def_key "a"
+def_key "v"
     select_item
 
 def_key "i"
@@ -40,7 +40,7 @@ def_key "d"
 def_key "y"
     save_tag_changes
 
-def_key "shift-u"
+def_key "U"
     update_database
 
 #: Views
@@ -127,11 +127,11 @@ def_key "ctrl-h"
 def_key "backspace"
     jump_to_parent_directory
 
-def_key "shift-a"
-    add_selected_items
-
 def_key "ctrl-a"
     add
+
+def_key "A"
+    add_selected_items
 
 def_key "v"
     move_sort_order_up
@@ -140,14 +140,14 @@ def_key "m"
     move_sort_order_down
 
 #: Selection
-def_key "v"
+def_key "V"
     reverse_selection
 
-def_key "V"
+def_key "ctrl-v"
     remove_selection
 
-def_key "ctrl-v"
-    select_range
+# def_key "ctrl-v"
+#     select_range
 
 #: Command runner
 def_key ":"
@@ -244,7 +244,7 @@ def_key "w"
     start_searching
 
 #: Playlist
-def_key "space"
+def_key "a"
      add_item_to_playlist
 
 def_key "j"
@@ -410,3 +410,4 @@ def_key "ctrl-s"
 def_key "ctrl-l"
     dummy
 
+# End of File

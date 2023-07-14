@@ -8,6 +8,9 @@
     - Other minor improvements.
 ************************************************************/
 
+/// START => Experimental CSS Settings
+// user_pref("layout.css.has-selector.enabled", true);
+
 /// START => FastFox Settings
 //
 // |> Initial Pain Delay        ( Default: 5 | Impact: Extremely Low )
@@ -18,13 +21,13 @@ user_pref("nglayout.initialpaint.delay_in_oopif", 1);
 user_pref("browser.startup.preXulSkeletonUI", false);
 
 // |> Webrender and GPU
-user_pref("gfx.webrender.all", true);
-user_pref("gfx.webrender.precache-shaders", true);
-user_pref("gfx.webrender.compositor", true);
-//user_pref("gfx.webrender.compositor.force-enabled", true); // enforce
-user_pref("layers.gpu-process.enabled", true);
-//user_pref("layers.gpu-process.force-enabled", true); // enforce
-user_pref("media.hardware-video-decoding.enabled", true);
+// user_pref("gfx.webrender.all", true);
+// user_pref("gfx.webrender.precache-shaders", true);
+// user_pref("gfx.webrender.compositor", true);
+// user_pref("gfx.webrender.compositor.force-enabled", true); // enforce
+// user_pref("layers.gpu-process.enabled", true);
+// user_pref("layers.gpu-process.force-enabled", true); // enforce
+// user_pref("media.hardware-video-decoding.enabled", true);
 
 // GPU-Accelerated Canvas
 user_pref("gfx.canvas.accelerated", true);                      // Default on macOS and Linux v.110
@@ -84,6 +87,11 @@ user_pref("browser.newtabpage.activity-stream.telemetry", false);
 /// END => SecureFox Settings
 
 /// START => PeskyFox Settings
+//
+// Disable auto-refresh.
+//  - Testing because MDN Web Docs flickers occasionally.
+//  - This did not help.
+// user_pref("accessibility.blockautorefresh", true);
 //
 // Remove feed crap.
 user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);

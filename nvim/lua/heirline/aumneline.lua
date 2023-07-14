@@ -3,6 +3,7 @@
 -- Fully custom and easy to configure.
 
 -- |> Colors
+--  - Do I need to have the theme installed for this `require` to work? Might be.
 local colors = require("aumnechroma.colors")
 
 -- |> Helpers
@@ -14,6 +15,10 @@ local utils = require("heirline.utils")
 -- START => Empty Space
 local Space = {
     provider = "   ",
+}
+
+local SingleSpace = {
+    provider = " ",
 }
 
 local Align = {
@@ -172,8 +177,8 @@ local FileFlags = {
             return vim.bo.modified
         end,
 
-        provider = "[+]",
-        hl = { fg = colors.fg_green_05_taurus_forest_fern },
+        provider = " ⏺",     -- [+]
+        hl = { fg = colors.fg_yellow_07_neon_light },
     },
 
     {
@@ -229,25 +234,26 @@ local FileType = {
 -- END => Extra File Info
 
 -- START => Searchcount
-local SearchCount = {
-    provider = function()
-        local mode = vim.fn.mode()
-        if mode == 'c' then
-            return 'N/A'
-        end
-
-        local last_search = vim.fn.getreg('/')
-        if not last_search or last_search == '' then
-            return ''
-        end
-
-        local searchcount = vim.fn.searchcount({ maxcount = 99 })  -- NOTE: Too high `maxcount` can cause major lag.
-        return 'Search: ' .. searchcount.current .. '/' .. searchcount.total
-    end,
-
-    hl = { fg = colors.fg_blue_00_aero },
-}
+-- local SearchCount = {
+--     provider = function()
+--         local mode = vim.fn.mode()
+--         if mode == 'c' then
+--             return 'N/A'
+--         end
+--
+--         local last_search = vim.fn.getreg('/')
+--         if not last_search or last_search == '' then
+--             return ''
+--         end
+--
+--         local searchcount = vim.fn.searchcount({ maxcount = 99 })  -- NOTE: Too high `maxcount` can cause major lag.
+--         return 'Search: ' .. searchcount.current .. '/' .. searchcount.total
+--     end,
+--
+--     hl = { fg = colors.fg_blue_00_aero },
+-- }
 -- END => Searchcount
+
 -- START => TimeClock
 local TimeClock = {
     provider = function()
@@ -280,7 +286,7 @@ local StatuslineMessage= {
 local StatusLine = {
     Space, ViModeIndicator, Space, FileNameBlock, Space, Align,
     StatuslineMessage, Align,
-    SearchCount, Space, FileType, Space, TimeClock, Space
+    FileType, Space, TimeClock, Space
 }
 
 -- |> WinBar components
@@ -318,8 +324,8 @@ local TablineFileFlags = {
         condition = function(self)
             return vim.api.nvim_buf_get_option(self.bufnr, "modified")
         end,
-        provider = "[+]",
-        hl = { fg = colors.fg_green_05_taurus_forest_fern },
+        provider = " ⏺ ",     -- [+]
+        hl = { fg = colors.fg_yellow_07_neon_light },
     },
     {
         condition = function(self)
@@ -328,9 +334,9 @@ local TablineFileFlags = {
         end,
         provider = function(self)
             if vim.api.nvim_buf_get_option(self.bufnr, "buftype") == "terminal" then
-                return "  "
+                return "   "
             else
-                return ""
+                return "  "
             end
         end,
         hl = { fg = colors.fg_orange_04_peach_cobbler },
@@ -383,7 +389,7 @@ local TablineCloseButton = {
     end,
     { provider = " " },
     {
-        provider = "",
+        provider = " ",
         hl = { fg = colors.bg_09_champion_blue },
         on_click = {
             callback = function(_, minwid)
@@ -401,6 +407,10 @@ local TablineCloseButton = {
 }
 
 -- The final touch!
+--  - `"", ""`
+--  - `"█", "█"`
+--  - `"🭁", "🭌"`
+--  - `"🭄", "🭏"`
 local TablineBufferBlock = utils.surround({ "", "" }, function(self)
     if self.is_active then
         return utils.get_highlight("AumBufferlineActive").bg
@@ -446,6 +456,7 @@ vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
 -- === |> - BufferLine / TabLine combined - <| ===
 local BufferLine = utils.make_buflist(
     TablineBufferBlock,
+    -- SingleSpace,
 
     { provider = "", hl = { fg = "gray" } },  -- Left truncation, optional (defaults to "<")
     { provider = "", hl = { fg = "gray" } },  -- Right trunctation, also optional (defaults to ">")

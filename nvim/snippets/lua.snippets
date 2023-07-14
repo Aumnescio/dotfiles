@@ -1,3 +1,43 @@
+snippet use_lazy "`lazy.nvim`: Add new plugin."
+	{
+		"${0:plugin}",
+	},
+
+snippet lazy_true "`lazy.nvim`: 'lazy = true'"
+	lazy = true,$0
+
+snippet lazy_version_false "`lazy.nvim`: 'version = false'"
+	version = false,$0
+
+snippet lazy_init "`lazy.nvim`: init function."
+	init = function()
+		$0
+	end
+
+snippet lazy_opts "`lazy.nvim`: opts table."
+	opts = {
+		$0
+	},
+
+snippet lazy_dependencies "`lazy.nvim`: 'dependencies = {}'"
+	dependencies = {
+		"${0:some/plugin}",
+	},
+
+snippet lazy_keys "`lazy.nvim`: keys function."
+	keys = function()
+		local ret = {}
+		for _, key in ipairs({ "${1:key_to_bind}" }) do
+			ret[#ret + 1] = { key, mode = { "${0:n|x|i|o}" } }
+		end
+		return ret
+	end,
+
+snippet lazy_config "`lazy.nvim`: config function."
+	config = function(_, opts)
+		$0
+	end,
+
 snippet print_text "Normal print."
 	print("$0")
 
@@ -7,16 +47,14 @@ snippet print_var_inspect "Print with `vim.inspect`."
 snippet print_var_formatted "Print a message and variable."
 	print(string.format("$1: %s", vim.inspect($0)))
 
-snippet use "Packer 'use'."
-	use { "$0" }
-
 snippet require_setup "Call setup on some file. Used to load plugins."
-	require("${1:plugin_name}").setup({
-		${0:opts}
-	})
+	require("${1:plugin_name}").setup(${0:opts})
+
+snippet bindkey "Bind a new key to a command."
+	bindkey("${1:mode}", "${2:key}", "${3:command}", opts)
 
 snippet map_legendary_key "Create new keybinding in `Legendary.nvim`."
-	{ "$1",          "$2",            description = "$0",          mode = { 'n', 'v', 'o' },   opts = opts },
+	{ "${1:key}",    "${2:command}",    description = "${0:desc}",    mode = { 'n', 'o', 'x' },    opts = opts },
 
 snippet new_legendary_command "Create a new `legendary.nvim` command."
 	{
@@ -89,3 +127,17 @@ snippet set_buf_text_and_advance_cursor "Write text into Neovim buffer at `Curso
 	vim.api.nvim_buf_set_text(0, cur_row - 1, cur_col, cur_row - 1, cur_col, { str })
 	vim.api.nvim_win_set_cursor(0, { cur_row, cur_col + string_len(str) })
 
+snippet choice_luasnip "LuaSnip: Choice Snippet"
+	choice(${1:<location-index>}, {
+		snippet_node(nil, { insert($1, "${2:<initial-choice>}")  }),
+		snippet_node(nil, { text("${3:<other-choice>}")      }),
+	})$0
+
+snippet state "Snippet for my `STATE: Something` thing."
+	( STATE: $0 )
+
+snippet comment "Lua `comment`."
+	-- $0
+
+snippet end_of_file "`End of File` comment. I like it..."
+	-- End of File

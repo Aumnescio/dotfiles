@@ -1,3 +1,16 @@
+snippet section_start "Section start comment."
+	/* =================================== */
+	/* SECTION: $0 | START */
+	/* =================================== */
+
+snippet section_end "Section end comment."
+	/* ================================= */
+	/* SECTION: $0 | END */
+	/* ================================= */
+
+snippet section_separator "Section separator comment."
+	/****************$0*/
+
 snippet important "CSS Property Modifier: `!important`"
 	!important$0
 
@@ -57,116 +70,334 @@ snippet h6 "Element Selector: `h6` (heading 6)"
 snippet var() "CSS Function: `var()` (Reference a variable by Name)."
 	var(${0:--variable-name})
 
-snippet rgb "CSS Color Function: `rgb()`."
-	rgb(${1:0-255}, ${2:0-255}, ${0:0-255})
-
-snippet rgba "CSS Color Function: `rgba()`."
-	rgba(${1:0-255}, ${2:0-255}, ${3:0-255}, ${0:0-255})
-
-snippet hsl "CSS Color Function: `hsl()`."
-	hsl(${1:value}, ${2:value}, ${0:value})
-
-snippet hsla "CSS Color Function: `hsla()`."
-	hsla(${1:value}, ${2:value}, ${3:value}, ${0:value})
-
-snippet display "CSS Property: `display`"
-	display: ${1:<display-type>};
-	${0:<other-property>}
-
-snippet color "CSS Property: `color`"
-	color: ${1:<color>};
-	${0:<other-property>}
-
-snippet background-color "CSS Property: `background-color`"
-	background-color: ${1:<color>};
-	${0:<other-property>}
-
-snippet background "CSS Property: `background`"
-	background: ${1:<background-property>};
-	${0:<other-property>}
-
 snippet variable_new "CSS Variable Declaration."
 	--${1:name}: ${2:value};
-	${0:<other-property>}
 
 snippet font-weight-bold "CSS `font-weight` Property Value: `insert-value`."
 	font-weight: ${1:600};
-	${0:<other-property>}
 
-snippet dis_unset "CSS `display` Property: `unset`"
-	unset
+snippet !reset_css_boilerplate "Snippet for Aum's CSS Reset."
+	/* ========================== */
+	/* SECTION: CSS Reset | START */
+	/* ========================== */
 
-snippet dis_none "CSS `display` Property: `none`"
-	none
+	/* Nuke defaults */
+	*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
+		all: unset;
+		display: revert;
+	}
 
-snippet dis_contents "CSS `display` Property: `contents`"
-	contents
+	/* Restore italics on emphasis */
+	em {
+		font-style: italic;
+	}
 
-snippet dis_inherit "CSS `display` Property: `inherit`"
-	inherit
+	:root {
+		font-size:  16px;
+	}
 
-snippet dis_initial "CSS `display` Property: `initial`"
-	initial
+	*, *::before, *::after {
+		box-sizing: border-box;
+	}
 
-snippet dis_revert "CSS `display` Property: `revert`"
-	revert
+	* {
+		font:       inherit;
+		margin:     0;
+		padding:    0;
+	}
 
-snippet dis_revert-layer "CSS `display` Property: `revert-layer`"
-	revert-layer
+	html, body {
+		height: 100%;
+	}
 
-snippet dis_table "CSS `display` Property: `table`"
-	table
+	html:focus-within {
+		 scroll-behavior: smooth;
+	 }
 
-snippet dis_table-row "CSS `display` Property: `table-row`"
-	table-row
+	body {
+		line-height:            1.32;
+		text-rendering:         optimizeSpeed;
+		-webkit-font-smoothing: antialiased;
+	}
 
-snippet dis_list-item "CSS `display` Property: `list-item`"
-	list-item
+	img, picture, video, canvas, svg {
+		display: block;
+		 max-width: 100%;
+	}
 
-snippet dis_block "CSS `display` Property: `block`"
-	block
+	p, h1, h2, h3, h4, h5, h6 {
+		overflow-wrap: break-word;
+	}
 
-snippet dis_inline-block "CSS `display` Property: `inline-block`"
-	inline-block
+	h1, h2, h3, h4, h5, h6 {
+		line-height: 1.2;
+	}
 
-snippet dis_block_flow "CSS `display` Property: `block flow`"
-	block flow
+	ol, ul, li, menu {
+		list-style: none;
+	}
 
-snippet dis_block_flex "CSS `display` Property: `block flex`"
-	block flex
+	a, button {
+		cursor: revert;
+	}
 
-snippet dis_block_grid "CSS `display` Property: `block grid`"
-	block grid
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
 
-snippet dis_block_flow-root "CSS `display` Property: `block flow-root`"
-	block flow-root
+	input, textarea {
+		user-select: auto;
+		-webkit-user-select: auto;
+	}
 
-snippet dis_flex "CSS `display` Property: `flex`"
-	flex
+	textarea {
+		white-space: revert;
+	}
 
-snippet dis_inline-flex "CSS `display` Property: `inline-flex`"
-	inline-flex
+	meter {
+		-webkit-appearance: revert;
+		appearance: revert;
+	}
 
-snippet dis_grid "CSS `display` Property: `grid`"
-	grid
+	:where(pre) {
+		all: revert;
+	}
 
-snippet dis_inline-grid "CSS `display` Property: `inline-grid`"
-	inline-grid
+	::placeholder {
+		color: unset;
+	}
 
-snippet dis_flow-root "CSS `display` Property: `flow-root`"
-	flow-root
+	::marker {
+		content: initial;
+	}
 
-snippet dis_inline "CSS `display` Property: `inline`"
-	inline
+	:where([hidden]) {
+		display: none;
+	}
 
-snippet dis_inline_flow "CSS `display` Property: `inline flow`"
-	inline flow
+	:where([contenteditable]:not([contenteditable="false"])) {
+		-moz-user-modify:       read-write;
+		-webkit-user-modify:    read-write;
+		overflow-wrap:          break-word;
+		line-break:             after-white-space;
+		-webkit-line-break:     after-white-space;
+		user-select:            auto;
+		-webkit-user-select:    auto;
+	}
 
-snippet dis_inline_flex "CSS `display` Property: `inline flex`"
-	inline flex
+	:where([draggable="true"]) {
+		-webkit-user-drag: element;
+	}
 
-snippet dis_inline_grid "CSS `display` Property: `inline grid`"
-	inline grid
+	:where(dialog:modal) {
+		all: revert;
+	}
 
-snippet dis_inline_flow-root "CSS `display` Property: `inline flow-root`"
-	inline flow-root
+	/* ======================== */
+	/* SECTION: CSS Reset | END */
+	/* ======================== */
+	$0
+
+snippet !variables_css_boilerplate "Snippet for Aum's CSS Variables."
+	/* ============================== */
+	/* SECTION: CSS Variables | START */
+	/* ============================== */
+	:root {
+		/* === Font Variables === */
+		/* Font Family */
+		--font-family-primary:  "Nunito Sans", sans-serif;
+		/* Font Sizes */
+		--font-size-100:        0.70rem;
+		--font-size-200:        0.85rem;
+		--font-size-300:        1.00rem;
+		--font-size-400:        1.50rem;
+		--font-size-500:        2.25rem;
+		--font-size-600:        3.00rem;
+		--font-size-700:        4.00rem;
+		--font-size-800:        5.00rem;
+		--font-size-900:        6.25rem;
+		--font-size-1000:       7.5rem;
+		/* Font Weights */
+		--font-weight-200:      200;
+		--font-weight-300:      300;
+		--font-weight-400:      400;
+		--font-weight-500:      500;
+		--font-weight-600:      600;
+		--font-weight-700:      700;
+		--font-weight-800:      800;
+		--font-weight-900:      900;
+		--font-weight-1000:     1000;
+
+		/* === Color Variables === */
+		/* Foreground */
+		--color-primary-foreground-light-blue:      rgb(176 182 252);
+		--color-secondary-foreground-light-green:   rgb(176 220 252);
+		--color-tertiary-foreground-light-orange:   rgb(252 216 188);
+		/* Background */
+		--color-primary-background-dark-blue:       rgb(4   6   12);
+		--color-secondary-background-dark-purple:   rgb(16  8   18);
+		--color-tertiary-background-medium-blue:    rgb(20  16  32);
+		/* Accent */
+		--color-primary-accent-light-pink:          rgb(229 190 237);
+		--color-secondary-accent-light-purple:      rgb(245 162 255);
+
+		/* === Margin Variables === */
+		--margin-tiny:              4px;
+		--margin-extra-smol:        8px;
+		--margin-smol:              12px;
+		--margin-extra-small:       16px;
+		--margin-small:             24px;
+		--margin-medium:            32px;
+		--margin-large:             40px;
+		--margin-extra-large:       48px;
+		--margin-gigantic:          64px;
+		--margin-extra-gigantic:    92px;
+		--margin-ultra-gigantic:    128px;
+	}
+	/* ============================ */
+	/* SECTION: CSS Variables | END */
+	/* ============================ */
+	$0
+
+snippet !core_utilities_css_boilerplate "Snippet for Aum's CSS Core Utility Classes."
+	/* =================================== */
+	/* SECTION: CSS Core Utilities | START */
+	/* =================================== */
+
+	/* Base Styling (Dark Mode and Font) */
+	:root {
+		color:              var(--color-primary-foreground-light-blue);
+		background-color:   var(--color-primary-background-dark-blue);
+		font-family:        var(--font-family-primary);
+	}
+
+	/* Utility Classes: \`Font Sizes\` */
+	.font-size-100 {
+		font-size: var(--font-size-100);
+	}
+	.font-size-200 {
+		font-size: var(--font-size-200);
+	}
+	.font-size-300 {
+		font-size: var(--font-size-300);
+	}
+	.font-size-400 {
+		font-size: var(--font-size-400);
+	}
+	.font-size-500 {
+		font-size: var(--font-size-500);
+	}
+	.font-size-600 {
+		font-size: var(--font-size-600);
+	}
+	.font-size-700 {
+		font-size: var(--font-size-700);
+	}
+	.font-size-800 {
+		font-size: var(--font-size-800);
+	}
+	.font-size-900 {
+		font-size: var(--font-size-900);
+	}
+	.font-size-1000 {
+		font-size: var(--font-size-1000);
+	}
+
+	/* Utility Classes: \`Font Weights\` */
+	.font-weight-200 {
+		font-weight: var(--font-weight-200);
+	}
+	.font-weight-300 {
+		font-weight: var(--font-weight-300);
+	}
+	.font-weight-400 {
+		font-weight: var(--font-weight-400);
+	}
+	.font-weight-500 {
+		font-weight: var(--font-weight-500);
+	}
+	.font-weight-600 {
+		font-weight: var(--font-weight-600);
+	}
+	.font-weight-700 {
+		font-weight: var(--font-weight-700);
+	}
+	.font-weight-800 {
+		font-weight: var(--font-weight-800);
+	}
+	.font-weight-900 {
+		font-weight: var(--font-weight-900);
+	}
+	.font-weight-1000 {
+		font-weight: var(--font-weight-1000);
+	}
+
+	/* === Utility Classes: \`Colors\` === */
+	/* Foreground */
+	.color-fg-blue {
+		color: var(--color-primary-foreground-light-blue);
+	}
+	.color-fg-green {
+		color: var(--color-secondary-foreground-light-green);
+	}
+	.color-fg-orange {
+		color: var(--color-tertiary-foreground-light-orange);
+	}
+
+	/* Background */
+	.color-bg-darkblue {
+		color: var(--color-primary-background-dark-blue);
+	}
+	.color-bg-darkpurple {
+		color: var(--color-secondary-background-dark-purple);
+	}
+	.color-bg-mediumblue {
+		color: var(--color-tertiary-background-medium-blue);
+	}
+
+	/* Accent */
+	.color-accent-pink{
+		color: var(--color-primary-accent-light-pink);
+	}
+	.color-accent-purple {
+		color: var(--color-secondary-accent-light-purple);
+	}
+
+	/* Utility container */
+	.container {
+		--max-width:        72rem;
+		--padding:          1rem;
+
+		width:              min(var(--max-width), 100% - var(--padding) * 2);
+		margin-inline:      auto;
+	}
+
+	/* Base \`button\` Styling */
+	button {
+		color:              var(--color-primary-background-dark-blue);
+		background-color:   var(--color-primary-accent-light-pink);
+		padding:            0.5rem 1.15rem;
+		border-radius:      1.0rem;
+		cursor:             pointer;
+	}
+
+	/* === Hover Styling === */
+	/* Button Hover */
+	button:hover {
+		background-color: var(--color-secondary-accent-light-purple);
+	}
+
+	/* Link Hover  */
+	a:hover {
+		color: var(--color-secondary-accent-light-purple);
+	}
+
+	.debug {
+		border: 2px dashed #ff4466cc !important;
+	}
+
+	/* ================================= */
+	/* SECTION: CSS Core Utilities | END */
+	/* ================================= */
+	$0

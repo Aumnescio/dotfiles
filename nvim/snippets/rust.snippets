@@ -148,28 +148,31 @@ snippet print_var "Snippet for: println! with variable."
 snippet int "Snippet for: i32."
 	i32
 
-snippet var_int "Snippet for: i32 variable."
+snippet let_int "Snippet for: i32 variable."
 	let $1: i32 = $0;
 
-snippet var_int_mut "Snippet for: Mutable i32 variable."
+snippet let_int_mut "Snippet for: Mutable i32 variable."
 	let mut $1: i32 = $0;
 
-snippet var_float "Snippet for: f64 variable."
+snippet let_float "Snippet for: f64 variable."
 	let $1: f64 = $0;
 
-snippet var_float_mut "Snippet for: Mutable f64 variable."
+snippet let_float_mut "Snippet for: Mutable f64 variable."
 	let mut $1: f64 = $0;
 
-snippet var_string "String variable."
+snippet let_string "String variable."
 	let $1: String = String::from("$0");
 
-snippet var_string_mut "Snippet for: Mutable String variable."
+snippet let_string_mut "Snippet for: Mutable String variable."
 	let mut $1: String = "$2".to_string();$0
 
-snippet var_tuple_duo "Two value tuple variable."
+snippet let_vec "Vec variable."
+	let $1 = vec![$0];
+
+snippet let_tuple_duo "Two value tuple variable."
 	let ${1:variable_name}: = (${2:tup.0}, ${3:tup.1});$0
 
-snippet var_tuple_trio "Three value tuple variable."
+snippet let_tuple_trio "Three value tuple variable."
 	let ${1:variable_name}: = (${2:tup.0}, ${3:tup.1}, ${4:tup.2});$0
 
 snippet string "Snippet for: 'String' type."

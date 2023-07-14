@@ -33,3 +33,8 @@ super + k
 super + shift + ctrl + p
     /home/aum/.local/bin/maimract.sh
 
+#: NOTE: These keys are already in use by `Awesome-WM`.
+# super + b
+# super + shift + b
+
+# End of File

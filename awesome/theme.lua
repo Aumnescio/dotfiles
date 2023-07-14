@@ -21,22 +21,22 @@ theme.font                      = "JetBrainsMono Nerd Font 12"
 theme.hotkeys_font              = "JetBrainsMono Nerd Font 14"
 theme.hotkeys_description_font  = "JetBrainsMono Nerd Font 14"
 
-theme.bg_normal                 = "#09050F" -- Good
-theme.bg_focus                  = "#181226" -- Good
-theme.bg_urgent                 = "#80252A" -- Maybe fine?
-theme.bg_minimize               = "#201440" -- Fine?
+theme.bg_normal                 = "#08040F"     -- Good
+theme.bg_focus                  = "#191328"     -- Good
+theme.bg_urgent                 = "#80252A"     -- Maybe fine?
+theme.bg_minimize               = "#323047"     -- This is used in the keybind menu as text, so it can't be too dark.
 theme.bg_systray                = theme.bg_normal
 
-theme.fg_normal                 = "#524284" -- Maybe Good
-theme.fg_focus                  = "#8090CF" -- Maybe Good
-theme.fg_urgent                 = "#ABB0EF" -- Maybe Good
-theme.fg_minimize               = "#9294AE" -- Maybe Good
+theme.fg_normal                 = "#524284"     -- Maybe Good
+theme.fg_focus                  = "#8090CF"     -- Maybe Good
+theme.fg_urgent                 = "#ABB0EF"     -- Maybe Good
+theme.fg_minimize               = "#72749E"     -- Maybe fine
 
 theme.useless_gap               = dpi(2)
 theme.border_width              = dpi(2)
-theme.border_normal             = "#000000" -- Okay?
-theme.border_focus              = "#553377" -- Okay
-theme.border_marked             = "#7c3f72" -- Okay
+theme.border_normal             = "#000000"     -- Okay?
+theme.border_focus              = "#553377"     -- Okay
+theme.border_marked             = "#7c3f72"     -- Okay
 
 -- There are other variable sets
 -- overriding the default one when
@@ -62,7 +62,9 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
 
 -- Variables set for theming notifications:
 -- notification_font
--- notification_[bg|fg]
+theme.notification_bg = "#BA4466"
+theme.notification_fg = "#CCCCFF"
+theme.notification_border_color = "#7C3F72"
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
 
@@ -76,7 +78,7 @@ theme.menu_width  = dpi(240)
 -- You can add as many variables as
 -- you wish and access them by using
 -- beautiful.variable in your rc.lua
---theme.bg_widget = "#cc0000"
+-- theme.bg_widget = "#cc0000"
 
 -- Define the image to load
 theme.titlebar_close_button_normal = themes_path.."default/titlebar/close_normal.png"

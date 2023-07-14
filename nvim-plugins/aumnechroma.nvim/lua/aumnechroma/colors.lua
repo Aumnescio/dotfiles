@@ -24,7 +24,6 @@ colors.bg_09_champion_blue              = "#646886"
 colors.bg_10_prophet_violet             = "#6c55a8"
 colors.bg_11_trailing_whitespace        = "#000000"
 
-
 -- ###############################################
 -- ##           - Special Colors -              ##
 -- ###############################################
@@ -122,6 +121,7 @@ colors.fg_blue_16_dacnis                = "#52bee5"
 colors.fg_blue_17_shneonblue            = "#5158ff"
 colors.fg_blue_18_dried_lilac           = "#bbc0f2"
 colors.fg_blue_19_carriage_ride         = "#9b9abf"
+colors.fg_blue_20_hera_blue             = "#7d7cf5"
 -- |----------------------|
 -- === - END - Blues - ===
 
@@ -152,6 +152,7 @@ colors.fg_purple_22_lical_geode         = "#b18cfb"
 colors.fg_purple_23_whisper_lilac       = "#bba8fc"
 colors.fg_purple_24_aconite_violet      = "#9f4ded"
 colors.fg_purple_25_lighter_purple      = "#bcaeff"
+colors.fg_purple_26_omagenta            = "#ff99ed"
 -- |----------------------|
 -- === - END - Purples, Magentas, Pinks - ===
 
@@ -238,3 +239,4 @@ colors.fg_green_10_algal_fuel           = "#24c376"
 
 return colors
 
+-- End of File

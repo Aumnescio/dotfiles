@@ -8,11 +8,17 @@ snippet !boilerplate_core "Core HTML Boilerplate."
 	<!-- START => \`HEAD\` -->
 	<!-- --------------- -->
 	<head>
+		<!-- Metadata -->
 		<title> ${1:Title} </title>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
-		<meta name="description" content="<insert-description-here>" />
-		<link rel="stylesheet" href="/src/style.css">
+		<meta name="description" content="This is a website." />
+		<!-- Google Fonts: Nunito Sans -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+		<!-- CSS: Reset, Variables, Core Utils and additional styles. -->
+		<link rel="stylesheet" href="./src/css/style.css">
 	</head>
 	<!-- ------------- -->
 	<!-- END => \`HEAD\` -->
@@ -26,7 +32,21 @@ snippet !boilerplate_core "Core HTML Boilerplate."
 		<!-- START => \`Core Body Content\` -->
 		<!-- ---------------------------- -->
 
-		<div class="app"></div>$0
+		<!-- SECTION: HEADER | START -->
+		<header class="primary-header">
+			$0
+		</header>
+		<!-- SECTION: HEADER | END -->
+
+		<!-- SECTION: MAIN | START -->
+		<main id="main-content">
+			<p>Hello World!</p>
+		</main>
+		<!-- SECTION: MAIN | END -->
+
+		<!-- SECTION: FOOTER | START -->
+		<footer class="primary-footer"></footer>
+		<!-- SECTION: FOOTER | END -->
 
 		<!-- -------------------------- -->
 		<!-- END => \`Core Body Content\` -->
@@ -36,7 +56,7 @@ snippet !boilerplate_core "Core HTML Boilerplate."
 		<!-- START => \`Script Section\` -->
 		<!-- ------------------------- -->
 
-		<script type="module" src="/src/main.ts"></script>
+		<!-- <script type="module" src="/src/js/main.js"></script> -->
 
 		<!-- ----------------------- -->
 		<!-- END => \`Script Section\` -->
@@ -52,8 +72,7 @@ snippet !boilerplate_core "Core HTML Boilerplate."
 
 snippet lorem_ipsum "Lorem ipsum paragraph for testing."
 	Voluptates consequuntur adipisci voluptas optio laudantium occaecati sed.
-	Distinctiovoluptas debitis enim.
-	Veniam quae quasi molestiae explicabo iure fugit fugit sunt.$0
+	Distinctiovoluptas debitis enim. $0
 
 snippet html "HTML Tag: `html`"
 	<html>
@@ -82,8 +101,11 @@ snippet body "HTML Tag: `body`"
 		${1:Body Contents}
 	</body>$0
 
+snippet div_plain "HTML Tag: `div`"
+	<div>$0</div>
+
 snippet div_class "HTML Tag: `div`"
-	<div class="$1">$2</div>
+	<div class="$1">$0</div>
 
 snippet horizontal_line "HTML Tag: `hr` (Horizontal Line)"
 	<hr>$0
@@ -91,8 +113,8 @@ snippet horizontal_line "HTML Tag: `hr` (Horizontal Line)"
 snippet break_line "HTML Tag: `br` (Break / NewLine)"
 	<br>$0
 
-snippet paragraph_tags "HTML Tag: `p` (Paragraph)"
-	<p>$1</p>$0
+snippet paragraph "HTML Tag: `p` (Paragraph)"
+	<p>$0</p>
 
 snippet quote "HTML Tag: `q` (Quote)"
 	<q>$1</q>$0
@@ -119,9 +141,6 @@ snippet heading_5 "HTML Tag: `h5` (Heading 5)"
 
 snippet heading_6 "HTML Tag: `h6` (Heading 6)"
 	<h6>$1</h6>$0
-
-snippet style "HTML Attribute: `style` (Inline CSS)"
-	style="${1:color: black};"$0
 
 snippet bold "HTML Tag: `b` (Bold)"
 	<b>${1:text}</b>$0
@@ -151,11 +170,15 @@ snippet ordered_list "HTML Tag: `ol` (Ordered List)"
 
 snippet unordered_list "HTML Tag: `ul` (Unordered List)"
 	<ul>
-		<li> ${1:List Item} </li>$2
-	</ul>$0
+		<li>
+			$0
+		</li>
+	</ul>
 
 snippet list_item "HTML Tag: `li` (List Item)"
-	<li> ${1:List Item} </li>$0
+	<li>
+		$0
+	</li>
 
 snippet definition_list "HTML Tag: `dl` (Definition List)"
 	<dl>
@@ -171,20 +194,20 @@ snippet definition_description "HTML Tag: `dd` (Definition Description)"
 
 snippet table "HTML Tag: `table`"
 	<table>
-		<caption> ${1:Title} </caption>
-		${2:Table Contents}
+		<caption>$1</caption>
+		$2
 	</table>$0
 
 snippet table_row "HTML Tag: `tr` (Table Row)"
 	<tr>
-		${1:Cells}
-	</tr>$0
-
-snippet table_data_cell "HTML Tag: `td` (Table Data Cell)"
-	<td> ${1:Cell Content} </td>$0
+		$0
+	</tr>
 
 snippet table_heading "HTML Tag: `th` (Table Cell Heading)"
-	<th> ${1:Cell Content} </th>$0
+	<th>$0</th>
+
+snippet table_data_cell "HTML Tag: `td` (Table Data Cell)"
+	<td>$0</td>
 
 snippet colspan_attr "HTML Attribute: `colspan` (For Tables)"
 	colspan="${1:Integer Value}"$0
@@ -192,14 +215,7 @@ snippet colspan_attr "HTML Attribute: `colspan` (For Tables)"
 snippet rowspan_attr "HTML Attribute: `rowspan` (For Tables)"
 	rowspan="${1:Integer Value}"$0
 
-snippet form "HTML Tag: `form`"
-	<form action="${1:URL}" method="${2:post | get}">
-	</form>$0
-
-snippet input_field  "HTML Tag: `input` (Type: Text)"
-	<input type="text" name="${1:name}" size="${2:Integer Value}" maxlength="${3:Integer Value}">$0
-
-snippet input_button  "HTML Tag: `input` (Type: Submit)"
+snippet input_submit_button  "HTML Tag: `input` (Type: Submit)"
 	<input type="submit" value="${1:Button Text}">$0
 
 snippet input_fileselect_button  "HTML Tag: `input` (Type: File Selection Button)"
@@ -208,10 +224,10 @@ snippet input_fileselect_button  "HTML Tag: `input` (Type: File Selection Button
 snippet input_radio_button "HTML Tag: `input` (Type: Radio Button)"
 	<input type="radio" name="${1:name}" value="${2:value}">${3:Display Text}$0
 
-snippet input_password "HTML Tag: `input` (Type: Password)"
+snippet input_password_text_field "HTML Tag: `input` (Type: Password)"
 	<input type="password" name="${1:name}" size="${2:Integer Value}" maxlength="${3:Integer Value}">$0
 
-snippet textarea "HTML Tag: `textarea`"
+snippet textarea_input_field "HTML Tag: `textarea`"
 	<textarea rows="${1:Integer Value}" cols="${2:Integer Value}">
 		${3:Display Text}
 	</textarea>$0
@@ -231,10 +247,16 @@ snippet fieldset "HTML Tag: `fieldset`"
 		${3:Input Field}<br>
 	</fieldset>
 
-snippet a_href_link "HTML Tag: `a` (href/url/link)"
-	<a href="${1:Relative or Absolute URL}" target="_blank"> ${2:Display Text / Description} </a>
+snippet a_href_external_link "HTML Tag: `a` (href/url/link)"
+	<a href="${1:Relative or Absolute URL}" target="_blank">${2:Description}</a>$0
 
-snippet image "HTML Tag: `img` (Image)"
+snippet a_href_link "HTML Tag: `a` (href/url/link)"
+	<a href="${1:Relative or Absolute URL}">$2</a>$0
+
+snippet img_image "HTML Tag: `img` (Image)"
+	<img src="${1:Path to Image}" alt="${2:Textual Description of Image}">$0
+
+snippet img_image_with_dimensions "HTML Tag: `img` (Image)"
 	<img src="${1:Path to Image}" alt="${2:Textual Description of Image}" width="${3:Integer Value}" height="${4:Integer Value}">$0
 
 snippet figure "HTML Tag: `figure`"
@@ -271,3 +293,19 @@ snippet script "HTML Tag: `script`"
 
 snippet script_module "HTML Tag: `script` (Type: Module)"
 	<script type="module" src="/src/${0:main.ts}"></script>
+
+snippet hero_section_simple "Snippet for a simple HTML Hero Section with a Title, paragraph, and a CTA Button."
+	<section class="hero container">
+		<h1 class="font-size-900 font-weight-900">
+			$1
+		</h1>
+		<p class="font-size-600 font-weight-200">
+			$2
+		</p>
+		<button class="call-to-action font-size-400 font-weight-900">
+			$0
+		</button>
+	</section>
+
+snippet copyright_icon "HTML Entity for a Copyright Icon."
+	&copy;$0

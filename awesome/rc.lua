@@ -3,11 +3,6 @@
 -- If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
--- Aum TODO-List:
---  - Hide the top bar by default.
---  - Also Customize and Theme things, including the Bar.
---  - Learn all sorts of things.
-
 -- |> Standard awesome library
 local gears = require("gears")  -- What does this contain?
 local awful = require("awful")  -- What does this contain?
@@ -16,7 +11,7 @@ require("awful.autofocus")  -- Makes it so that closing a window brings some win
 -- |> Widget and layout library
 local wibox = require("wibox") -- What is this?
 
--- |>Theme handling library
+-- |> Theme handling library
 local beautiful = require("beautiful") -- This contains some theme related things.
 
 -- |> Notification library
@@ -78,11 +73,12 @@ modkey = "Mod4" -- Default modkey: "Super" (STATE: Good)
 
 -- |> Layouts
 awful.layout.layouts = {
-    awful.layout.suit.tile,  -- In this I can scale the Windows with mouse.
-    awful.layout.suit.floating,  -- Need this for like working with Unreal, because Tiling causes some awkwardness.
+    awful.layout.suit.tile,         -- This is same as `tile.right`. (Main window on the left.)
+    awful.layout.suit.tile.left,    -- `tile.left`: Main window on the right.
+    awful.layout.suit.fair,         -- Balanced. Grid-like.
+    awful.layout.suit.floating,     -- Occasionally useful in special cases.
     -- TODO: Figure out which bind swaps layout, customize it maybe.
     -- awful.layout.suit.spiral,
-    -- awful.layout.suit.fair,
     -- awful.layout.suit.max,
     -- awful.layout.suit.max.fullscreen,
     -- awful.layout.suit.magnifier,
@@ -90,7 +86,6 @@ awful.layout.layouts = {
     -- Remove the commented ones later, once I understand these better,
     -- and know which ones I like.
     -- awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.tile.left,
     -- awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
     -- awful.layout.suit.fair.horizontal,
@@ -158,7 +153,6 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
--- |> Create a wibox for each screen and add it.
 -- |> What is this?
 local taglist_buttons = gears.table.join(
     awful.button({}, 1, function(t)
@@ -286,16 +280,16 @@ awful.screen.connect_for_each_screen(function(current_screen)
     current_screen.mywibox:setup({
         layout = wibox.layout.align.horizontal,
 
-        { -- Left widgets
+        {   -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             mylauncher,
             current_screen.mytaglist,
             current_screen.mypromptbox,
         },
 
-        current_screen.mytasklist, -- Middle widget
+        current_screen.mytasklist,  -- Middle widget
 
-        { -- Right widgets
+        {   -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
@@ -362,7 +356,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey, "Shift", "Control" }, "s", function()
         awful.spawn("setxkbmap us")
     end, { description = 'Set keyboard_layout_lang to "us"', group = "awesome" }),
-    
+
     -- Key:         Super + Ctrl + s
     -- Action:      Swap keyboard layout to Fin.                    (STATE: Good)
     awful.key({ modkey, "Control" }, "s", function()
@@ -518,18 +512,18 @@ globalkeys = gears.table.join(
     -- Key:         Super + <Space>
     -- Action:      Focus Next Window in Layout.                        (STATE: Okay?)
     -- NOTE:        Supposed to be a function
-    awful.key({ modkey }, "space",
-        awful.layout.inc(1),
-        { description = "Focus Next Window in Layout", group = "layout" }
-    ),
+    -- awful.key({ modkey }, "space",
+    --     awful.layout.inc(1),
+    -- --     { description = "Focus Next Window in Layout", group = "layout" }
+    -- ),
 
     -- Key:         Super + Shift + <Space>
     -- Action:      Focus Previous Window in Layout.                    (STATE: Okay?)
     -- NOTE:        Supposed to be a function
-    awful.key({ modkey, "Shift" }, "space",
-        awful.layout.inc(-1),
-        { description = "Focus Previous Window in Layout", group = "layout" }
-    ),
+    -- awful.key({ modkey, "Shift" }, "space",
+    --     awful.layout.inc(-1),
+    -- --     { description = "Focus Previous Window in Layout", group = "layout" }
+    -- ),
 
     -- Key:         Super + Ctrl + n
     -- Action:      Restore Minimized Window.                           (STATE: Okay?)
@@ -565,9 +559,33 @@ globalkeys = gears.table.join(
     -- Key:         Super + p
     -- Action:      Activate Run Prompt / MenuBar.                      (STATE: Okay)
     -- NOTE:        Supposed to be a function
-    awful.key({ modkey }, "p", function()
-        menubar.show()
-    end, { description = "Activate Run Prompt / MenuBar", group = "launcher" })
+    awful.key(
+        { modkey },
+        "p",
+        function()
+            menubar.show()
+        end,
+        { description = "Activate Run Prompt / MenuBar", group = "launcher" }
+    ),
+
+    -- |> Toggle Statusbar / Wibar / Wibox Visibility
+    -- Key:         Super + a
+    -- Action:      Toggle Wibox / Wibar visibility.
+    -- NOTE:        Supposed to be a function.
+    awful.key(
+        { modkey },
+        "a",
+        function()
+            myscreen = awful.screen.focused()
+            myscreen.mywibox.visible = not myscreen.mywibox.visible
+        end,
+        { description = "Toggle top Wibar/Wibox/Statusbar visibility.", group = "awesome" }
+    ),
+
+    -- Key:         Super + Shift + c
+    awful.key({ modkey, "Shift" }, "c", function()
+        awful.spawn("colorpicker")
+    end, { description = "Activate colorpicker.", group = "command" })
 )
 
 -- |> Window / Client management keys / mappings.
@@ -783,14 +801,14 @@ awful.rules.rules = {
 
 -- |> Signals
 -- Signal function to execute when a new client appears.
-client.connect_signal("manage", function(c)
+client.connect_signal("manage", function(client)
     -- Set the Windows at the Slave,
     -- i.e. put it at the end of others instead of setting it Master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
-    if awesome.startup and not c.size_hints.user_position and not c.size_hints.program_position then
+    if awesome.startup and not client.size_hints.user_position and not client.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
+        awful.placement.no_offscreen(client)
     end
 end)
 
@@ -846,19 +864,19 @@ end)
 
 local last_focus
 
--- |> Set `Border Color` when Focused.
+-- |> Set Border Color when Focused.
 client.connect_signal("focus", function(window)
     last_focus = nil
     window.border_color = beautiful.border_focus
 end)
 
--- |> Set `Border Color` when Unfocused.
+-- |> Set Border Color when Unfocused.
 client.connect_signal("unfocus", function(window)
     last_focus = window
     window.border_color = beautiful.border_normal
 end)
 
--- Trying to fix some sort of `autofocus` thing.
+-- Trying to fix some sort of autofocus thing.
 client.connect_signal("unmanage", function(window)
     if last_focus == window and window.transient_for then
         client.focus = window.transient_for

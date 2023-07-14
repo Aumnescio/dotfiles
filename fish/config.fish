@@ -14,20 +14,29 @@ set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 set -gx PKG_CONFIG_PATH "/usr/lib/x86_64-linux-gnu/pkgconfig/"
 
 #: `Pure` fish-prompt colors. Could customize these I suppose.
+#:  - These seem to have been exported to the `~/.config/fish/fish_variables` file.
 #: STATE: Fine
-set --universal pure_color_danger brred
-set --universal pure_color_dark 332244
-set --universal pure_color_info cyan
-set --universal pure_color_light white
-set --universal pure_color_mute red
-set --universal pure_color_normal normal
-set --universal pure_color_primary blue
-set --universal pure_color_success green
-set --universal pure_color_warning yellow
+# set --universal pure_color_danger brred
+# set --universal pure_color_dark 332244
+# set --universal pure_color_info cyan
+# set --universal pure_color_light white
+# set --universal pure_color_mute red
+# set --universal pure_color_normal normal
+# set --universal pure_color_primary blue
+# set --universal pure_color_success green
+# set --universal pure_color_warning yellow
+
+#: `ls` and `exa`: Colors
+#:  - Created complete version using `set -Ux LS_COLORS` and `set -Ux EXA_COLORS`.
+#:      - The settings can be seen in the `~/.config/fish/fish_variables` file.
+#:      - The settings can be overwritten by calling the `set -Ux` commands again.
+#:  - Help: "https://the.exa.website/docs/colour-themes"
+# set -Ux LS_COLORS "fi=34:di=34:ex=34:pi=34:so=34:bd=34:cd=34:ln=34:or=34:*.aac=34:*.alac=34:*.ape=34:*.flac=34:*.m4a=34:*.mka=34:*.mp3=34:*.ogg=34:*.opus=34:*.wav=34:*.wma=34"
+# set -Ux EXA_COLORS "uu=38;5;61:un=38;5;62:gu=38;5;64:gn=38;5;65"
 
 #: Path
 #: Node version manager `fnm`:
-#: - This apparently only needed to be done once.
+#: - Running this once is enough.
 # fish_add_path /home/aum/.fnm
 
 #: `fzf` defaults configuration.
@@ -36,7 +45,7 @@ set -gx FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border'
 set -gx FZF_ALT_C_COMMAND 'fd -H -t d'
 
 #: Starship config location
-set -gx STARSHIP_CONFIG '/home/aum/.config/starship/starship.toml'
+# set -gx STARSHIP_CONFIG '/home/aum/.config/starship/starship.toml'
 
 #: Matplotlib kitty backend
 set -gx MPLBACKEND 'module://matplotlib-backend-kitty'
@@ -54,10 +63,17 @@ if status is-interactive
     fish_vi_key_bindings
 
     #: Abbreviations / Aliases:
+    abbr --add --global ls-real '/usr/bin/ls'
     abbr --add --global rm 'rm -vi'
+    abbr --add --global rmrec 'rm -vIr'
     abbr --add --global cp 'cp -vi'
     abbr --add --global mv 'mv -vi'
-    abbr --add --global md 'mkdir'
+    abbr --add --global md 'mkdir -p'
+    abbr --add --global mkdir 'mkdir -p'
+    abbr --add --global et 'erd'
+    abbr --add --global ssh 'kitty +kitten ssh'
+
+    abbr --add --global xcolor 'xcolor --format HEX | xclip -sel clip'
 
     # START - Navigating back to parent directories.
     abbr --add --global '...' '../..'
@@ -69,7 +85,9 @@ if status is-interactive
 
     # START - Code Editor (Mostly Neovim)
     abbr --add --global nv 'nvim'
-    abbr --add --global nvs 'nvim (fzf)'
+    abbr --add --global nvmini 'NVIM_APPNAME=nvim_minimal nvim'
+    abbr --add --global nvrepro 'NVIM_APPNAME=nvim_repro nvim'
+    abbr --add --global nvs 'nvim ./(fzf)'
     abbr --add --global codi 'codium'
     abbr --add --global notes 'nvim /home/aum/Secondbrain/Vault/mind-tracking-fleeting-notes.norg'
     # END - Code Editor
@@ -78,16 +96,19 @@ if status is-interactive
     abbr --add --global untar 'tar --extract --verbose --file'
     abbr --add --global untarbzip 'tar --extract --verbose --bzip2 --file'
     abbr --add --global untargzip 'tar --extract --verbose --gzip --file'
-    abbr --add --global cheat 'cht.sh --shell'
+
     #: This is some old thing. TODO: Test / Remove
     abbr --add --global rodb 'rofi -show kb -modi kb:/home/aum/.config/rofi/custom-modes/rofi-kb-mode.bash'
 
     #: Opening Music Player `ncmpcpp`
     abbr --add --global aumusic 'ncmpcpp'
 
+    #: Screen Recording
+    abbr --add --global aumrec 'aum-record-region'
+
     #: Setting keyboard repeat rate easily, because it tends to reset sometimes.
-    abbr --add --global setkeyboardrepeatrate 'xset r rate 196 72'
-    abbr --add --global fixkeyboardrepeatrate 'xset r rate 196 72'
+    abbr --add --global setkeyboardrepeatrate 'xset r rate 196 80'
+    abbr --add --global fixkeyboardrepeatrate 'xset r rate 196 80'
 
     #: Hmm.
     abbr --add --global python 'python3'
@@ -108,7 +129,7 @@ if status is-interactive
 
     #: START => Web Development
     #: |> browser-sync
-    abbr --add --global browsync 'browser-sync start --server --files "*"'
+    abbr --add --global browsync 'browser-sync start --config ./bs-config.js'
     #: END => Web Development
 
     #: TODO: Probably remove these and `kb`.
@@ -203,6 +224,10 @@ if status is-interactive
         exa --grid --all --classify --icons --group-directories-first $argv
     end
 
+    function lsr
+        exa --grid --all --classify --icons --group-directories-first | rg -S "$argv"
+    end
+
     function lt
         exa --tree --level=3 --header --long --classify --icons --group-directories-first $argv
     end
@@ -261,6 +286,11 @@ if status is-interactive
     #: Opening detached `Graphical File Browser` (nautilus) in Current Directory.
     function naut
         nohup nautilus --new-window $argv[1] > /dev/null 2>&1 & disown
+    end
+
+    #: Opening detached `PDF Viewer` (zathura).
+    function zath
+        nohup zathura $argv[1] > /dev/null 2>&1 & disown
     end
 
     function reload_fish
@@ -375,8 +405,4 @@ function zi
     __zoxide_zi $argv
 end
 
-# =============================================================================
-#: Cheat.sh fish completion. (Not sure if I should run this every time the shell starts.)
-#: NOTE: It has been ran once interactively.
-
-# complete -c cheat.sh -xa '(curl -s cheat.sh/:list)'
+# End of File
