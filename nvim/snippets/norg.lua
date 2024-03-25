@@ -30,15 +30,16 @@ local types                 = require("luasnip.util.types")
 local parse                 = require("luasnip.util.parser").parse_snippet
 
 return {
-    -- snippet({ trig = "image", name = "Typst Function: `image()`", dscr = "Snippet for the Typst Function: `image()`"},
-    --     fmt(
-    --         [[image("{}", width: {}%)]],
-    --         {
-    --             insert(1, "<url>"),
-    --             insert(2, "<N>"),
-    --         }
-    --     )
-    -- ),
+    snippet({ trig = "date", name = "Insert Date", dscr = "Snippet for inserting the current date."},
+        fmt(
+            [[
+                {}
+            ]],
+            {
+                partial(os.date, "`%d/%m/%Y`")
+            }
+        )
+    ),
 }
 
 -- End of File

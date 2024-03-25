@@ -12,8 +12,8 @@ return {
     },
 
     {   -- Line Movement Up/Down.                               ( STATE: Good, when it builds. )
-        --  - Extremely fast load-time and also performant actions.
         --  - Written in Rust.
+        --  - Extremely fast load-time and also performant actions.
         "willothy/moveline.nvim",
         lazy = true,
         version = "0.3.1",
@@ -86,7 +86,9 @@ return {
                     -- Align to rightmost char
                     "ar",
                     function()
-                        alignvim.align_to_char(1, false, false, false)
+                        alignvim.align_to_char({
+                            length = 1,
+                        })
                     end,
                     description = "Align selection to the rightmost character.",
                     mode = "x",
@@ -95,7 +97,10 @@ return {
                 {   -- Align to leftmost char
                     "al",
                     function()
-                        alignvim.align_to_char(1, true, false, false)
+                        alignvim.align_to_char({
+                            length = 1,
+                            reverse = true,
+                        })
                     end,
                     description = "Align selection to the leftmost character.",
                     mode = "x",
@@ -105,17 +110,26 @@ return {
         end,
     },
 
-    {   -- Comment Toggling                                     ( STATE: Good )
+    -- NOTE/TODO: Might be looking to move to `mini.comment` or something.
+    {   -- Comment Toggling                                     ( STATE: Generally been good. )
+        -- - Having minor issue, `gcc` bind sometimes not working.
         "numToStr/Comment.nvim",
         cond = true,        -- Allow in VS-Codium.
         lazy = true,
-        -- NOTE: These work, but I they are not available in `legendary.nvim`.
-        -- TODO: Do the keys function thing and config function legendary bindings.
-        keys = {
-            { "gc",     "<Plug>(comment_toggle_linewise)",          mode = "n", desc = "Comment Operator." },
-            { "gcc",    "<Plug>(comment_toggle_linewise_current)",  mode = "n", desc = "Comment current line." },
-            { "gc",     "<Plug>(comment_toggle_linewise_visual)",   mode = "x", desc = "Comment selected lines." },
-        },
+        version = "0.8.0",
+
+        -- This might or might not work.
+        keys = function()
+            local ret = {}
+            for _, key in ipairs({ "gc", "gcc" }) do
+                ret[#ret + 1] = { key, mode = "n" }
+            end
+            for _, key in ipairs({ "gc" }) do
+                ret[#ret + 1] = { key, mode = "x" }
+            end
+            return ret
+        end,
+
         opts = {
             padding = true,     -- Add a space between comment and the line.
             sticky = true,      -- Whether the cursor should stay at its position.
@@ -139,6 +153,7 @@ return {
 
             -- Whether to automatically create keybindings.
             --  - `false`: no automatic creation of mappings.
+            --  - NOTE: Bindings created manually below, using `Legendary.nvim`.
             mappings = {
                 basic = false,
                 extra = false,
@@ -150,6 +165,16 @@ return {
             -- Function to call after (un)comment.
             post_hook = nil,
         },
+
+        config = function(_, opts)
+            require("Comment").setup(opts)
+
+            require("legendary").keymaps({
+                { "gc",     "<Plug>(comment_toggle_linewise)",              description = "Comment Operator.",          mode = "n", opts = { noremap = true, silent = true } },
+                { "gcc",    "<Plug>(comment_toggle_linewise_current)",      description = "Comment current line.",      mode = "n", opts = { noremap = true, silent = true } },
+                { "gc",     "<Plug>(comment_toggle_linewise_visual)",       description = "Comment selected lines.",    mode = "x", opts = { noremap = true, silent = true } },
+            })
+        end,
     },
 }
 

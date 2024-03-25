@@ -1,11 +1,14 @@
 # Aumnescio's Config Files
 
-- Neovim
 - AwesomeWM
 - Picom
 - Firefox
+- Kitty
+- Alacritty
 - Fish
+- Neovim
+- Helix
+- Rofi
+- Zathura
 - mpd
 - ncmpcpp
-- Rofi
-- And Helix, which I don't really use.

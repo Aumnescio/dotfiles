@@ -30,6 +30,67 @@ local types                 = require("luasnip.util.types")
 local parse                 = require("luasnip.util.parser").parse_snippet
 
 return {
+    snippet({ trig = "boilerplate", name = "Typst Base Boilerplate", dscr = "Snippet for Typst Base Boilerplate"},
+        fmt(
+            [[
+                // ================================
+                // SECTION: Settings => START   ===
+                // ================================
+
+                #set text(
+                    font: "JetBrains Mono",
+                    size: 11pt,
+                )
+
+                #set page(
+                    paper: "a4",
+                    margin: (x: 1.6cm, y: 1.8cm),
+                    numbering: "1",
+                )
+
+                #set par(
+                    justify: true,
+                    leading: 0.6em,
+                )
+
+                #set heading(
+                    numbering: "1.",
+                    outlined: true,
+                )
+                // ================================
+                // SECTION: Settings => END     ===
+                // ================================
+
+                // Title
+                #align(center, text(17pt)[
+                    *Title*
+                ])
+
+                // Author
+                #align(center, text(12pt)[
+                    Herbert Salin
+                ])
+
+                // ================================
+                // SECTION: Content => START    ===
+                // ================================
+
+                = Section 1 Title
+
+                    Words.{}
+
+
+                // ================================
+                // SECTION: Content => END      ===
+                // ================================
+
+                // End of File
+            ]],
+            {
+                insert(0),
+            }
+        )
+    ),
     snippet({ trig = "#image", name = "Typst Function: `image()`", dscr = "Snippet for the Typst Function: `image()`"},
         fmt(
             [[

@@ -889,7 +889,8 @@ end)
 
 -- |> Run xrandr script to Setup Monitors.
 -- STATE: Good
-awful.spawn.with_shell("/home/aum/.screenlayout/arandrsetup.sh")
+-- awful.spawn.with_shell("/home/aum/.screenlayout/arandrsetup.sh")
+awful.spawn.with_shell("/home/aum/.screenlayout/arandrsetup-2screen.sh")
 
 -- |> Set keyboard layout.
 -- |> Set keyboard repeat rate.

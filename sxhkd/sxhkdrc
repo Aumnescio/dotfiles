@@ -23,11 +23,11 @@ super + shift + p
 
 #: Run prompt.
 super + d
-    rofi -show drun
+    rofi -show drun -matching fuzzy -drun-use-desktop-cache
 
 #: Window focus prompt.
 super + k
-    rofi -show window
+    rofi -show window -matching fuzzy
 
 #: Use `Tesseract` to extract text from screenshot.
 super + shift + ctrl + p

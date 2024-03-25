@@ -38,8 +38,8 @@ return {
                 -- `foreground` | `background` | `virtualtext`
                 mode = "virtualtext",   -- Set the display mode.
 
-                -- Available methods are: [ `false` | `true | `"normal"` | `"lsp"` | `"both"` ]
-                tailwind = false,       -- Enable Tailwind colors
+                -- Available methods are: [ `false` | `true` | `"normal"` | `"lsp"` | `"both"` ]
+                tailwind = "lsp",       -- Enable Tailwind colors
 
                 -- Parsers can contain values used in |user_default_options|
                 sass = { enable = false, parsers = { "css" }, },    -- Enable sass colors

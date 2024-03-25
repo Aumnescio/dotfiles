@@ -23,17 +23,30 @@ local nonempty              = extras.nonempty
 local dyn_lambda            = extras.dynamic_lambda
 
 local fmt                   = require("luasnip.extras.fmt").fmt                 -- For format-strings.
-local fmta                  = require("luasnip.extras.fmt").fmta
+local fmta                  = require("luasnip.extras.fmt").fmta                -- For format-strings, with named slots.
 local conds                 = require("luasnip.extras.expand_conditions")
 local postfix               = require("luasnip.extras.postfix").postfix
 local types                 = require("luasnip.util.types")
 local parse                 = require("luasnip.util.parser").parse_snippet
 
-luasnip.filetype_extend("svelte", { "html" })
-luasnip.filetype_extend("svelte", { "css" })
+-- NOTE:    Don't quite love having all the HTML and CSS snippets in Svelte files,
+--          because they are not context sensitive, and they also
+--          have some compatibility issues.
+-- luasnip.filetype_extend("svelte", { "html" })
+-- luasnip.filetype_extend("svelte", { "css" })
 luasnip.filetype_extend("svelte", { "typescript" })
 
 return {
+    snippet({ trig = "component", name = "Svelte `component`", dscr = "Svelte Snippet for a `component` tag."},
+        fmt(
+            [[
+                <{} />
+            ]],
+            {
+                insert(0)
+            }
+        )
+    ),
     snippet({ trig = "if", name = "Svelte Block: `if`", dscr = "Svelte Snippet for an `if` block."},
         fmt(
             [[
@@ -70,7 +83,7 @@ return {
             }
         )
     ),
-    snippet({ trig = "each", name = "Svelte Block: `each`", dscr = "Svelte Snippet for an `each` block."},
+    snippet({ trig = "for_each_loop", name = "Svelte Block: `each`", dscr = "Svelte Snippet for an `each` block."},
         fmt(
             [[
                 {{#each {} as {}}}
@@ -84,5 +97,6 @@ return {
             }
         )
     ),
-
 }
+
+-- End of File

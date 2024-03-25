@@ -7,7 +7,7 @@
 --  - Not a whole lot of documentation on this.
 --  - Recommended in `impatient.nvim` README, as replacement for the plugin.
 --  - NOTE: `lazy.nvim` probably would enable this already..
-vim.loader.enable()
+-- vim.loader.enable()
 
 -- NOTE TO SELF: I disabled the `html.vim` file in Exectubles/Neovim `runtime` directory. (`disabled-html.vim`)
 --  - If issue related to this, revert the name of this file.
@@ -169,10 +169,10 @@ opt.updatetime      = 28        -- Some update-rate thing to help smoothness.
 --          So I want `updatetime` to be larger than ~20ms, at least, so when holding down a key, the highlight won't flicker.
 
 -- |> Virtual characters.
-opt.listchars       = "eol:↵,tab:»›,trail:~,extends:❯,precedes:❮"           -- No listchar for spaces.
+opt.listchars       = "eol:↵,tab:»›,trail:~,extends:❯,precedes:❮,leadmultispace:▎   "   -- No listchar for spaces.
 -- `End of Buffer` and `FoldColumn` display characters:
 opt.fillchars       = "eob:⏐,fold:·,foldopen:󰍴,foldclose:,foldsep:|"       -- `eob` could be better.
-opt.list            = true      -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
+opt.list            = false     -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
 
 -- |> Command line settings.
 opt.showmode        = false     -- Normal/Insert/Visual Mode command line visiblity toggle.     ( Custom version enabled in `heirline.nvim`. )
@@ -229,12 +229,15 @@ g.polyglot_disabled = {
 }
 
 -- NOTE:    Settings can get overwritten by `polyglot.vim` filetype indentation rules, (or by something else)
-opt.autoindent      = true      -- Automatic indentation.               ( Copy indent from current line )
-opt.smartindent     = true      -- More automatic/smart indentation.
+--          Pretty sure autoindent and smartindent don't do anything in most cases,
+--          as either Treesitter or some other plugin will be handling the indentation.
+opt.autoindent      = true     -- Automatic indentation.               ( Copy indent from current line )
+opt.smartindent     = true     -- More automatic/smart indentation.
 opt.cindent         = true      -- Some C-like indentation rule.        ( Probably needs to be disabled for some filetypes. )
 opt.copyindent      = true      -- Copy indentation characters from previous line.      ( Not really much effect. )
 opt.preserveindent  = true      -- Preserve indent whitespace style.                    ( Not really much effect. )
 opt.indentexpr      = ""        -- TODO: Figure out something good for this.
+-- opt.indentexpr      = "nvim_treesitter#indent()"     -- Treesitter Indenting.
 opt.indentkeys      = "o:"      -- Characters that cause reindeting.    ( Some filetype plugins will modify this. )
 opt.cinkeys         = "o:"      -- Characters that cause reindeting when `cindent` is on.
 opt.cinwords        = [[if,then,while,do]]      -- Keywords that cause indentation.
@@ -282,7 +285,7 @@ opt.wrapscan        = true      -- Toggle searching to wrap from end of buffer t
 
 -- |> Folding settings.
 -- NOTE: Folding in Neovim is extremely borked, and almost unuseable.
-opt.foldenable      = false      -- Folding => Enabled
+opt.foldenable      = true      -- Folding => Enabled
 
 -- Fold Display Format
 -- TODO: Work in progress foldtext function.
@@ -310,13 +313,17 @@ opt.foldenable      = false      -- Folding => Enabled
     -- return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
 -- end
 
+-- This gets overwritten by `nvim-ufo`.
 vim.o.foldtext = [[
     substitute(getline(v:foldstart),'\\t',repeat('\ ',&tabstop),'g').'...'.trim(getline(v:foldend)) . ' (' . (v:foldend - v:foldstart + 1) . ' lines)'
 ]]
 
 -- `expr` can cause lots of lag.
+-- `syntax` lags when used with Treesitter, and requires file-type support or manual implementation.
+--          - But, `syntax` would be the best way to fold, if not using treesitter. Folds are accurate and not buggy.
 -- `marker` clutters files with text.
-vim.wo.foldmethod = "manual"    -- Fold Method.     ( `manual` / `marker` / `expr` / `indent` )
+-- `manual` maybe when using nvim-ufo is best so far? But still having folding issues.
+vim.wo.foldmethod = "manual"    -- Fold Method.     ( `manual` / `marker` / `expr` / `indent` / `syntax` )
 
 -- `foldmarker`: Bit clunky to use, but the most dynamic (in the sense of what can be folded), accurate, and reliable way to fold.
 --  - Lags 200000 times less than treesitter foldexpr.
@@ -338,14 +345,17 @@ opt.foldlevelstart  = 99        -- 99 to start with all folds open. ( To close t
 opt.foldnestmax     = 6         -- Max nested fold count.
 opt.foldminlines    = 1         -- Default.
 opt.foldclose       = ""        -- Set to "all" to close folds when cursor leaves them. ( It's too aggressive and not customizeable. )
-opt.foldopen        = "search,tag,mark,quickfix,percent,undo,insert,hor"
+opt.foldopen        = "block,hor,search,tag,mark,percent,quickfix,undo"
+-- opt.foldopen        = "block,hor,search,tag,mark,percent,quickfix,undo,insert"
 
 -- |> Scrolling settings.
 -- NOTE: `scroll` has to be set in an autocmd to work properly: `./lua/config/autocommands.lua`
 opt.scroll          = 3      -- Number of lines to scroll when using `<C-u>` and `<C-d>`.
 -- NOTE: Having a `scrolloff` larger than `nvim-cmp` max-height ensures that the completion menu only opens downwards.
 --  - Which I like,
---  - but `scrolloff` also causes flicker, which I despise...
+--  - but `scrolloff` also causes flicker, which I despise.     ( Some plugins might be causing worse flicker. )
+--  - NOTE: I can't really get nvim to flicker when run with `nvim --clean`.
+--  - NOTE: But still, as of `Oct 9 2023`, flicker is unbearable.
 opt.scrolloff       = 0         -- Vertical scroll offset.      ( 0-20'ish )
 opt.sidescrolloff   = 12        -- Horizontal scroll offset.    ( 0-20'ish )
 opt.sidescroll      = 32        -- Number of columns to jump for each `horizontal scroll`.  ( Low values can cause extreme lag. )
@@ -356,10 +366,10 @@ opt.splitbelow      = true      -- Split direction below instead of above.
 
 -- |> Wrap settings.
 opt.wrap            = false     -- Virtual Text-wrapping.   ( I dislike the look, words aren't being wrapped at good spots/borders/breakpoints. )
-opt.linebreak       = false     -- Break at specific column instead of last char that fits on screen.
+opt.linebreak       = true      -- Stops words from being split in two. (And can do something else too.)
 opt.breakindent     = true      -- When wrapping, visually indent lines.
-opt.breakindentopt  = "sbr"     -- `showbreak`
-opt.showbreak       = "❯ "      -- Makes it more obvious when a line has been wrapped.
+opt.breakindentopt  = ""        -- `showbreak` - Options: "sbr" | ""
+opt.showbreak       = ""        -- Can make it more obvious when a line has been wrapped. (But looks annoying.)
 -- opt.showbreak       = ""        -- Does not cause the awkward offset that is caused by the above setting.
 -- opt.textwidth = 80           -- Hard break column limit.      ( Enabled for `.md` and `.norg` in ./plugins/autocommands.lua. )
 
@@ -411,12 +421,12 @@ opt.guicursor = "n-v-ve-sm:block,i-c-ci:ver25,r-cr-o:hor20"  -- Cursor Settings
 -- => STATE: Good
 
 -- |> Set Neovide Font:
-vim.o.guifont = "JetBrainsMono Nerd Font:h22:b"
--- vim.o.guifont = "JetBrainsMono Nerd Font:h22:b:#e-antialias:h-normal"
+-- vim.o.guifont = "JetBrainsMono Nerd Font:h18:b"
+-- vim.o.guifont = "JetBrainsMono Nerd Font:h18:b:#e-antialias:h-normal"
 opt.linespace = 0  -- This (above 0) seems to add space to the bottom of lines, making the line spacing uneven.
 
 -- |> Settings: Fullscreen / AA / Refresh Rate, etc.
-g.neovide_no_idle                           = true
+g.neovide_no_idle                           = false
 g.neovide_fullscreen                        = false
 g.neovide_remember_window_size              = false
 g.neovide_input_use_logo                    = false
@@ -427,7 +437,7 @@ g.neovide_cursor_antialiasing               = true
 g.neovide_refresh_rate                      = 165
 
 g.neovide_refresh_rate_idle                 = 30
--- g.neovide_transparency                      = 1         -- Overwritten by Picom. (Compositor)
+g.neovide_transparency                      = 0.85          -- Could be overwritten by Picom. (Compositor)
 g.neovide_scale_factor                      = 1.0
 g.neovide_cursor_unfocused_outline_width    = 0.125
 g.neovide_confirm_quit                      = true
@@ -438,8 +448,8 @@ g.neovide_profiler                          = false
 -- |> Padding
 g.neovide_padding_top                       = 0
 g.neovide_padding_bottom                    = 0
-g.neovide_padding_right                     = 64
-g.neovide_padding_left                      = 64
+g.neovide_padding_right                     = 48
+g.neovide_padding_left                      = 48
 
 -- |> Cursor Effects
 g.neovide_cursor_animation_length           = 0.00825
@@ -466,5 +476,9 @@ g.neovide_scroll_animation_length           = 0.25
 --===============================================--+
 -- === END - 7. Neovide Settings (GUI) - END === --|
 --===============================================--+
+
+-- TEMP FOLDING STUFF:
+-- - Don't even remember what this is about.
+-- vim.g.rust_fold = 1
 
 -- End of File

@@ -8,6 +8,9 @@
 -- NOTE:    These seem to work for loading treesitter completely lazily.
 --          I couldn't get a disable condition to work.
 
+-- NOTE:    Neovim treesitter implementation is too slow for any file above 500-1000 lines.
+--          Which sucks a lot. ( Extra Note: Helix treesitter performance is hundreds of times more performant. )
+
 -- |> Enable `Treesitter` for `markdown` files.         ( If this causes noticeable lag, can disable. )
 local treesitter_aumgroup = vim.api.nvim_create_augroup("MyTreesitterFiletypes", { clear = true })
 
@@ -29,6 +32,14 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.svelte" },
     command = "TSEnable highlight svelte",
+    group = treesitter_aumgroup,
+})
+
+-- |> Enable `Treesitter` for `typst` files.
+--  - Testing...
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.typ" },
+    command = "TSEnable highlight typst",
     group = treesitter_aumgroup,
 })
 
@@ -68,6 +79,7 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 -- })
 
 -- |> Enable `Treesitter` for `rust` files.
+-- NOTE: Causes lag in files with more than 1000 lines.
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.rs" },
     command = "TSEnable highlight rust",
@@ -81,6 +93,12 @@ vim.api.nvim_create_autocmd("BufReadPre", {
     group = treesitter_aumgroup,
 })
 
+-- |> Enable `Treesitter` for `C-Sharp` files.
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.cs" },
+    command = "TSEnable highlight c_sharp",
+    group = treesitter_aumgroup,
+})
 
 -- |> Enable `Treesitter` for `<insert-filetype-here>` files.
 -- TODO
@@ -140,13 +158,13 @@ return {
 
                 local languages = {
                     "lua",          -- Lua's `Treesitter Highlighting` has very bad performance. ( Causes input latency. )
-                    "php",          -- TODO: Testing...
-                    -- "rust",
+                    "php",          -- Testing...
+                    -- "rust",      -- Treesitter lags very easily...
                     -- "html",      -- Not sure which highlighting I want.
                     -- "css",       -- Not sure which highlighting I want.
 
                     -- Treesitter might be really beneficial in Svelte, as it contains like 5+ languages.
-                    --  - Can't get other highlighters to work well for Svelte.
+                    --  - Can't get other highlighters/indenters to work well for Svelte.
                     -- "svelte",
                 }
 
@@ -171,6 +189,7 @@ return {
                     "lua", "vim", "markdown", "toml", "yaml", "rst", "pug", "json",
                     "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
                     "query", "commonlisp", "v", "markdown_inline", "vimdoc", "php",
+                    "ron", "c_sharp", "slint", "typst", "scheme", "nix", "gdscript", "gdshader"
                 },  -- NOTE: `norg` and `norg_meta` installed through `:Neorg sync-parsers` command.
 
                 auto_install = false,
@@ -194,15 +213,20 @@ return {
                     enable = true,
                     disable = {
                         "lua",              -- Non-treesitter defaults work in Lua.
-                        "rust",             -- Non-treesitter defaults work in Rust.
+                        -- "rust",          -- TODO: Testing...
                         "html",             -- HTML indent settings are configurable and good without treesitter.
                         "css",              -- Non-treesitter default indentation might be fine for CSS.
                         "php",              -- TODO: Testing...
 
-                        -- TODO: Might need to install some svelte vim plugin which provides indentation.
-                        -- "svelte",           -- Indentation is not great but without treesitter was even worse.
+                        "c_sharp",          -- TODO: Make `C#` indentation work. (Enabling this does not work.)
 
-                        "norg",             -- TODO: Testing. Doesn't seem to make much of a difference.
+                        -- TODO: Might need to install some svelte vim plugin which provides indentation.
+                        -- - Hard to find though.
+                        -- "svelte",           -- Indentation is not great yet either way.
+
+                        -- "norg",             -- TODO: Testing. Doesn't seem to make much of a difference.
+                        "c",                -- Testing disabling, to get performance increase.
+                        "cpp",              -- Testing disabling, to get performance increase.
                     },
                 },
 
@@ -307,6 +331,7 @@ return {
                     return true
                 end, opts.ensure_installed)
             end
+
             require("nvim-treesitter.configs").setup(opts)
         end,
     },

@@ -9,9 +9,10 @@ local Module = {}
 function Module.setup()
     -- |> Fetch default LSP preferences from `langserver-prefs.nvim`.
     local lsp_prefs = require("langserver-prefs")
+    local rust_tools = require("rust-tools")
 
     -- |> Rust LSP / rust-analyzer Setup    ( STATE: Good )
-    require("rust-tools").setup({
+    rust_tools.setup({
         tools = {
             -- How to execute terminal commands.
             -- Options right now: termopen / quickfix
@@ -64,7 +65,7 @@ function Module.setup()
             -- Options same as lsp hover / vim.lsp.util.open_floating_preview()
             hover_actions = {
                 border = lsp_prefs.lsp_default_borderstyle,
-                auto_focus = false,
+                auto_focus = true,  -- Unsure? But might like this.
             },
 
             -- This is just copy paste from rust-tools github and not yet tested. (TODO, low prio)
@@ -152,8 +153,33 @@ function Module.setup()
             flags           = lsp_prefs.lsp_default_flags,
             handlers        = lsp_prefs.lsp_default_handlers,
             capabilities    = lsp_prefs.lsp_default_capabilities,
-            on_attach       = lsp_prefs.lsp_default_on_attach,
             standalone      = lsp_prefs.lsp_default_singlefile_support,
+
+            on_attach = function(client, bufnr)
+                -- Toggle `Semantic Tokens Highlighting`:
+                client.server_capabilities.semanticTokensProvider = nil  -- Set to `nil` to disable semantic highlights.
+
+                require("legendary").keymaps({
+                    { "<F2>",           vim.lsp.buf.rename,                 description = "LSP: Rename",                        mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "gh",             vim.lsp.buf.hover,                  description = "LSP: Hover Docs",                    mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "gd",             vim.lsp.buf.definition,             description = "LSP: Definition",                    mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "<Space><S-d>",   vim.lsp.buf.type_definition,        description = "LSP: Type Definition",               mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "g<S-d>",         vim.lsp.buf.declaration,            description = "LSP: Declaration",                   mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "gi",             vim.lsp.buf.implementation,         description = "LSP: Implementation",                mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "gr",             "<Cmd>Telescope lsp_references",    description = "LSP: Telescope -> References",       mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "<Space>ca",      vim.lsp.buf.code_action,            description = "LSP: Code Action",                   mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "<C-k>",          vim.lsp.buf.signature_help,         description = "LSP: Signature Help",                mode = "n", opts = { noremap = true, buffer = bufnr } },
+
+                    -- RustTools specific ones.
+                    { "<Leader>ca",     rust_tools.code_action_group.code_action_group,     description = "LSP: RustTools Code Action",     mode = "n", opts = { noremap = true, buffer = bufnr } },
+                    { "g<S-h>",         rust_tools.hover_actions.hover_actions,             description = "LSP: RustTools Hover Action",    mode = "n", opts = { noremap = true, buffer = bufnr } },
+
+                    -- Formatting
+                    { "<Space>f",       function()
+                        vim.lsp.buf.format({ async = true })
+                    end,    description = "LSP: Format Buffer",    mode = "n", opts = { noremap = true, buffer = bufnr } },
+                })
+            end,
 
             -- |> |settings| is for Language Server specific settings. (In this case, rust-analyzer.)
             settings = {
@@ -178,7 +204,7 @@ function Module.setup()
                     },
                     checkOnSave = {
                         -- command = "check",  -- This causes some lag.
-                        command = "clippy",  -- Might cause even more lag.
+                        command = "clippy",  -- Might cause even more lag.  ( Is fine and good. )
                         -- Can also set to `"check"`, but `clippy` is a superset.
 
                         -- Testing these, if they affect performance. (No idea, but it doesn't seem to have broken anything.)

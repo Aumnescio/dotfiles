@@ -1,10 +1,11 @@
 -- |> Set scroll distance for `<C-u>` and `<C-d>`:
-vim.api.nvim_create_autocmd("VimEnter,WinNew,WinEnter,WinResized,BufNew,BufEnterPost,BufWinEnter,VimResized", {
-    pattern = "*",
-    callback = function()
-        vim.wo.scroll = 3
-    end,
-})
+--  - I suspect that this isn't working well.
+-- vim.api.nvim_create_autocmd("VimEnter,WinNew,WinEnter,WinResized,BufNew,BufEnterPost,BufWinEnter,VimResized", {
+--     pattern = "*",
+--     callback = function()
+--         vim.wo.scroll = 3
+--     end,
+-- })
 
 -- |> Highlight when yanking / copying.     ( NOTE: This seems to work better when it's not in a `augroup`. )
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -52,6 +53,15 @@ vim.api.nvim_create_autocmd("BufEnter", {
     group = writer_aumgroup
 })
 
+-- |> Some indent fixing thing, maybe, for `C#`. (C-Sharp)
+-- NOTE: This really does not want to work.
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--     pattern = { "*.cs" },
+--     -- command = 'lua vim.opt.indentexpr = ""',
+--     command = 'lua vim.opt.indentexpr = "nvim_treesitter#indent()"',  -- This does not seem to be working. I'm not even sure if this is a thing.
+--     group = writer_aumgroup
+-- })
+
 -- |> `norg` filetype detection, because Neorg does not provide it before it is loaded.
 -- vim.api.nvim_create_autocmd("BufRead,BufNewFile", {
 --     pattern = { "*.norg" },
@@ -82,12 +92,33 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 -- |> Treesitter Folding for some filetypes: `norg`
 --  - NOTE: The fold expression increases Neorg startuptime by at least about 10-25%.
+--  - I do not like these a lot, but they are generally better than nothing.
+--  - NOTE: Using `nvim-ufo`, so don't want these active.
+-- vim.api.nvim_create_autocmd("Filetype", {
+--     pattern = { "norg" },
+--     callback = function()
+--         vim.wo.foldmethod   = "expr"
+--         vim.wo.foldexpr     = "nvim_treesitter#foldexpr()"
+--         vim.wo.foldenable   = true
+--     end,
+-- })
+
+-- TS Folding for Rust. ( Not great, but fine'ish. )
+-- vim.api.nvim_create_autocmd("Filetype", {
+--     pattern = { "rust" },
+--     callback = function()
+--         vim.wo.foldmethod   = "expr"
+--         vim.wo.foldexpr     = "nvim_treesitter#foldexpr()"
+--         vim.wo.foldenable   = true
+--     end,
+-- })
+
+-- Enable `list` and `line numbers` in Rust files.
 vim.api.nvim_create_autocmd("Filetype", {
-    pattern = { "norg" },
+    pattern = { "rust" },
     callback = function()
-        vim.wo.foldmethod   = "expr"
-        vim.wo.foldexpr     = "nvim_treesitter#foldexpr()"
-        vim.wo.foldenable   = true
+        vim.api.nvim_cmd({ cmd = "set", args = { "list" }}, {})
+        vim.api.nvim_cmd({ cmd = "set", args = { "nu" }}, {})
     end,
 })
 
@@ -143,6 +174,9 @@ autocmd!
     autocmd BufEnter *.fish :lua vim.api.nvim_buf_set_option(0, "commentstring", "# %s")
     autocmd BufFilePost *.fish :lua vim.api.nvim_buf_set_option(0, "commentstring", "# %s")
 
+    autocmd BufEnter *.conf :lua vim.api.nvim_buf_set_option(0, "commentstring", "# %s")
+    autocmd BufFilePost *.conf :lua vim.api.nvim_buf_set_option(0, "commentstring", "# %s")
+
     autocmd BufEnter *.typ :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
     autocmd BufFilePost *.typ :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
 augroup END
@@ -158,7 +192,9 @@ local function AumDisableTrailingWhitespaceHighlight()
     -- vim.api.nvim_cmd({ cmd = "call", args = { "clearmatches()" }}, {})  -- Alternative way to clear matches, I guess.
 end
 
--- Autocommands to toggle trailing whitespace highlighting.
+-- |> Autocommands to toggle trailing whitespace highlighting.
+--  - NOTE: Suspecting that these cause issues with folding. (Apparently not...)
+--  - TODO: Could still find better way to clear whitespace.
 local syntax_matching_aumgroup = vim.api.nvim_create_augroup("MyTrailingWhitespaceHighlight", { clear = true })
 vim.api.nvim_create_autocmd("InsertLeave", {
     callback = function()
@@ -197,5 +233,17 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 --     end,
 --     group = autoindent_aumgroup
 -- })
+
+-- Filetype detection for Slint files.
+local slint_ftdetect_aumgroup = vim.api.nvim_create_augroup("MySlintFtdetect", { clear = true })
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    pattern = { '*.slint' },
+    callback = function()
+        vim.cmd("set filetype=slint")
+        vim.cmd("setlocal comments=://")
+        vim.cmd("setlocal commentstring=//\\ %s")
+    end,
+    group = autoindent_aumgroup
+})
 
 -- End of File

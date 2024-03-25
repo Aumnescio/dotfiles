@@ -5,12 +5,12 @@
 --  -> nvim-ufo
 
 return {
-    {   -- Supposed to give better folding, but is either not working at all,
-        -- or giving errors, which I can't be arsed to deal with right now.
+    {   -- Almost good, but having issues,                                  ( STATE: Meh. )
         "kevinhwang91/nvim-ufo",
-        enabled = false,                            -- `true` to enable.
-        lazy = true,
+        enabled = true,                             -- `true` to enable.
+        lazy = false,                               -- TODO: Config some lazy-loading maybe.
         version = false,
+
         dependencies = {
             "kevinhwang91/promise-async",
             "nvim-treesitter/nvim-treesitter",      -- Required for treesitter based folds.
@@ -47,14 +47,16 @@ return {
                     curWidth = curWidth + chunkWidth
                 end
 
-                table.insert(newVirtText, {suffix, 'MoreMsg'})
+                table.insert(newVirtText, {suffix, 'UfoVirtualText'})
 
                 return newVirtText
             end
 
             -- `nvim-ufo` setup
             require("ufo").setup({
-                open_fold_hl_timeout = 120,
+                -- Duration of range-highlight applied to the folded area, when opening a fold.
+                open_fold_hl_timeout = 0,       -- `0`: Good
+
                 -- close_fold_kinds = { "imports", "comment" },
 
                 provider_selector = function(bufnr, filetype, buftype)

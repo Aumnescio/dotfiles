@@ -5,10 +5,16 @@
 
 -- Dummy commands which can be used as an event to lazy-load language servers.
 vim.api.nvim_create_user_command("LspSetupRust", 'echo "Setting up `Rust-Analyzer`."', {})
+vim.api.nvim_create_user_command("LspSetupSlint", 'echo "Setting up `Slint-LSP`."', {})
 vim.api.nvim_create_user_command("LspSetupTypescript", 'echo "Setting up `TS-Server`."', {})
 vim.api.nvim_create_user_command("LspSetupSvelte", 'echo "Setting up `Svelte`."', {})
 vim.api.nvim_create_user_command("LspSetupUnoCSS", 'echo "Setting up `UnoCSS`."', {})
 vim.api.nvim_create_user_command("LspSetupPhp", 'echo "Setting up `PhpActor`."', {})
+vim.api.nvim_create_user_command("LspSetupOmniSharp", 'echo "Setting up `OmniSharp`."', {})
+vim.api.nvim_create_user_command("LspSetupCSharpLS", 'echo "Setting up `CSharp-LS`."', {})
+vim.api.nvim_create_user_command("LspSetupTailwindCSS", 'echo "Setting up `TailwindCSS-LS`."', {})
+vim.api.nvim_create_user_command("LspSetupSQLS", 'echo "Setting up `SQLS`."', {})
+vim.api.nvim_create_user_command("LspSetupGodot", 'echo "Setting up `Godot-LS`."', {})
 
 return {
     {   -- LangServerProtocol Configs                   ( STATE: Good'ish )
@@ -30,15 +36,38 @@ return {
 
         opts = {
             diagnostics = {
-                virtual_text = false,
+                -- virtual_text = {
+                --     spacing = 4,
+                --
+                --     prefix = "",
+                --
+                --     -- prefix = function(diagnostic, i, total)
+                --     --     local severity = vim.diagnostic.severity[diagnostic.severity]
+                --     --     severity = string.sub(severity, 0, 1) .. string.sub(severity, 2, -1):lower()
+                --     --
+                --     --     return {
+                --     --         "",
+                --     --         "LspDiagnosticSign" .. severity
+                --     --     }
+                --     -- end,
+                --
+                --     format = function(diagnostic)
+                --         return ""
+                --     end,
+                -- },
+                virtual_text = false,       -- Virtual text updates slowly and mostly looks like shit.
                 signs = false,
-                underline = true,
+                underline = true,           -- Underline updates faster than virtual text and looks nice. (Style is `undercurl`)
                 update_in_insert = true,    -- Not too sure about this, but without it, the diagnostics are a bit unresponsive.
                 severity_sort = true,
                 float = {
                     source = "always",
                     border = "rounded",
                 },
+            },
+
+            inlay_hints = {
+                enabled = true,
             },
 
             -- LSP Server Settings      ( TODO: Working on getting rid of this. )
@@ -75,6 +104,7 @@ return {
 
     {   -- Rust LangServer++                            ( STATE: Good )
         -- NOTE: If issues with this, there might have been a fork of this that is worth trying.
+        -- - Should swap to the maintained fork when can. (`rustacean.nvim`)
         "simrat39/rust-tools.nvim",
         lazy = true,
         dependencies = {
@@ -129,6 +159,48 @@ return {
             vim.api.nvim_create_user_command("LspSetupRust", 'echo "Setting up `Rust-Analyzer`."', {})
             require("rust-langserver-setup").setup()
             vim.api.nvim_create_user_command("LspSetupRust", 'echo "Setting up `Rust-Analyzer`."', {})
+        end,
+    },
+
+    {   -- Setup Config for Slint-LS                    ( STATE: Fine )
+        "Aumnescio/slint-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+
+        cmd = {
+            "LspSetupSlint",
+        },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+        },
+
+        config = function()
+            vim.api.nvim_create_user_command("LspSetupSlint", 'echo "Setting up `Slint-LSP`."', {})
+            require("slint-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupSlint", 'echo "Setting up `Slint-LSP`."', {})
+        end,
+    },
+
+    {   -- Setup Config for GLSL_Analyzer               ( STATE: TODO )
+        "Aumnescio/glsl-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+
+        cmd = {
+            "LspSetupGlsl",
+        },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+        },
+
+        config = function()
+            vim.api.nvim_create_user_command("LspSetupGlsl", 'echo "Setting up `Glsl-Analyzer`."', {})
+            require("glsl-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupGlsl", 'echo "Setting up `Glsl-Analyzer`."', {})
         end,
     },
 
@@ -221,6 +293,27 @@ return {
         end,
     },
 
+    {   -- Setup Config for TailwindCSS-LS                  ( STATE: Suppose it works. )
+        "Aumnescio/tailwind-langserver-setup.nvim",
+        enabled = true,
+        lazy = true,
+        dev = true,
+        ft = { "svelte" },  -- Will autostart in Svelte files.
+        cmd = {
+            "LspSetupTailwindCSS",
+        },
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+            "hrsh7th/nvim-cmp",
+            "hrsh7th/cmp-nvim-lsp",
+        },
+        config = function()
+            require("tailwind-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupTailwindCSS", 'echo "Setting up `TailwindCSS-LS`."', {})
+        end,
+    },
+
     {   -- Setup Config for UnoCSS-LS                   ( STATE: Very weak )
         "Aumnescio/unocss-langserver-setup.nvim",
         enabled = false,        -- Disabled, because it is not good enough. Prefer tailwind for now.
@@ -244,7 +337,8 @@ return {
         end,
     },
 
-    {   -- Setup Config for PHP-LS                  ( STATE: Testing )
+    {   -- Setup Config for PHP-LS                  ( STATE: Good )
+        --  - NOTE: Uses `intelephense`, which is much better than `phpactor`.
         "Aumnescio/php-langserver-setup.nvim",
         lazy = true,
         dev = true,
@@ -261,6 +355,108 @@ return {
         config = function()
             require("php-langserver-setup").setup()
             vim.api.nvim_create_user_command("LspSetupPhp", 'echo "Setting up `PHP`."', {})
+        end,
+    },
+
+    {   -- Setup Config for Typst-LS                    ( STATE: Testing )
+        "Aumnescio/typst-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+        ft = "typst",
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+        },
+        config = function()
+            require("typst-langserver-setup").setup()
+        end,
+    },
+
+    {   -- Setup Config for OmniSharp (C#)              ( STATE: Launches, but crashes easily. )
+        "Aumnescio/omnisharp-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+
+        cmd = {
+            "LspSetupOmniSharp",
+        },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+        },
+
+        config = function()
+            vim.api.nvim_create_user_command("LspSetupOmniSharp", 'echo "Setting up `OmniSharp`."', {})
+            require("omnisharp-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupOmniSharp", 'echo "Setting up `OmniSharp`."', {})
+        end,
+    },
+
+    {   -- Setup Config for OmniSharp (C#)              ( STATE: Testing )
+        "Aumnescio/csharp-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+
+        cmd = {
+            "LspSetupCSharpLS",
+        },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+        },
+
+        config = function()
+            vim.api.nvim_create_user_command("LspSetupCSharpLS", 'echo "Setting up `CSharp-LS`."', {})
+            require("csharp-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupCSharpLS", 'echo "Setting up `CSharp-LS`."', {})
+        end,
+    },
+
+    {   -- Setup Config for SQLS (SQL)                  ( STATE: Testing )
+        -- Note: A potential alternative does exist if this is not good.
+        "Aumnescio/sql-langserver-setup.nvim",
+        lazy = true,
+        dev = true,
+
+        ft = { "sql", "mysql" },
+
+        cmd = {
+            "LspSetupSQLS",
+        },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+            "nanotee/sqls.nvim",
+        },
+
+        config = function()
+            require("sql-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupSQLS", 'echo "Setting up `SQLS`."', {})
+        end,
+    },
+
+    {   -- Setup Config for Godot-LS                    ( STATE: Testing. )
+        "Aumnescio/godot-langserver-setup.nvim",
+        enabled = true,
+        lazy = true,
+        dev = true,
+
+        ft = { "gd", "gdscript" },
+        cmd = { "LspSetupGodot" },
+
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "Aumnescio/langserver-prefs.nvim",
+            "hrsh7th/nvim-cmp",
+            "hrsh7th/cmp-nvim-lsp",
+        },
+
+        config = function()
+            require("godot-langserver-setup").setup()
+            vim.api.nvim_create_user_command("LspSetupGodot", 'echo "Setting up `Godot-LS`."', {})
         end,
     },
 }

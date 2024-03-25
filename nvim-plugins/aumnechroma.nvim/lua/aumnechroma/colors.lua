@@ -5,7 +5,6 @@
 -- Init the color table.
 local colors = {}
 
-
 -- ###############################################
 -- ##          - Background Colors -            ##
 -- ###############################################
@@ -59,24 +58,24 @@ colors.special_15_root_brew             = "#100e0c"
 
 -- === - START - Whites - ===
 -- |------------------------|
-colors.fg_white_00_icy_landscape        = "#c8d0fc"
+colors.fg_white_00_icy_landscape        = "#c9d2fe"
 colors.fg_white_01_seashell             = "#fff4ef"
 colors.fg_white_02_island_hopping       = "#f6e4d6"
 colors.fg_white_03_warm_winter          = "#d6eee4"
 colors.fg_white_04_azure                = "#ebfffc"
 colors.fg_white_05_bubbles              = "#e1f9ff"
 colors.fg_white_06_calm_iridescence     = "#faeedd"
-colors.fg_white_07_hint_of_blue         = "#c0c4ff"
+colors.fg_white_07_hint_of_blue         = "#c2c6ff"
 colors.fg_white_08_sugar_crystal        = "#f2eeff"
 colors.fg_white_09_romantic_cruiser     = "#eadfef"
 colors.fg_white_10_fairy_wings          = "#ffecf2"
 colors.fg_white_11_icy_plains           = "#ced1fb"
 colors.fg_white_12_cold_illusion        = "#b3b8ff"
-colors.fg_white_13_icy_landscape_dim_1  = "#c4cbf9"
-colors.fg_white_14_icy_landscape_dim_2  = "#c0c8f4"
-colors.fg_white_15_icy_landscape_dim_3  = "#bbc4f0"
-colors.fg_white_16_icy_landscape_dim_4  = "#b8c0db"
-colors.fg_white_17_icy_landscape_dim_5  = "#b4bbd8"
+colors.fg_white_13_icy_landscape_dim_1  = "#b4bbee"
+colors.fg_white_14_icy_landscape_dim_2  = "#a4abdd"
+colors.fg_white_15_icy_landscape_dim_3  = "#949bcc"
+colors.fg_white_16_icy_landscape_dim_4  = "#848bbb"
+colors.fg_white_17_icy_landscape_dim_5  = "#747baa"
 -- |----------------------|
 -- === - END - Whites - ===
 
@@ -129,7 +128,7 @@ colors.fg_blue_20_hera_blue             = "#7d7cf5"
 -- |------------------------|
 colors.fg_purple_01_myrtle_flower       = "#b4adfd"
 colors.fg_purple_02_purple_sand         = "#c3aaf8"
-colors.fg_purple_03_lavender_cream      = "#c4aff4"
+colors.fg_purple_03_lavender_cream      = "#c8b6fb"
 colors.fg_purple_04_baby_purple         = "#c5bdfc"
 colors.fg_purple_05_lavender_dreamer    = "#dcaafc"
 colors.fg_purple_06_iridescent_purple   = "#9978d1"

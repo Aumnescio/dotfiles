@@ -4,7 +4,6 @@
 -- NOTES
 --  - Polyglot won't lazy-load properly, and causes startup time penalty. Looking to get rid of polyglot.
 --  - Base HTML and CSS syntax highlighting in `.html` and `.css` files is acceptable, even without polyglot.
---  - `Svelte` files do not look good. Probably need to try another plugin.
 
 return {
     {   -- |> Syntax Highlighting for many filetypes.       ( STATE: Meh )
@@ -105,9 +104,10 @@ return {
         end,
     },
 
-    {   -- Heading Highlighting                             ( STATE: Okay )
-        --  - Quite bad load-time: `50ms`
+    {   -- Heading Highlighting                             ( STATE: Was Okay, might be having issues. )
+        --  - Really bad load-time: `150ms`
         "lukas-reineke/headlines.nvim",
+        enabled = false,
         lazy = true,        -- Loaded by dependency requirement in Neorg setup.
         version = false,
 
@@ -226,6 +226,7 @@ return {
         "Aumnescio/cursorword-highlight.nvim",
         lazy = true,
         dev = true,
+
         cmd = {
             "CursorwordHighlightOn",
         },
@@ -257,41 +258,78 @@ return {
         end,
     },
 
-    {   -- Typst Syntax Matchgroups                         ( STATE: Testing and WIP )
-        "Aumnescio/typst-syntax.nvim",
-        lazy = true,
-        dev = true,
-        ft = "typst",
-        dependencies = {
-            "Aumnescio/typst-ftdetect.nvim",
-            "Aumnescio/typst-indent.nvim",
-        },
-        config = function()
-            require("typst-syntax").setup()
-        end,
-    },
+    -- {   -- Typst Syntax Matchgroups                         ( STATE: Somewhat functional, but Treesitter might have made enough progress to be better. )
+    --     "Aumnescio/typst-syntax.nvim",
+    --     lazy = true,
+    --     dev = true,
+    --     ft = "typst",
+    --     dependencies = {
+    --         "Aumnescio/typst-ftdetect.nvim",
+    --         "Aumnescio/typst-indent.nvim",   -- Temporarily disabled.
+    --     },
+    --     config = function()
+    --         require("typst-syntax").setup()
+    --     end,
+    -- },
 
-    {   -- Typst Filetype Detection
+    {   -- Typst Filetype Detection                             ( STATE: I think this works, and even Treesitter needs this. )
         "Aumnescio/typst-ftdetect.nvim",
         lazy = true,
         dev = true,
         event = "BufReadPre *.typ",
     },
 
-    {   -- Custom Typst Indentation Rules
-        "Aumnescio/typst-indent.nvim",
-        lazy = true,
-        dev = true,
-        config = function()
-            require("typst-indent").setup()
-        end,
-    },
+    -- {   -- Custom Typst Indentation Rules
+    --     "Aumnescio/typst-indent.nvim",
+    --     lazy = true,
+    --     dev = true,
+    --     config = function()
+    --         require("typst-indent").setup()
+    --     end,
+    -- },
 
     {   -- RON | Rusty Object Notation              ( STATE: Probably fine. )
         "ron-rs/ron.vim",
         lazy = true,
         ft = "ron",
     },
+
+    {   -- Rainbow CSV Syntax Highlighting          ( STATE: Maybe fine. )
+        "mechatroner/rainbow_csv",
+        lazy = true,
+        ft = "csv",
+    },
+
+    {   -- For C# / C-Sharp indenting               ( STATE: Dunno. )
+        "jlcrochet/vim-cs",
+        lazy = true,
+        ft = "cs",
+    },
+
+    {   -- `just` / justfiles                       ( STATE: Maybe fine. )
+        "NoahTheDuke/vim-just",
+        lazy = true,
+        ft = "just",
+    },
+
+    {   -- `Slint`                                  ( STATE: Testing. )
+        "slint-ui/vim-slint",
+        lazy = true,
+        ft = "slint",
+    },
+
+    -- {   -- `Svelte`                                 ( STATE: Testing. )
+    --     -- - Not great.
+    --     -- - The things that don't work in Treesitter do work with this, but overall this might still be worse.
+    --     -- - These plugins are also years old and might not be receiving updates.
+    --     "evanleck/vim-svelte",
+    --     lazy = true,
+    --     ft = "svelte",
+    --     dependencies = {
+    --         "othree/html5.vim",
+    --         "pangloss/vim-javascript",
+    --     },
+    -- },
 }
 
 -- End of File

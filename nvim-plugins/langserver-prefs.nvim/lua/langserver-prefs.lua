@@ -17,6 +17,8 @@ Module.lsp_default_flags = {
     debounce_text_changes = 120     -- 150 is default, and is probably fine.
 }
 
+Module.lsp_semantic_tokens = nil    -- Disabled generally good.
+
 -- |> Borderstyle
 Module.lsp_default_borderstyle = {
     { "╭", "FloatBorder" }, { "─", "FloatBorder" },
@@ -44,44 +46,48 @@ Module.lsp_default_capabilities = vim.tbl_deep_extend(
 --  - NOTE: There is a good chance `noice.nvim` or `nui.nvim` might overwrite these.
 Module.lsp_default_handlers = {
     ["textDocument/signatureHelp"]  = vim.lsp.with(vim.lsp.handlers.signature_help, { border = Module.lsp_default_borderstyle }),
-    ["textDocument/hover"]          = vim.lsp.with(vim.lsp.handlers.hover,          { border = Module.lsp_default_borderstyle }),
+    ["textDocument/hover"]          = vim.lsp.with(vim.lsp.handlers.hover, {
+        border = Module.lsp_default_borderstyle,
+        -- `max_width`: This is critical to ensure documentation highlighting, until some bug is fixed somewhere.
+        -- - Too wide window breaks highlighting.
+        max_width   = 76,
+        max_height  = 16,
+        silent = true,
+    }),
 }
 
 -- |> LSP Keybindings and `Semantic Token` toggle.
 Module.lsp_default_on_attach = function(client, bufnr)
     -- Toggle `Semantic Tokens Highlighting`:
-    -- client.server_capabilities.semanticTokensProvider = nil     -- Set to `nil` to disable semantic highlights.
+    client.server_capabilities.semanticTokensProvider = Module.lsp_semantic_tokens  -- Set to `nil` to disable semantic highlights.
     -- - NOTE: Having this on nil might have caused something to error.
     -- I might just disable the groups themselves in my theme.
 
-    local bufmap = function(mode, lhs, rhs)
-        local lsp_opts = { noremap = true, silent = true, buffer = bufnr }
-        vim.keymap.set(mode, lhs, rhs, lsp_opts)
-    end
+    require("legendary").keymaps({
+        { "<F2>",           vim.lsp.buf.rename,                     description = "LSP: Rename",                    mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "gh",             vim.lsp.buf.hover,                      description = "LSP: Hover Docs",                mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "gd",             vim.lsp.buf.definition,                 description = "LSP: Definition",                mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "<Space><S-d>",   vim.lsp.buf.type_definition,            description = "LSP: Type Definition",           mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "g<S-d>",         vim.lsp.buf.declaration,                description = "LSP: Declaration",               mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "gi",             vim.lsp.buf.implementation,             description = "LSP: Implementation",            mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "gr",             "<Cmd>Telescope lsp_references<CR>",    description = "LSP: Telescope -> References",   mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "<Space>ca",      vim.lsp.buf.code_action,                description = "LSP: Code Action",               mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "<C-k>",          vim.lsp.buf.signature_help,             description = "LSP: Signature Help",            mode = "n", opts = { noremap = true, buffer = bufnr } },
+        { "<Space>f",       function()
+            vim.lsp.buf.format({ async = true })
+        end,    description = "LSP: Format Buffer",    mode = "n", opts = { noremap = true, buffer = bufnr } },
+    })
 
-    -- NOTE/TODO: There's a decent possibility that I want to bind these keys using
-    -- `Legendary.nvim`
+    -- local bufmap = function(mode, lhs, rhs)
+    --     local lsp_opts = { noremap = true, silent = true, buffer = bufnr }
+    --     vim.keymap.set(mode, lhs, rhs, lsp_opts)
+    -- end
 
-    -- === - LSP Mappings - ===
-    bufmap("n", "<F2>",         vim.lsp.buf.rename)                     -- STATE: Good  ( I think `dressing.nvim` is overwriting the UI for this, and its good. )
-    bufmap("n", "gh",           vim.lsp.buf.hover)                      -- STATE: Good, expect that it occasionally lags.   ( Rust-Analyzer, Pyright )
-    bufmap("n", "gd",           vim.lsp.buf.definition)                 -- STATE: Good
-    bufmap("n", "<Space>D",     vim.lsp.buf.type_definition)            -- STATE: Probably good
-    bufmap("n", "gD",           vim.lsp.buf.declaration)                -- STATE: Probably good
-    bufmap("n", "gi",           vim.lsp.buf.implementation)             -- STATE: Probably good
-    bufmap("n", "gr",           vim.lsp.buf.references)                 -- STATE: Bit awkward to use window. Some Aerial-like or Navigator plugin might be better.
-    bufmap("n", "<Space>ca",    vim.lsp.buf.code_action)                -- STATE: Probably good     ( Bind could be better. )
-    bufmap("n", "<C-k>",        vim.lsp.buf.signature_help)             -- STATE: Good. Displays good info and is responsive.
-
-    bufmap("n", "<Space>f",     function()                              -- STATE: Seems to be good.
-        vim.lsp.buf.format({ async = true })
-    end)
-
-    bufmap("n", "<Space>wa",    vim.lsp.buf.add_workspace_folder)       -- STATE: Not sure, not really often used or required.
-    bufmap("n", "<Space>wr",    vim.lsp.buf.remove_workspace_folder)    -- STATE: Not sure, not really often used or required.
-    bufmap("n", "<Space>wl",    function()                              -- STATE: Not sure, not really often used or required.
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end)
+    -- bufmap("n", "<Space>wa",    vim.lsp.buf.add_workspace_folder)       -- STATE: Not sure, not really often used or required.
+    -- bufmap("n", "<Space>wr",    vim.lsp.buf.remove_workspace_folder)    -- STATE: Not sure, not really often used or required.
+    -- bufmap("n", "<Space>wl",    function()                              -- STATE: Not sure, not really often used or required.
+    --     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    -- end)
 end
 
 -- |> Return all preferences

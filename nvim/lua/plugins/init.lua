@@ -17,10 +17,9 @@
 --  - Legendary:        In `legendary.lua`
 
 --  - urlview.nvim:     TODO?
---  - wf.nvim:          TODO: Maybe move to `whichkey.lua`.
 
 return {
-    {   -- Neovim Config                                ( STATE: Unknown )
+    {   -- Neovim Config                                        ( STATE: Unknown )
         "folke/neoconf.nvim",
         lazy = true,
         cmd = "Neoconf",
@@ -73,7 +72,8 @@ return {
             },
         },
     },
-    {   -- Neovim API Development                       ( STATE: Unknown | Probably Good )
+
+    {   -- Neovim API Development                               ( STATE: Unknown | Probably Good )
         "folke/neodev.nvim",
         lazy = true,
         -- TODO: Move opts to module file.
@@ -108,7 +108,8 @@ return {
             pathStrict = true,
         },
     },
-    {   -- DebuggerAdapterProtocol                      ( STATE: Unknown )
+
+    {   -- DebuggerAdapterProtocol                              ( STATE: Unknown )
         --  - TODO: Test and configure.
         "mfussenegger/nvim-dap",
         lazy = true,
@@ -116,16 +117,19 @@ return {
             "rcarriga/nvim-dap-ui",
         },
     },
-    {   -- Debugger UI                                  ( STATE: Unknown )
+
+    {   -- Debugger UI                                          ( STATE: Unknown )
         --  - TODO: Test and configure.
         "rcarriga/nvim-dap-ui",
         lazy = true,
     },
-    {   -- Diagnostic Viewer                            ( STATE: Good )
+
+    {   -- Diagnostic Viewer                                    ( STATE: Good )
         --  - TODO: Test and config more.
         "folke/trouble.nvim",
         lazy = true,
     },
+
     {   -- Surround operations, text objects, and more.         ( STATE: Good )
         "echasnovski/mini.nvim",
         -- TODO: Add `keys` function and Legendary Binding Creation in `config` function, to lazy-load this.
@@ -138,7 +142,7 @@ return {
             -- |> mini-bufremove            ( Maybe looking for something better and more multipurpose. )
             require("mini.bufremove").setup()
 
-            -- |> AroundIn                  ( STATE: Some issues )
+            -- |> AroundIn                                      ( STATE: Some issues )
             require("mini.ai").setup({
                 -- Table with textobject id as fields, textobject specification as values.
                 -- Also use this to disable builtin textobjects. See |MiniAi.config|.
@@ -174,7 +178,7 @@ return {
                 silent = false,
             })
 
-            -- |> Surround Operations       ( STATE: Good )
+            -- |> Surround Operations                           ( STATE: Good )
             require("mini.surround").setup({
                 -- Add custom surroundings to be used on top of builtin ones. For more
                 -- information with examples, see `:h MiniSurround.config`.
@@ -206,8 +210,129 @@ return {
                 -- see `:h MiniSurround.config`.
                 search_method = "cover_or_next",
             })
+
+            -- NOTE: Basically like `which-key` functionality, but extremely good, requiring no config.
+            --  - Reads descriptions set in `Legendary.nvim` keybinds.
+            local miniclue = require("mini.clue")               -- ( STATE: Extremely Good )
+            miniclue.setup({
+                -- To config these triggers, I think I need to understand the way my keys have been setup.
+                -- I use the following keys as `Leader-like` keys: '\', '<Space>', `g`, 'z', 'i', 'm'
+                triggers = {
+                    -- Leader triggers
+                    { mode = 'n', keys = '<Leader>' },
+                    { mode = 'x', keys = '<Leader>' },
+                    { mode = 'n', keys = '<Space>' },
+                    { mode = 'x', keys = '<Space>' },
+                    { mode = 'n', keys = 'g' },
+                    { mode = 'x', keys = 'g' },
+                    { mode = 'n', keys = 'z' },
+                    { mode = 'x', keys = 'z' },
+                    { mode = 'n', keys = 'i' },
+                    { mode = 'x', keys = 'i' },
+                    { mode = 'n', keys = 'm' },
+                    { mode = 'x', keys = 'm' },
+
+                    -- Window commands
+                    { mode = 'n', keys = '<C-w>' },
+
+                    -- |> Built-in completion
+                    --  - NOTE: I think I have this disabled, so it's not really relevant.
+                    -- { mode = 'i', keys = '<C-x>' },
+
+                    -- -- |> Marks
+                    -- { mode = 'n', keys = "'" },
+                    -- { mode = 'n', keys = '`' },
+                    -- { mode = 'x', keys = "'" },
+                    -- { mode = 'x', keys = '`' },
+
+                    -- -- |> Registers
+                    -- { mode = 'n', keys = '"' },
+                    -- { mode = 'x', keys = '"' },
+                    -- { mode = 'i', keys = '<C-r>' },
+                    -- { mode = 'c', keys = '<C-r>' },
+                },
+
+                -- I'm not quite sure what these are so I'm gonna test mostly without these.
+                --  - Enhance this by adding descriptions for `<Leader>` mapping groups. (?)
+                clues = {
+                    miniclue.gen_clues.windows(),
+                    -- miniclue.gen_clues.builtin_completion(),
+                    -- miniclue.gen_clues.marks(),
+                    -- miniclue.gen_clues.registers(),
+                    -- miniclue.gen_clues.g(),
+                    -- miniclue.gen_clues.z(),
+                },
+
+                window = {
+                    delay = 420,
+
+                    config = {
+                        border = "rounded",
+                        width = "auto",
+                    },
+
+                    -- I'm not sure if these binds will work, might want to figure out better ones.
+                    scroll_down = '<C-d>',
+                    scroll_down = '<C-u>',
+                }
+            })
+
+            -- NOTE: File browser/management plugin.
+            local minifiles = require("mini.files")             -- ( STATE: Extremely Good )
+            minifiles.setup({
+                -- TODO: Config the opts.
+
+                -- Customization of shown content.
+                content = {
+                    -- Predicate for which file system entries to show.
+                    filter = nil,
+                    -- What prefix to show to the left of file system entry.
+                    prefix = nil,
+                    -- In which order to show file system entries.
+                    sort = nil,
+                },
+
+                -- Module mappings created only inside explorer.
+                -- Use `''` (empty string) to not create one.
+                mappings = {
+                    close       = '<C-q>',
+                    go_in       = 'e',
+                    go_in_plus  = 'E',
+                    go_out      = 'q',
+                    go_out_plus = 'Q',      -- NOTE: This overwrites the macro running key.
+                    reset       = '<BS>',
+                    reveal_cwd  = '@',
+                    show_help   = 'g?',
+                    synchronize = '=',
+                    trim_left   = '<',
+                    trim_right  = '>',
+                },
+
+                -- General options.
+                options = {
+                    -- Whether to delete permanently or move into module-specific trash.
+                    permanent_delete = true,
+                    -- Whether to use for editing directories.
+                    use_as_default_explorer = true,
+                },
+
+                -- Customization of explorer windows.
+                windows = {
+                    -- Maximum number of windows to show side by side.
+                    max_number = math.huge,
+                    -- Whether to show preview of file/directory under cursor.
+                    preview = false,                     -- TODO: Test this.
+                    -- Width of focused window.
+                    width_focus = 50,
+                    -- Width of non-focused window.
+                    width_nofocus = 15,
+                    -- Width of preview window.
+                    width_preview = 25,
+                }
+            })
         end,
     },
+
     {   -- Live preview for `normal` command.                   ( STATE: Fine, but meh. )
         "smjonas/live-command.nvim",
         lazy = true,
@@ -224,9 +349,8 @@ return {
         end,
     },
 
-    {   -- Fix Scrolloff near end of file.                      ( STATE: Seems Good )
-        --  - Scrolloff misbehaving was a really large paper cut issue for me.
-        --  - This seems to fix it well, without causing issues.
+    {   -- Fix Scrolloff near end of file.                      ( STATE: Meh until fixed )
+        --  - Has issues -> Not quite useable yet.
         "Aasim-A/scrollEOF.nvim",
         cond = false,
         lazy = true,
@@ -295,106 +419,7 @@ return {
         end,
     },
 
-    {   -- Which Key System                         ( STATE: Useful, but buggy. )
-        --  - Quite pleasant UI and works well with bindings created using `Legendary.nvim`.
-        --  - A bit buggy and horribly reliant on the `timeout` option, which I hate.
-        --  - But I found a way to make this work, with the custom binds below.
-        "Cassin01/wf.nvim",
-        lazy = false,           -- TODO: Make lazy with Keybind-activation.
-        version = "*",          -- Seems fine.
-
-        opts = {
-            theme = "default",
-        },
-
-        config = function(_, opts)
-            -- Setup
-            require("wf").setup(opts)
-
-            local which_key = require("wf.builtin.which_key")
-
-            -- Bind a couple keys for chord-starter (Leader-key-like keys) based which-key popups.
-            --  - I can't set the binds to just <Space> and <Leader> because I need `timeout=false`,
-            --    which would make the keys never activate.
-            vim.keymap.set(
-                "n",
-                "<Leader>o",
-                which_key(),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] Activate",
-                }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<Leader>n",
-                which_key({
-                    text_insert_in_advance = [[<Leader>]],
-                }),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] <Leader> Chords",
-                }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<Space>w",
-                which_key({
-                    text_insert_in_advance = [[<Space>]],
-                }),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] <Space> Chords",
-                }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<Space>g",
-                which_key({
-                    text_insert_in_advance = "g",
-                }),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] g-Chords",
-                }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<Space>i",
-                which_key({
-                    text_insert_in_advance = "i",
-                }),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] i-Chords",
-                }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<Space>z",
-                which_key({
-                    text_insert_in_advance = "z",
-                }),
-                {
-                    noremap = true,
-                    silent = true,
-                    desc = "[WhichKey] z-Chords",
-                }
-            )
-        end
-    },
-
-    {   -- Expand-region selections.            ( STATE: Does not do what I want )
+    {   -- Expand-region selections.                            ( STATE: Does not do what I want )
         --  - Would have to extract the good parts and modify the bad parts for this to be useable.
         "olambo/vi-viz",
         enabled = false,

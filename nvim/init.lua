@@ -12,12 +12,18 @@
 --  - Testing `off` for improved performance.
 -- vim.cmd([[filetype plugin indent off]])
 
--- Not really relevant.
+-- Not really too relevant.
 vim.g.editorconfig = false
 
 -- PHP indentation settings (TODO: Move somewhere else.)
 vim.g.PHP_default_indenting = 1
 vim.g.PHP_BracesAtCodeLevel = 0
+
+-- Disabling SQL omnicompletion.
+--  - It was bugging me in files where it really should not be active.
+vim.g.omni_sql_no_default_maps = 1
+vim.cmd([[let $omnifunc = '']])
+vim.g.loaded_sql_completion = 1
 
 -- => Core Vim/Neovim opts
 require("config/core-options")
@@ -106,21 +112,21 @@ local lazy_opts = {
         border = "rounded",
 
         icons = {
-            cmd         = " ",     -- TODO: Fix: ''     ( Can't see this )
+            cmd         = " ",
             config      = " ",
-            event       = " ",     -- TODO: Fix: ''     ( Can't see this )
+            event       = "",
             ft          = " ",
             init        = " ",
             import      = " ",
             keys        = " ",
             lazy        = "󰒲 ",
-            loaded      = " ",
-            not_loaded  = " ",
+            loaded      = "󰄴 ",
+            not_loaded  = "󰝦 ",
             plugin      = " ",
             runtime     = " ",
             source      = " ",
-            start       = "🟆 ",     -- TODO: Fix: ''     ( Can't see this )
-            task        = "✔ ",
+            start       = "🟆 ",
+            task        = "✔",
             list = {
                 "∈",
                 "➜",
@@ -201,7 +207,7 @@ local lazy_opts = {
                 "zipPlugin",
                 "tarPlugin",
                 "gzip",
-                "tohtml",
+                "tohtml",        -- I mean this is kind of cute, but it does not seem to work with treesitter colors.
                 "tutor",
             },
         },
@@ -832,7 +838,7 @@ require("config/autocommands")
 -- === END - LSP -> Lua Language Server Setup - END === --|
 --======================================================--+
 --============================================================================--+
--- === START - LSP -> CSS & TailwindCSS & UnoCSS LangServer Setup - START === --|
+-- === START - LSP -> CSS-Modules LangServer Setup - START === --|
 --============================================================================--+
 
 -- |> START -> CSS-Modules-LS Setup

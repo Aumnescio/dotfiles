@@ -1,28 +1,58 @@
-# TODO: Config the theme. (Semi copy-paste stuff from Neovim `Aumnechroma`)
+# TODO: Config the theme further.
 theme = "aumnechroma-theme"
-
 
 [editor]
 line-number = "relative"
 cursorline = true
 color-modes = true
+true-color = true
 bufferline = "multiple"
+scrolloff = 12
+mouse = true
+middle-click-paste = false
+gutters = [
+  "diagnostics",
+  "spacer",
+  "line-numbers",
+  "spacer",
+  "diff",            # I might not want to see this.
+]
+auto-completion = true  
+auto-format = true    # Not sure if I want this.
+idle-timeout = 200
+completion-trigger-len = 2
+completion-replace = false
+auto-info = true
+text-width = 94
+auto-pairs = true
 
+[editor.soft-wrap]
+enable = false
 
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
 select = "underline"
 
-
 [editor.indent-guides]
 render = true
 
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "version-control"]
+center = []
+right = ["diagnostics", "selections", "position", "position-percentage", "total-line-numbers", "file-encoding", "file-type"]
+separator = "|"
+mode.normal = "NORMAl"
+mode.insert = "INSERT"
+mode.select = "SELECT"
 
 [editor.lsp]
-display-signature-help-docs = true
+enable = true
+display-messages = false
+auto-signature-help = true
 display-inlay-hints = true
-
+display-signature-help-docs = true
+snippets = true
 
 # TODO: Config all the rest of the keys.
 [keys.normal]
@@ -69,5 +99,4 @@ v = "select_mode"
 
 C-S-p = "file_picker_in_current_directory"
 
-
-
+# End of File

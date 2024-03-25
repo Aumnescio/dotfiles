@@ -5,16 +5,22 @@
 -- `LuaSnip`
 -- `nvim-cmp`
 -- `nvim-cmp` sources
+-- `codeium`
+
+vim.api.nvim_create_user_command("CodeiumActivate", 'echo "Setting up `Codeium AI`."', {})
 
 return {
     {   -- Snippet Support                              ( STATE: Very Good )
+        -- Just a bit bad startup time.
         "L3MON4D3/LuaSnip",
         lazy = true,
-        version = false,            -- Releases are rare.
+        version = "v2.1.0",            -- Releases are rare.
+
         event = {
             "InsertEnter",
             "CmdlineEnter",
         },
+
         opts = function()
             local node_type = require("luasnip.util.types")
 
@@ -80,10 +86,11 @@ return {
             })
         end,
     },
+
     {   -- Autocompletion                               ( STATE: Good )
         "hrsh7th/nvim-cmp",
         lazy = true,
-        version = false,
+        version = false,        -- `nvim-cmp` does not release often, so fetch from master should be good.
 
         event = {
             "InsertEnter",
@@ -130,10 +137,6 @@ return {
             end
 
             local function UberEnter()
-                local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-                local line_text = vim.api.nvim_get_current_line()
-                local left_char = string.sub(line_text, col, col)
-                local right_char = string.sub(line_text, col + 1, col + 1)
                 local pairs_dict = {
                     ["("] = ")",
                     ["{"] = "}",
@@ -142,7 +145,16 @@ return {
                     [">"] = "<",    -- HTML Tags    (Testing)
                 }
 
-                if pairs_dict[left_char] == right_char then
+                local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+                local line_text = vim.api.nvim_get_current_line()
+                local left_char = string.sub(line_text, col, col)
+                local right_char = string.sub(line_text, col + 1, col + 1)
+
+                -- What I want to do: Indent on next line when cursor like this: `>|`
+                -- left_char == ">"
+                -- - Hard xd.
+
+                if pairs_dict[left_char] == right_char then  -- New Line with Indent
                     local bufnr = vim.api.nvim_get_current_buf()
                     local contents_left = string.sub(line_text, 0, col)
                     local contents_right = string.sub(line_text, col + 1, -1)
@@ -152,7 +164,7 @@ return {
                     vim.api.nvim_buf_set_lines(bufnr, row,      row, false, { string.rep(" ", indent_level) .. contents_right })
                     vim.api.nvim_buf_set_lines(bufnr, row,      row, false, { string.rep(" ", indent_level + 4) })
                     vim.api.nvim_win_set_cursor(0, { row + 1, indent_level + 4 })
-                else
+                else  -- Normal New Line
                     vim.api.nvim_input("<NL>")      -- New Line     ( Return / Enter / <CR> )
                 end
             end
@@ -164,14 +176,14 @@ return {
                     return true
                 end,  -- Disables completion in Telescope.
 
-                -- `performance`: Low values might reduce performance (?) at the cost of completion latency.   ( Or just affect completion delays. )
-                --  - Large values make this absolutely unuseable. Low is good.
+                -- `performance`: Low values feel good. Half of these feel like they do not work at all.
                 performance = {  -- STATE: Very good.
                     -- `debounce`: Delays updating the `nvim-cmp` `Completion Popup Menu` by `debounce` milliseconds.
                     --  - The fetching/filling/adding of most sources' contents to the `Completion Popup Menu` is also delayed by `debounce` milliseconds.
                     --  - Very low values cause very noticeably flickering.   (0-20)
                     --  - Larger values will noticeably delay getting completions from most sources.
-                    debounce = 26,               -- Low Value (20-50) = Probably Good   ( `26` seems to work best for me. )
+                    --  - There is absolutely no benefit to a very large value. It does not improve input lag.
+                    debounce = 18,               -- Low Value (20-50) = Probably Good   ( `26`'ish seems to work best for me. )
 
                     -- `throttle`:
                     --  - Delays the closing of the `nvim-cmp` `Completion Popup Menu` by `throttle` milliseconds.
@@ -179,20 +191,28 @@ return {
                     --  - Does not seem to affect initial activation duration.
                     --  - Does not seem to affect forwards completion updates.  ( At least not much. )
                     --  - Increased a bit to fight flickering.
-                    throttle = 48,               -- Low Value (6-64) = Probably Good    ( `48` seems to work best for me. )
+                    --  - There is absolutely no benefit to a very large value. It does not improve input lag.
+                    throttle = 24,               -- Low Value (6-64) = Probably Good    ( `48`'ish seems to work best for me. )
 
                     -- `fetching_timeout`: Not sure what this is supposed to.
                     --  - I'd think it might discard slow results, but it doesn't seem to be doing that.
-                    fetching_timeout = 200,
+                    --  - Feels horribly irrelevant.
+                    fetching_timeout = 80,     -- Was 200 earlier. Testing lower value.
 
                     -- `async_budget`: I'm not quite sure how this affects things, what the default value is, or what good values might be.
                     --  - Just arbitrarily/randomly selected 50, so testing how that'll work.
-                    async_budget = 50,
+                    --  - Feels horribly irrelevant.
+                    async_budget = 12,          -- `50ms` seems like quite a lot, not sure what value good here. Don't even know what the default value is.
+
+                    -- No idea about this really.
+                    --  - Feels horribly irrelevant.
+                    confirm_resolve_timeout = 80,
 
                     -- I feel like 200 might be default. Could maybe use a lower value?
                     --  - I wonder how this affects performance?
                     --  - From most sources, most of the time, only like the top 5 to 16 entries are really relevant.
                     --  - But sometimes it is nice to have more entries when exploring fields and such.
+                    --  - Does not seem to help performance really. (Tailwind)
                     max_view_entries = 32,      -- Maximum count of total completion entries to show in the completion popup.
                 },
 
@@ -661,6 +681,7 @@ return {
             require("cmp_luasnip_choice").setup()
         end,
     },
+
     {   -- `nvim-cmp` completion source for fuzzy matching buffer contents.     ( STATE: Really Good )
         "tzachar/cmp-fuzzy-buffer",
         lazy = true,
@@ -670,6 +691,7 @@ return {
             "nvim-telescope/telescope-fzf-native.nvim",
         },
     },
+
     {   -- Nvim `fzf` wrapper                           ( STATE: Good )     ( Dependency for `cmp-fuzzy-buffer`. )
         "tzachar/fuzzy.nvim",
         lazy = true,
@@ -677,6 +699,74 @@ return {
         dependencies = {
             "nvim-telescope/telescope-fzf-native.nvim",
         },
+    },
+
+    {   -- Codeium AI Autocompletion                    ( STATE: Testing )
+        "Exafunction/codeium.vim",
+        -- I want to load it only manually.
+        lazy = true,
+        version = false,
+
+        -- `init` might work for setting these global variables which affect behaviour.
+        init = function()
+            -- Disabling defaults and configuring my custom binding below in the config function.
+            vim.g.codeium_disable_bindings = 1
+
+            -- `true`: Requires manually calling `codeium#Complete()`
+            -- to activate suggestions.
+            vim.g.codeium_manual = false            -- This is relatively clunky to use.
+        end,
+
+        cmd = {
+            "CodeiumActivate",
+        },
+
+        config = function(_, opts)
+            -- TODO: Preferably with Legendary.
+            vim.keymap.set(
+                "i",
+                "<C-/>",
+                function()
+                    return vim.fn["codeium#Complete"]()
+                end,
+                { expr = true }
+            )
+            vim.keymap.set(
+                "i",
+                "<C-d>",
+                function()
+                    return vim.fn["codeium#CycleCompletions"](1)
+                end,
+                { expr = true }
+            )
+            vim.keymap.set(
+                "i",
+                "<C-u>",
+                function()
+                    return vim.fn["codeium#CycleCompletions"](-1)
+                end,
+                { expr = true }
+            )
+            vim.keymap.set(
+                "i",
+                "<C-x>",
+                function()
+                    return vim.fn["codeium#Clear"]()
+                end,
+                { expr = true }
+            )
+            vim.keymap.set(
+                "i",
+                "<C-b>",
+                function()
+                    return vim.fn["codeium#Accept"]()
+                end,
+                { expr = true }
+            )
+
+            -- Dummy Command for activating the plugin.
+            vim.api.nvim_create_user_command("CodeiumActivate", 'echo "Setting up `Codeium AI`."', {})
+        end,
     },
 }
 

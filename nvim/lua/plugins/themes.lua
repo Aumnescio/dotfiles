@@ -11,6 +11,7 @@ return {
             vim.api.nvim_cmd({ cmd = "colorscheme", args = { "aumnechroma" } }, {})
         end,
     },
+
     {
         "catppuccin/nvim", name = "catppuccin",
         enabled = false,        -- Not using catppuccin.

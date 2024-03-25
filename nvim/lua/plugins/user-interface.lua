@@ -14,7 +14,7 @@
 return {
     {   -- Startup Dashboard                            ( STATE: Good )
         "goolord/alpha-nvim",
-        enabled = true,
+        enabled = false,        -- I really don't use or need this.
         cond = function()       -- Could probably be simplified, but this seems to work now.
             return
                 vim.bo.filetype == "" or
@@ -79,7 +79,9 @@ return {
     },
 
     {   -- Status-/Tab-/Buffer-line                     ( STATE: Good )
+        --  - NOTE: Potentially causing some extra flicker, but I really probably do prefer having this.
         "rebelot/heirline.nvim",
+        enabled = true,
         lazy = true,
         event = "UiEnter",                  -- Load `heirline` on `UiEnter`.
 
@@ -95,54 +97,116 @@ return {
     {   -- LSP Progresss UI
         "j-hui/fidget.nvim",
         lazy = true,                        -- Loaded by `lspconfig`.
-        -- version = false,
-        tag = "legacy",         -- To avoid breaking changes for now. Maybe test newer versions at some point.
+        version = false,
 
         -- Related documentation: "https://github.com/j-hui/fidget.nvim/blob/main/doc/fidget.md"
         config = function()
             require("fidget").setup({
-                text = {
-                    spinner = "dots_snake",     -- Animation shown when tasks are ongoing.
-                    done = "✔",                 -- Character shown when all tasks are complete.
-                    commenced = "Started",      -- Message shown when task starts.
-                    completed = "Completed",    -- Message shown when task completes.
-                },
+                -- Options related to LSP progress subsystem
+                progress = {
+                    poll_rate = 0,                -- How frequently to poll for progress messages.
+                    suppress_on_insert = false,   -- Suppress new messages while in insert mode.
+                    ignore_done_already = false,  -- Ignore new tasks that are already complete.
 
-                align = {
-                    bottom = true,              -- Align fidgets along bottom edge of buffer.
-                    right = true,               -- Align fidgets along right edge of buffer.
-                },
-
-                timer = {
-                    spinner_rate = 125,         -- Frame rate of spinner animation, in ms.
-                    fidget_decay = 2000,        -- How long to keep around empty fidget, in ms.
-                    task_decay = 1000,          -- How long to keep around completed task, in ms.
-                },
-
-                window = {
-                    relative = "win",           -- Where to anchor, either "win" or "editor".
-                    blend = 100,                -- &winblend for the window.
-                    zindex = nil,               -- The zindex value for the window.
-                    border = "none",            -- Style of border for the fidget window.
-                },
-
-                fmt = {
-                    leftpad = true,             -- Right-justify text in fidget box.
-                    stack_upwards = true,       -- List of tasks grows upwards.
-                    max_width = 0,              -- Maximum width of the fidget box.
-
-                    fidget = function(fidget_name, spinner)
-                        return string.format("%s %s", spinner, fidget_name)
+                    -- Clear notification group when LSP server detaches.
+                    clear_on_detach = function(client_id)
+                        local client = vim.lsp.get_client_by_id(client_id)
+                        return client and client.name or nil
                     end,
 
-                    task = function(task_name, message, percentage)
-                        return string.format(
-                        "%s%s [%s]",
-                        message,
-                        percentage and string.format(" (%s%%)", percentage) or "",
-                        task_name
-                        )
+                    -- How to get a progress message's notification group key.
+                    notification_group = function(msg)
+                        return msg.lsp_client.name
                     end,
+
+                    ignore = {},                  -- List of LSP servers to ignore.
+
+                    -- Options related to how LSP progress messages are displayed as notifications.
+                    display = {
+                        render_limit = 16,          -- How many LSP messages to show at once.
+                        done_ttl = 3,               -- How long a message should persist after completion.
+                        done_icon = "✔",            -- Icon shown when all LSP progress tasks are complete.
+                        done_style = "Constant",    -- Highlight group for completed LSP tasks.
+                        progress_ttl = math.huge,   -- How long a message should persist when in progress.
+
+                        -- Icon shown when LSP progress tasks are in progress.
+                        progress_icon = {
+                            pattern = "dots",
+                            period = 1
+                        },
+
+                        progress_style = "WarningMsg",  -- Highlight group for in-progress LSP tasks.
+                        group_style = "Title",          -- Highlight group for group name (LSP server name).
+                        icon_style = "Question",        -- Highlight group for group icons.
+
+                        priority = 30,                  -- Ordering priority for LSP notification group.
+
+                        skip_history = true,        -- Whether progress notifications should be omitted from history
+
+                        -- How to format a progress message.
+                        format_message = require("fidget.progress.display").default_format_message,
+
+                        -- How to format a progress annotation.
+                        format_annote = function(msg)
+                            return msg.title
+                        end,
+
+                        -- How to format a progress notification group's name.
+                        format_group_name = function(group)
+                            return tostring(group)
+                        end,
+
+                        -- Override options from the default notification config.
+                        overrides = {
+                            rust_analyzer = { name = "rust-analyzer" },
+                        },
+                    },
+
+                    -- Options related to Neovim's built-in LSP client.
+                    lsp = {
+                        progress_ringbuf_size = 0,      -- Configure the nvim's LSP progress ring buffer size.
+                    },
+                },
+
+                -- Options related to notification subsystem
+                notification = {
+                    poll_rate = 10,                     -- How frequently to poll and render notifications.
+                    filter = vim.log.levels.INFO,       -- Minimum notifications level.
+                    history_size = 128,                 -- Number of removed messages to retain in history.
+                    override_vim_notify = false,        -- Automatically override vim.notify() with Fidget.
+
+                    -- How to configure notification groups when instantiated.
+                    configs = { default = require("fidget.notification").default_config },
+
+                    -- Options related to how notifications are rendered as text
+                    view = {
+                        stack_upwards = true,               -- Display notification items from bottom to top.
+                        icon_separator = " ",               -- Separator between group name and icon.
+                        group_separator = "---",            -- Separator between notification groups.
+                        group_separator_hl = "Comment",     -- Highlight group used for group separator.
+                    },
+
+                    -- Options related to the notification window and buffer
+                    window = {
+                        normal_hl = "Comment",      -- Base highlight group in the notification window.
+                        winblend = 100,             -- Background color opacity in the notification window.
+                        border = "none",            -- Border around the notification window.
+                        zindex = 45,                -- Stacking priority of the notification window.
+                        max_width = 0,              -- Maximum width of the notification window.
+                        max_height = 0,             -- Maximum height of the notification window.
+                        x_padding = 1,              -- Padding from right edge of window boundary.
+                        y_padding = 0,              -- Padding from bottom edge of window boundary.
+                        align = "bottom",           -- How to align the notification window.
+                        relative = "editor",        -- What the notification window position is relative to.
+                    },
+                },
+
+                -- Options related to logging
+                logger = {
+                    level = vim.log.levels.WARN,  -- Minimum logging level
+                    float_precision = 0.01,       -- Limit the number of decimals displayed for floats
+                    -- `path`: Where `Fidget` writes its logs to.
+                    path = string.format("%s/fidget.nvim.log", vim.fn.stdpath("cache")),
                 },
             })
         end,
@@ -151,7 +215,7 @@ return {
     {   -- Icons                                        ( STATE: Good )     ( Nice simple visual addition. Dependency for some plugins. )
         --  - NOTE: Dependency of `heirline.nvim`, bit awkward to disable this.
         "nvim-tree/nvim-web-devicons",
-        lazy = true,
+        lazy = false,
 
         opts = {
             -- `default = true`:        Enable default icons.
@@ -170,14 +234,7 @@ return {
 
             -- Personal icon overrides.
             --  - 'DevIcon' will be appended to `name`.
-            override = {
-                -- |> Example:
-                -- zsh = {
-                --     icon         = "",
-                --     color        = "#428850",
-                --     name         = "Zsh"         -- => "ZshDevIcon"
-                -- },
-            },
+            override = {},
 
             -- Same as `override` but specifically for overrides by filename.
             -- Takes effect when `strict` is true.
@@ -203,22 +260,25 @@ return {
         },
     },
 
-    {   -- Indent Guides                                ( STATE: Quite Good )
+    {   -- Indent Guides                                ( STATE: Almost good, but makes scrolling over folds lag. )
         --  - NOTE: The treesitter and chunk things are laggy.
         --  - Base indent-guides are fine.
+        --  - Might cause additional minor flicker when used with scrolloff.
         "shellRaining/hlchunk.nvim",
         enabled = true,
         lazy = true,
         version = false,
 
-        -- event = "UIEnter",
+        -- NOTE: Effectively disabled, because this causes way way too much lag with folds.
+        -- - Being able to fold is more important to me than seeing the indent-guides.
         ft = {
-            "lua",
-            "rust",
-            "sh",
-            "bash",
-            "fish",
-            "typst",
+            -- "lua",
+            -- "rust",
+            -- "sh",
+            -- "bash",
+            -- "fish",
+            -- "typst",
+            -- "cs",
         },
 
         config = function()
@@ -235,9 +295,12 @@ return {
                 blank = {
                     enable = false,
                 },
+
+                -- TODO: If possible, add some delay to displaying this.
                 chunk = {
                     enable = false,
                 },
+
                 line_num = {
                     enable = false,
                 },
@@ -268,7 +331,6 @@ return {
                 start_in_insert = false,
 
                 -- These are passed to nvim_open_win
-                anchor      = "SW",
                 border      = "rounded",
                 -- -- 'editor' and 'win' will default to being centered
                 relative    = "cursor",
@@ -361,16 +423,15 @@ return {
                         winblend = 10,
                     },
 
-                    max_width = 120,
-                    max_height = 60,
                     min_width = 60,
-                    min_height = 20,
+                    max_width = 100,
+                    min_height = 24,
+                    max_height = 56,
                 },
 
                 -- Options for built-in selector.
                 builtin = {
                     -- These are passed to nvim_open_win.
-                    anchor = "NW",
                     border = "rounded",
                     -- `editor` and `win` will default to being centered.
                     relative = "editor",
@@ -385,12 +446,12 @@ return {
                     -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
                     -- the min_ and max_ options can be a list of mixed types.
                     -- max_width = {140, 0.8} means "the lesser of 140 columns or 80% of total"
-                    width = 120,
-                    max_width = { 140, 0.8 },
-                    min_width = { 80, 0.6 },
-                    height = 80,
-                    max_height = 0.9,
-                    min_height = { 40, 0.4 },
+                    width = 100,
+                    max_width = { 100, 0.7 },
+                    min_width = { 60, 0.4 },
+                    height = 60,
+                    max_height = 0.8,
+                    min_height = { 32, 0.3 },
 
                     -- Set to `false` to disable
                     mappings = {
@@ -654,5 +715,8 @@ return {
         end,
     },
 }
+
+-- List of plugins that do not really work well:
+-- - "Fildo7525/pretty_hover"
 
 -- End of File

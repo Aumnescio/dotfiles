@@ -1,20 +1,5 @@
 # Snipmate Syntax Snippets for LuaSnip
-
-snippet fn_void "Snippet for: function definition without return value."
-	fn $1($2) {
-		$0
-	}
-
-snippet fn_with_return_type "Snippet for: function definition with return value."
-	fn $1($2) -> $3 {
-		$0
-	}
-
-snippet string_from "Create a `String` from a `&str`."
-	String::from("$1")$0
-
-snippet vecnew "Snippet for: Vec::new()."
-	Vec::new()$0
+# TODO: Move all these to luasnip?
 
 snippet vecint "Snippet for: Vec<i32>."
 	Vec<i32>$0
@@ -37,11 +22,6 @@ snippet colvec "Snippet for: collect::<Vec<T>>()."
 snippet reverse_string "Snippet for: Reversing String or &str."
 	let reversed: String = $0.chars().rev().collect();
 
-snippet struct "Snippet for: 'struct' definition."
-	struct $1 {
-		$2: $3,$0
-	}
-
 snippet struct_with_new "Snippet for: 'struct' definition with `new()` constructor."
 	struct $1 {
 		$2: $3,$4
@@ -53,11 +33,6 @@ snippet struct_with_new "Snippet for: 'struct' definition with `new()` construct
 				$2$0
 			}
 		}
-	}
-
-snippet enum "Keyword: `enum`"
-	enum ${1:EnumName} {
-		${0:EnumMember(OptionalDataType)}
 	}
 
 snippet trait "Keyword: `trait`"
@@ -79,13 +54,6 @@ snippet impl_new "Snippet for: 'impl' block with new()."
 		}
 	}
 
-snippet impl_display "Snippet for: Basic `fmt::display` implementation."
-	impl fmt::Display for $1 {
-		fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-			write!(formatter, "$0")
-		}
-	}
-
 snippet derive "Snippet for: derive."
 	#[derive($0)]
 
@@ -100,12 +68,6 @@ snippet derive_copy "Snippet for: derive copy."
 
 snippet derive_clonecopy "Snippet for: derive clone and copy."
 	#[derive(Clone, Copy)]$0
-
-snippet match "Snippet for: 'match' keyword."
-	match $1 {
-		$2 => $3,
-		_ => $0,
-	}
 
 snippet match_comparison "Snippet for: 'match x.cmp(y)'."
 	match $1.cmp($2) {
@@ -139,12 +101,6 @@ snippet for "Snippet for: for loop."
 		$0
 	}
 
-snippet print "Snippet for: println!."
-	println!("$0");
-
-snippet print_var "Snippet for: println! with variable."
-	println!("{}", $0);
-
 snippet int "Snippet for: i32."
 	i32
 
@@ -159,12 +115,6 @@ snippet let_float "Snippet for: f64 variable."
 
 snippet let_float_mut "Snippet for: Mutable f64 variable."
 	let mut $1: f64 = $0;
-
-snippet let_string "String variable."
-	let $1: String = String::from("$0");
-
-snippet let_string_mut "Snippet for: Mutable String variable."
-	let mut $1: String = "$2".to_string();$0
 
 snippet let_vec "Vec variable."
 	let $1 = vec![$0];
@@ -203,7 +153,7 @@ snippet dyn "Snippet for: 'dyn' keyword."
 	dyn $0
 
 snippet else "Snippet for: 'else' keyword."
-	else $0
+	else {$0}
 
 snippet extern "Snippet for: 'extern' keyword."
 	extern $0
@@ -222,15 +172,7 @@ snippet if "Snippet for: 'if' keyword."
 		$0
 	}
 
-snippet iflet "Snippet for: 'if let'."
-	if let $1 = $2 {
-		$0
-	}
-
-snippet let "Snippet for: 'let' keyword."
-	let $0
-
-snippet mod "Snippet for: 'mod' keyword."
+snippet mod_keyword "Snippet for: 'mod' keyword."
 	mod $0
 
 snippet move "Snippet for: 'move' keyword."
@@ -276,11 +218,6 @@ snippet use "Snippet for: 'use' keyword."
 
 snippet where "Snippet for: 'where' keyword."
 	where $0
-
-snippet allow_unused "Bunch of allows for unused things.."
-	#![allow(unused_variables)]
-	#![allow(unused_mut)]
-	#![allow(unused_assignments)]
 
 snippet use_bevy_prelude "Import Bevy prelude."
 	use bevy::prelude::*;

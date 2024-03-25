@@ -11,7 +11,7 @@ function Module.setup()
     local lsp_prefs = require("langserver-prefs")
     local nvim_lsp = require("lspconfig")
 
-    -- |> CSS LSP Setup                 ( STATE: Probably Fine ) [ Needs to be tested. ]
+    -- |> CSS LSP Setup                 ( STATE: Decent, I think. )
     nvim_lsp.cssls.setup({
         cmd = { "vscode-css-language-server", "--stdio" },
         filetypes = { "css", "scss", "less" },
@@ -28,6 +28,7 @@ function Module.setup()
             css = {
                 validate = true,
                 lint = {
+                    unknownAtRules = "ignore",          -- Using because of `@tailwind` `AtRules` warning.
                     -- idSelector = "warning",
                     zeroUnits = "warning",
                     duplicateProperties = "warning"
@@ -38,13 +39,10 @@ function Module.setup()
                 }
             },
 
-            less = {
-                validate = true
-            },
-
             scss = {
                 validate = true,
                 lint = {
+                    unknownAtRules = "ignore",          -- Using because of `@tailwind` `AtRules` warning.
                     idSelector = "warning",
                     zeroUnits = "warning",
                     duplicateProperties = "warning"
@@ -52,6 +50,13 @@ function Module.setup()
                 completion = {
                     completePropertyWithSemicolon = true,
                     triggerPropertyValueCompletion = true
+                }
+            },
+
+            less = {
+                validate = true,
+                lint = {
+                    unknownAtRules = "ignore"           -- Using because of `@tailwind` `AtRules` warning.
                 }
             }
         },

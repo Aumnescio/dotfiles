@@ -257,7 +257,7 @@ local FileType = {
 -- START => TimeClock
 local TimeClock = {
     provider = function()
-        return '  ' .. vim.fn.strftime("%H:%M")
+        return '󱑎 ' .. vim.fn.strftime("%H:%M")
     end,
 
     hl = { fg = colors.fg_purple_01_myrtle_flower },
@@ -430,7 +430,7 @@ end
 local buflist_cache = {}
 
 -- Setup an `autocmd` that updates the `buflist_cache` every time that buffers are added/removed.
-vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
+vim.api.nvim_create_autocmd({ "VimEnter", "UIEnter", "BufAdd", "BufDelete" }, {
     callback = function()
         vim.schedule(function()
             local buffers = get_bufs()

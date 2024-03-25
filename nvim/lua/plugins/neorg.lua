@@ -25,9 +25,8 @@ return {
         enabled = true,
         lazy = true,
 
-        -- Right now using the 4.4.1 version performs much better than the later versions.
-        --  - But the concealer performance is better on the latest `main`.
-        version = false,
+        -- Commonly issues with versions and Neorg's stability.
+        version = "7.0.0",
 
         -- Filetype lazy-loading does not work great with Neorg.
         -- Neorg fails to activate concealer properly when lazy-loaded with this.
@@ -41,18 +40,15 @@ return {
 
         dependencies = {
             "nvim-lua/plenary.nvim",
-            {
-                "lukas-reineke/headlines.nvim",             -- Bit rough load-time, but I do like it.
-                dependencies = {
-                    "nvim-treesitter/nvim-treesitter",      -- This way, treesitter should load first, and there should be no problems.
-                },
-            },
+            "nvim-treesitter/nvim-treesitter",
         },
 
         opts = {
             load = {
                 -- `defaults`: Loads default behaviour.
                 [ "core.defaults" ] = {},
+
+                -- TODO: Configure code-block conceal.
 
                 -- `concealer`: Adds pretty icons to your documents.    ( TODO: Config this to work with new Neorg. )
                 [ "core.concealer" ] = {
@@ -61,9 +57,9 @@ return {
                         --  - This overwrites custom icons, so can't use this.
                         -- icon_preset = "diamond",     -- `basic` | `diamond` | `varied`
 
-                        -- `icons`: STATE: TODO.
+                        -- `icons`: STATE: Fine?.
                         icons = {
-                            -- `heading`: STATE: TODO.
+                            -- `heading`: STATE: Fine?.
                             heading = {
                                 -- `icons`: This sets the conceal icons used for Headings.
                                 --  - NOTE: It works like this now, in latest version of `main`.
@@ -76,307 +72,15 @@ return {
                                     "⟐ ",
                                     "⯈",
                                 },
-
-                                -- level_1 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.1.prefix",
-                                --     icon = " ",        -- Options: `⟐ `, ` `, `󰺕 `, `󱥸 `, `◈`, `⟁ `, `⯈`
-                                --     query = "[ (heading1_prefix) (link_target_heading1) @no-conceal ] @icon",
-                                -- },
-                                --
-                                -- level_2 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.2.prefix",
-                                --     icon = " 󰺕 ",
-                                --     query = "[ (heading2_prefix) (link_target_heading2) @no-conceal ] @icon",
-                                -- },
-                                --
-                                -- level_3 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.3.prefix",
-                                --     icon = "  󱥸 ",
-                                --     query = "[ (heading3_prefix) (link_target_heading3) @no-conceal ] @icon",
-                                -- },
-                                --
-                                -- level_4 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.4.prefix",
-                                --     icon = "   ◈",
-                                --     query = "[ (heading4_prefix) (link_target_heading4) @no-conceal ] @icon",
-                                -- },
-                                --
-                                -- level_5 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.5.prefix",
-                                --     icon = "    ⟐ ",
-                                --     query = "[ (heading5_prefix) (link_target_heading5) @no-conceal ] @icon",
-                                -- },
-                                --
-                                -- level_6 = {
-                                --     enabled = true,
-                                --     highlight = "@neorg.headings.6.prefix",
-                                --     icon = "     ⯈",
-                                --     query = "[ (heading6_prefix) (link_target_heading6) @no-conceal ] @icon",
-                                -- },
                             },  -- `heading`
+
+                            -- `code_block`: STATE: No idea / TODO.
+                            code_block = {
+                                conceal = true,
+                            },  -- `code_block`
                         },  -- `icons`
                     },  -- `config`
                 },  -- `core.concealer`
-
-                -- [ "core.concealer" ] = {        -- Adds pretty icons to your documents.
-                --     config = {
-                --
-                --         -- NOTE: `diamond` is the best preset, but need to disable preset to use custom icons.
-                --         -- icon_preset = "diamond",     -- `basic` | `diamond` | `varied`
-                --
-                --         icons = {
-                --             definition = {              -- TODO: Make sure the icons work as they should. Customize better ones.
-                --                 enabled = true,
-                --                 multi_prefix = {
-                --                     enabled = true,
-                --                     icon = "⋙ ",
-                --                     query = "(multi_definition_prefix) @icon",
-                --                 },
-                --                 multi_suffix = {
-                --                     enabled = true,
-                --                     icon = "⋘ ",
-                --                     query = "(multi_definition_suffix) @icon",
-                --                 },
-                --                 single = {
-                --                     enabled = true,
-                --                     icon = "≡",
-                --                     query = "[ (single_definition_prefix) (link_target_definition) @no-conceal ] @icon",
-                --                 },
-                --             },
-                --
-                --             delimiter = {               -- TODO: Make sure the icons work as they should. Customize better ones.
-                --                 enabled = true,
-                --                 horizontal_line = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.delimiters.horizontal_line",
-                --                     icon = "─",
-                --                     query = "(horizontal_line) @icon",
-                --                 },
-                --                 strong = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.delimiters.strong",
-                --                     icon = "⟪",
-                --                     query = "(strong_paragraph_delimiter) @icon",
-                --                 },
-                --                 weak = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.delimiters.weak",
-                --                     icon = "⟨",
-                --                     query = "(weak_paragraph_delimiter) @icon",
-                --                 },
-                --             },
-                --
-                --             footnote = {                -- TODO: Make sure the icons work as they should. Customize better ones.
-                --                 enabled = true,
-                --                 multi_prefix = {
-                --                     enabled = true,
-                --                     icon = "⁑",
-                --                     query = "(multi_footnote_prefix) @icon",
-                --                 },
-                --                 multi_suffix = {
-                --                     enabled = true,
-                --                     icon = "⁑",
-                --                     query = "(multi_footnote_suffix) @icon",
-                --                 },
-                --                 single = {
-                --                     enabled = true,
-                --                     icon = "⁎",
-                --                     query = "[ (single_footnote_prefix) (link_target_footnote) @no-conceal ] @icon",
-                --                 },
-                --             },
-                --
-                --             heading = {                 -- STATE: Okay.
-                --                 enabled = true,
-                --                 level_1 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.1.prefix",
-                --                     icon = " ",        -- Options: `⟐ `, ` `, `󰺕 `, `󱥸 `, `◈`, `⟁ `, `⯈`
-                --                     query = "[ (heading1_prefix) (link_target_heading1) @no-conceal ] @icon",
-                --                 },
-                --                 level_2 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.2.prefix",
-                --                     icon = " 󰺕 ",
-                --                     query = "[ (heading2_prefix) (link_target_heading2) @no-conceal ] @icon",
-                --                 },
-                --                 level_3 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.3.prefix",
-                --                     icon = "  󱥸 ",
-                --                     query = "[ (heading3_prefix) (link_target_heading3) @no-conceal ] @icon",
-                --                 },
-                --                 level_4 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.4.prefix",
-                --                     icon = "   ◈",
-                --                     query = "[ (heading4_prefix) (link_target_heading4) @no-conceal ] @icon",
-                --                 },
-                --                 level_5 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.5.prefix",
-                --                     icon = "    ⟐ ",
-                --                     query = "[ (heading5_prefix) (link_target_heading5) @no-conceal ] @icon",
-                --                 },
-                --                     level_6 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.headings.6.prefix",
-                --                     icon = "     ⯈",
-                --                     query = "[ (heading6_prefix) (link_target_heading6) @no-conceal ] @icon",
-                --                 },
-                --             },
-                --
-                --             list = {                    -- STATE: Okay.     ( Could be more unique and custom. )
-                --                 enabled = true,
-                --                 level_1 = {
-                --                     enabled = true,
-                --                     icon = "•",
-                --                     query = "(unordered_list1_prefix) @icon",
-                --                 },
-                --                 level_2 = {
-                --                     enabled = true,
-                --                     icon = " •",
-                --                     query = "(unordered_list2_prefix) @icon",
-                --                 },
-                --                 level_3 = {
-                --                     enabled = true,
-                --                     icon = "  •",
-                --                     query = "(unordered_list3_prefix) @icon",
-                --                 },
-                --                 level_4 = {
-                --                     enabled = true,
-                --                     icon = "   •",
-                --                     query = "(unordered_list4_prefix) @icon",
-                --                 },
-                --                 level_5 = {
-                --                     enabled = true,
-                --                     icon = "    •",
-                --                     query = "(unordered_list5_prefix) @icon",
-                --                 },
-                --                 level_6 = {
-                --                     enabled = true,
-                --                     icon = "     •",
-                --                     query = "(unordered_list6_prefix) @icon",
-                --                 },
-                --             },
-                --
-                --             markup = {
-                --                 enabled = true,
-                --                 spoiler = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.markup.spoiler",
-                --                     icon = "•",
-                --                     query = '(spoiler ("_open") _ @icon ("_close"))',
-                --                 },
-                --             },
-                --
-                --             quote = {
-                --                 enabled = true,
-                --                 level_1 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.1.prefix",
-                --                     icon = "│",
-                --                     query = "(quote1_prefix) @icon",
-                --                 },
-                --                 level_2 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.2.prefix",
-                --                     icon = "│",
-                --                     query = "(quote2_prefix) @icon",
-                --                 },
-                --                 level_3 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.3.prefix",
-                --                     icon = "│",
-                --                     query = "(quote3_prefix) @icon",
-                --                 },
-                --                     level_4 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.4.prefix",
-                --                     icon = "│",
-                --                     query = "(quote4_prefix) @icon",
-                --                 },
-                --                 level_5 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.5.prefix",
-                --                     icon = "│",
-                --                     query = "(quote5_prefix) @icon",
-                --                 },
-                --                 level_6 = {
-                --                     enabled = true,
-                --                     highlight = "@neorg.quotes.6.prefix",
-                --                     icon = "│",
-                --                     query = "(quote6_prefix) @icon",
-                --                 },
-                --             },
-                --
-                --             todo = {                    -- STATE: Most of them are good, some could be better.
-                --                 enabled = true,
-                --                 undone = {
-                --                     enabled = true,
-                --                     icon = "−",         -- Options: `֎ `, `¤`, `⊟`, ``, `−`.
-                --                     query = "(todo_item_undone) @icon",
-                --                 },
-                --                 urgent = {
-                --                     enabled = true,
-                --                     icon = "",         -- Options: ` `, ` `, `⚠`, ``.
-                --                     query = "(todo_item_urgent) @icon",
-                --                 },
-                --                 done = {
-                --                     enabled = true,
-                --                     icon = "✓",         -- Options: `✓`.
-                --                     query = "(todo_item_done) @icon",
-                --                 },
-                --                 uncertain = {
-                --                     enabled = true,
-                --                     icon = "",         -- Options: `⯑ `, ` `, ``.
-                --                     query = "(todo_item_uncertain) @icon",
-                --                 },
-                --                 pending = {
-                --                     enabled = true,
-                --                     icon = "",         -- Options: ``, ``.
-                --                     query = "(todo_item_pending) @icon",
-                --                 },
-                --                 on_hold = {
-                --                     enabled = true,
-                --                     icon = "",
-                --                     query = "(todo_item_on_hold) @icon",
-                --                 },
-                --                 cancelled = {
-                --                     enabled = true,
-                --                     icon = "",         -- Options: ``, ``, `󰩺`, ``.
-                --                     query = "(todo_item_cancelled) @icon",
-                --                 },
-                --                 recurring = {
-                --                     enabled = true,
-                --                     icon = "↺",
-                --                     query = "(todo_item_recurring) @icon",
-                --                 },
-                --             },
-                --         },
-                --
-                --         -- TODO: Report this problem as issue.
-                --         -- The todo marker's ("(x)", etc) conceal character is offset in the foldtext.
-                --         --  - "(X) Heading Name" becomes:
-                --         --  - "( ) HeaXding Name" when folded.
-                --         folds = false,              -- Disabling this solves some visual issues related to folds.
-                --         dim_code_blocks = {
-                --             enabled = true,
-                --             content_only = true,
-                --             conceal = true,
-                --             adaptive = false,
-                --             padding = {
-                --                 left = 2,
-                --                 right = 4,
-                --             },
-                --             width = "fullwidth",    -- `fullwidth` | `content`
-                --         },
-                --     },
-                -- },  -- End `core.concealer`
 
                 [ "core.dirman" ] = {      -- Manages Neorg workspaces.
                     config = {
@@ -392,22 +96,8 @@ return {
         config = function(_, opts)
             local neorg = require("neorg")
 
-            -- |> Setup, and config icons after.
+            -- |> Setup, and config icons after. (TODO'ish)
             neorg.setup(opts)
-
-            -- `ordered list icons` config for Neorg.
-
-            -- Fetch the concealer config table for modification.
-            -- local neorg_ordered_config = neorg.modules.get_module_config("core.concealer").icons.ordered
-            -- local ordered_concealer_module = neorg.modules.get_module("core.concealer").concealing.ordered
-            --
-            -- -- Set `ordered.level_<n>.icon` functions.
-            -- neorg_ordered_config.level_1.icon = ordered_concealer_module.punctuation.unicode_dot(ordered_concealer_module.enumerator.numeric)
-            -- neorg_ordered_config.level_2.icon = ordered_concealer_module.enumerator.latin_lowercase
-            -- neorg_ordered_config.level_3.icon = ordered_concealer_module.punctuation.unicode_dot(ordered_concealer_module.enumerator.numeric)
-            -- neorg_ordered_config.level_4.icon = ordered_concealer_module.enumerator.latin_lowercase
-            -- neorg_ordered_config.level_5.icon = ordered_concealer_module.punctuation.unicode_dot(ordered_concealer_module.enumerator.numeric)
-            -- neorg_ordered_config.level_6.icon = ordered_concealer_module.enumerator.latin_lowercase
         end,
     },
 }

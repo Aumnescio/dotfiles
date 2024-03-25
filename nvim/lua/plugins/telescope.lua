@@ -88,7 +88,7 @@ return {
 
                     -- Requires `ripgrep` (rg)
                     find_command = {"rg", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case"},
-                    prompt_prefix = "  ",
+                    prompt_prefix = " ",
                     selection_caret = "  ",
                     entry_prefix = "   ",
                     initial_mode = "insert",
@@ -175,16 +175,56 @@ return {
             })
         end,    --> END `config` function
     },
+
     {   -- Telescope UI Extension                       ( STATE: Good )
         "nvim-telescope/telescope-ui-select.nvim",
         lazy = true,
     },
+
     {   -- Telescope `fzf` Extension                    ( STATE: Good )     ( Dependency for `fuzzy.nvim` and `cmp-fuzzy-buffer`. )
         "nvim-telescope/telescope-fzf-native.nvim",
         lazy = true,    -- Had some semi-related issues, but this should be fine now.
         build = {
             "make",
         },
+    },
+
+    {   -- Telescope `TailwindCSS` Extension            ( STATE: Testing )
+        "danielvolchek/tailiscope.nvim",
+        lazy = true,
+        ft = "svelte",
+
+        config = function(_, opts)
+            require("telescope").setup({
+                extensions = {
+                    tailiscope = {
+                        register = "",
+                        default = "all",
+                        doc_icon = "󰈙",
+                        no_dot = true,
+
+                        -- NOTE: If mappings are left empty, the plugin will error.
+                        maps = {
+                            n = {
+                                back = "b",
+                                open_doc = "od",
+                            },
+                            i = {
+                                back = "<C-h>",
+                                open_doc = "<C-d>",
+                            }
+                        }
+                    }
+                }
+            })
+
+            -- Not quite sure if this is required.
+            -- require("telescope").load_extension("tailiscope")
+
+            require("legendary").keymaps({
+                { "<Leader>tw",      "<Cmd>Telescope tailiscope<CR>",       description = "Telescope: Search/Find TailwindCSS Classes",   mode = "n", opts = { noremap = true } },
+            })
+        end
     },
 }
 

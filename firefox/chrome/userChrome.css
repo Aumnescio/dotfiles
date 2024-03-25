@@ -91,6 +91,11 @@
     display: none !important;
 }
 
+/* Trying to stop white flashing. */
+.browserContainer {
+    background-color: #030406 !important;
+}
+
 /**********************************/
 /***        END OF FILE         ***/
 /**********************************/

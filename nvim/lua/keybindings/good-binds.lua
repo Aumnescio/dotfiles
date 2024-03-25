@@ -266,10 +266,6 @@ bindkey({"n", "x", "o"},    "gb",       "gn",     opts)
 -- Action:      Open URL under cursor. ( Might also work for opening files like images. )   ( This is quite scuffed. )
 bindkey({"n", "o"},    "gx",        "gx",     { noremap = true, silent = false })
 
--- Key:         is
--- Action:      Insert a <Space>.
-bindkey("n",    "is",               "i<Space><Esc>",   opts)
-
 --=================================================--
 -- === END - Changing and Replacing text - END === --
 --=================================================--
@@ -284,6 +280,12 @@ bindkey("n",    "is",               "i<Space><Esc>",   opts)
 -- Action:      Do nothing, wait for next key in chord.
 -- TODO:        Since this is bound to <NOP>, I need to rebind all the possible missing `g` bindings.
 bindkey({"n", "x", "o"},    "g",    "<NOP>",   opts_silent)
+
+-- Couple temp binds. TODO: Move
+bindkey({"n", "x", "o"},    "g^",    "g^",   opts_silent)
+bindkey({"n", "x", "o"},    "g0",    "g0",   opts_silent)
+bindkey({"n", "x", "o"},    "g$",    "g$",   opts_silent)
+bindkey({"n", "x", "o"},    "g_",    "g_",   opts_silent)
 
 -- Key:         i
 -- Action:      Do nothing, wait for next key in chord.
@@ -300,11 +302,6 @@ bindkey({"n", "o", "x"},    "zs",    "f",   opts)
 -- Key:         zS
 -- Action:      Jump to `Character`. ( 1 Character before )
 bindkey({"n", "o", "x"},    "zS",    "t",   opts)
-
--- Key:         z=
--- Action:      Fix spelling.
--- NOTE:        TODO: Move to Legendary.
-bindkey({"n", "o"},    "z=",    "z=",   opts)
 
 -- Key:         <Leader>sp
 -- Action:      Automatically fix next spelling mistake.
@@ -372,8 +369,10 @@ bindkey("n",   "<C-S-<Right>>",  "5<C-w><",   opts)
 bindkey({"n", "x", "o"},    "f",     "d",           opts)
 
 -- Key:         ff / fl
-bindkey("n",    "ff",    '0vg_d"_dd',   opts)
-bindkey("n",    "fl",    '0vg_d"_dd',   opts)
+-- NOTE:        Using `'0dg_"_d'` or `'0vg_d"_d'` caused `Rust Tools` / `Rust Analyzer` / `Neovim LSP` to Error.
+--              ( 14.09.2023 )
+bindkey("n",    "ff",    '<S-v>d',    opts)
+bindkey("n",    "fl",    '<S-v>d',    opts)
 
 -- Key:         fp
 bindkey("n",    "fp",    "dap",         opts)
@@ -422,10 +421,6 @@ bindkey("x",                "w",        "o",        opts)
 -- === START - Misc === --
 --======================--
 
--- Key:         Ctrl-Shift-d
--- Action:      Free key right now. Probably.
--- bindkey("n",    "<C-S-d>", ":UltiSnipsEdit<CR>",  opts)
-
 -- Key:         Ctrl-Shift-a
 -- Action:      Yank all text in buffer.
 -- TODO:        Move to Legendary.
@@ -458,15 +453,6 @@ bindkey('n', '<C-i>', 'i', opts)
 -- Key:         Ctrl-Shift-i
 -- Action:      Free key.
 bindkey('n', '<C-S-i>', 'a', opts)
-
--- Key:         ir          ( Normal Mode )
--- Action:      Macro Operator.     ( Requires register to record into. Ex: 'q' )
-bindkey("n",    "ir",       "q",                    { noremap = true, silent = false })
-
--- Key:         Shift-q         ( Normal, Visual )
--- Action:      Play / repeat macro on 'q'. (In Visual Mode, on each selected line.)
-bindkey("n",    "<S-q>",    "@q",                   { noremap = true, silent = false })
-bindkey("x",    "<S-q>",    ":normal @q<CR>",       { noremap = true, silent = false })
 
 -- Key:         Ctrl-(Shift)-u
 -- bindkey("n",    "<C-u>", "", opts, "Unknown", "unknown_001", "Some issue with binding this key. Not sure what it does. (Normal)")
@@ -535,11 +521,11 @@ bindkey("n", "<space>e", vim.diagnostic.open_float, opts)
 bindkey("n", "<space>q", vim.diagnostic.setloclist, opts)
 
 -- |> `trouble.nvim` bindings:
-bindkey("n", "<leader>er", "<Cmd>TroubleToggle document_diagnostics<cr>")
-bindkey("n", "<leader>el", "<Cmd>TroubleToggle loclist<cr>")
-bindkey("n", "<leader>eq", "<Cmd>TroubleToggle quickfix<cr>")
-bindkey("n", "<leader>rl", "<Cmd>TroubleToggle lsp_references<cr>")
-bindkey("n", "<leader>ds", "<Cmd>TroubleToggle lsp_definitions<cr>")
+bindkey("n", "<leader>er", "<Cmd>TroubleToggle document_diagnostics<CR>")
+bindkey("n", "<leader>el", "<Cmd>TroubleToggle loclist<CR>")
+bindkey("n", "<leader>eq", "<Cmd>TroubleToggle quickfix<CR>")
+bindkey("n", "<leader>rl", "<Cmd>TroubleToggle lsp_references<CR>")
+bindkey("n", "<leader>ds", "<Cmd>TroubleToggle lsp_definitions<CR>")
 
 -- |> Some weird fixing... Related to default <C-n> and <C-p>.
 -- Note: experimental testing thing.
@@ -551,6 +537,7 @@ bindkey("i", "<C-p>", "")
 -- === START - Aum Autopairs Functions - START === --
 
 -- Trying to create my own autopairs system.
+-- - It kinda works.
 
 local function AumAutoPairs(pair_start, pair_end)
     -- True if `pair_start` is a parenthesis type.
@@ -606,7 +593,7 @@ local function AumAutoPairs(pair_start, pair_end)
         -- Insert parentheses type pair-endings.
         vim.api.nvim_buf_set_text(0, fixed_row, shifted_column, fixed_row, shifted_column, { pair_end })
     -- Ex: `_|)` but not `_|"`
-    elseif not pair_is_paren_type and whitespace_before_cursor and not quote_after_cursor then
+    elseif not pair_is_paren_type and whitespace_before_cursor and not quote_after_cursor and nothing_after_cursor then
         -- Insert quote type pair-endings.
         vim.api.nvim_buf_set_text(0, fixed_row, shifted_column, fixed_row, shifted_column, { pair_end })
     end
@@ -696,10 +683,9 @@ require("legendary").setup({
         -- |> START - Command mode      ( STATE: Good )         ===
         --=========================================================
         -- Key:         l               ( Normal, Visual, Operator )
-        { "l",          ":",            description = "[Aum/CommandMode] Enter command mode.",              mode = { "n", "o" },                opts = { noremap = true, silent = false, nowait = true }},
-        { "l",          ":Normal ",     description = "[Aum/CommandMode/Visual] Run normal mode command for each visually selected line.",      mode = { "x" },     opts = opts },
+        { "l",          ":",            description = "[Aum/CommandMode] Enter command mode.",              mode = { "n", "o", "x" },           opts = { noremap = true, silent = false, nowait = true }},
         -- Key:         :               ( Visual )
-        { ":",          ":",            description = "[Aum/CommandMode/Visual] Enter command mode in Visual Mode.",                            mode = { "x" },     opts = opts },
+        { ":",          ":Normal",      description = "[Aum/CommandMode/Visual] Run normal mode command for each visually selected line.",      mode = { "x" },     opts = opts },
 
         --=====================================================================
         -- |> START - Movement/Navigation Up / Down     ( STATE: Good )     ===
@@ -709,11 +695,11 @@ require("legendary").setup({
         -- Key:         h               ( Normal, Visual, Operator )
         { "h",          "gj",           description = "[Aum/Motion] Move cursor one line downwards.",       mode = { "n", "x", "o" },   opts = opts_silent },
         -- Key:         Shift-t         ( Normal, Visual, Operator )
-        { "<S-t>",      "3<C-u>zz",     description = "[Aum/Motion] Move cursor 'scroll' lines upwards and center the screen.",     mode = { "n", "x", "o" },   opts = opts_silent },
+        { "<S-t>",      "3gkzz",        description = "[Aum/Motion] Move cursor 'scroll' lines upwards and center the screen.",     mode = { "n", "x", "o" },   opts = opts_silent },
         -- { "<S-t>",   "5gk",          description = "[Motion] Move cursor 5 lines upwards.",                   mode = { "n", "x", "o" },   opts = opts_silent },
         -- Key:         Shift-h         ( Normal, Visual, Operator )
-        { "<S-h>",      "3<C-d>zz",     description = "[Aum/Motion] Move cursor 'scroll' lines downwards and center the screen.",   mode = { "n", "x", "o" },   opts = opts_silent },
-        -- { "<S-h>",   "5gj",       description = "[Motion] Move cursor 5 lines downwards.",                 mode = { "n", "x", "o" },   opts = opts_silent },
+        { "<S-h>",      "3gjzz",        description = "[Aum/Motion] Move cursor 'scroll' lines downwards and center the screen.",   mode = { "n", "x", "o" },   opts = opts_silent },
+        -- { "<S-h>",   "5gj",          description = "[Motion] Move cursor 5 lines downwards.",                 mode = { "n", "x", "o" },   opts = opts_silent },
         -- Key:         Ctrl-t          ( Normal, Visual, Operator )
         { "<C-t>",      "{zz",          description = "[Aum/Motion] Move cursor upwards to the next paragraph.",        mode = { "n", "x", "o" },   opts = opts },
         -- Key:         Ctrl-h
@@ -722,10 +708,10 @@ require("legendary").setup({
         { "{",          "}",            description = "[Aum/Motion] Move cursor downwards to the next paragraph.",      mode = { "n", "x", "o" },   opts = opts },
         -- Key:         }
         { "}",          "{",            description = "[Aum/Motion] Move cursor upwards to the next paragraph.",        mode = { "n", "x", "o" },   opts = opts },
-        -- Key:         gs              ( Normal, Visual, Operator )
-        -- { "gs",         "0gg",          description = "[Aum/Motion] Move cursor to the first line in the current file/buffer.",     mode = { "n", "x", "o" },   opts = opts },
+        -- Key:         ga              ( Normal, Visual, Operator )
+        { "ga",         "0gg",          description = "[Aum/Motion] Move cursor to the first line in the current file/buffer.",     mode = { "n", "x", "o" },   opts = opts },
         -- Key:         ge              ( Normal, Visual, Operator )
-        -- { "ge",         "0<S-g>zz",     description = "[Aum/Motion] Move cursor to the last line in the current file/buffer.",      mode = { "n", "x", "o" },   opts = opts },
+        { "ge",         "0<S-g>zz",     description = "[Aum/Motion] Move cursor to the last line in the current file/buffer.",      mode = { "n", "x", "o" },   opts = opts },
 
         --=========================================================
         -- |> START - Left / Right      ( STATE: Good )         ===
@@ -746,7 +732,7 @@ require("legendary").setup({
         -- Key:         go
         { "go",         "0",            description = "[Aum/Motion] Move cursor to start of line.",     mode = { "n", "x", "o" },   opts = opts_silent },
         -- Key:         gn
-        { "gn",         "$",            description = "[Aum/Motion] Move cursor to end of line.",       mode = { "n", "x", "o" },   opts = opts_silent },
+        { "gn",         "g_",           description = "[Aum/Motion] Move cursor to end of line.",       mode = { "n", "x", "o" },   opts = opts_silent },
         -- Key:         Ctrl-a
         { "<C-a>",      "<Esc>I",       description = "[Aum/Motion] Move cursor to start of line. (Insert Mode)",   mode = { "i" },     opts = opts_silent },
         -- Key:         Ctrl-s
@@ -809,6 +795,17 @@ require("legendary").setup({
         { "<S-a>",      ":Normal A",    description = "[Aum/Insert] Insert at start of line using `normal` command.",           mode = { "x" },         opts = opts },
         -- Key:         Ctrl-k          ( Insert )
         { "<C-k>",      "<C-o>",        description = "[Aum/Insert] Execute a `Normal Mode` command from `Insert Mode`.",       mode = { "i" },         opts = opts },
+        -- Key:         is
+        { "is",         "i<Space><Esc>",    description = "Insert a single `whitespace`.",      mode = { "n" },     opts = opts },
+        -- Key:         i.
+        { "i.",         "maA.<Esc>`a",      description = "Insert a single `period` at the end of current line, without moving the cursor.",    mode = { "n" },     opts = opts },
+
+        --============================================================
+        -- |> START - Deleting / Deletion       ( STATE: WIP )     ===
+        --============================================================
+
+        -- Key:         szt
+        { "szt",        '"_dt',         description = "Delete to character.",       mode = { "n" },     opts = opts },
 
         --=================================================================
         -- |> START - Text Editing (Insert Mode)    ( STATE: TODO )     ===
@@ -839,10 +836,11 @@ require("legendary").setup({
         { "<CR>",       description = "Smart `<CR>` for inserting a new line with correct indentation. Will also accept autocompletion results.",   mode = { "i" },     opts = opts },
 
         -- Key:         Ctrl-<CR> ( Enter )  ( Normal )
-        { "<C-CR>",     "mao<Esc>k`a",                      description = "Create new empty line below cursor.",                    mode = { "n" },     opts = opts },
+        { "<C-CR>",     "mao<Esc>k`a",                      description = "Create new empty line below cursor.",                mode = { "n" },     opts = opts },
 
         -- Key:         Shift-<CR> ( Enter )  ( Normal )
-        { "<S-CR>",     "maO<Esc>j`a",                      description = "Create new empty line above cursor.",                    mode = { "n" },     opts = opts },
+        { "<S-CR>",     "<Cmd>call append(line('.')-1, '')<CR>",    description = "Create new empty line above cursor.",        mode = { "n" },     opts = opts },
+        -- { "<S-CR>",     "maO<Esc>j`a",                      description = "Create new empty line above cursor.",                    mode = { "n" },     opts = opts },
 
         --=====================================================================================
         -- |> START - Parens / Brackets / Braces   ( STATE: WIP )      ( Aum Autopairs )    ===
@@ -880,10 +878,19 @@ require("legendary").setup({
         --=================================================================================
         -- |> START - Moving / Copying characters       ( STATE: Seems Good / WIP )     ===
         --=================================================================================
-        -- Key:         Alt-Left
-        { "<A-Left>",   "vd<Left><S-p>",     description = "Move character under cursor one column to the left.",    mode = { "n" },     opts = opts },
-        -- Key:         Alt-Right
-        { "<A-Right>",  "vd<Right><S-p>",    description = "Move character under cursor one column to the right.",   mode = { "n" },     opts = opts },
+        -- Key:         Alt-Left            ( Normal )
+        { "<A-Left>",   "vd<Left><S-p>",    description = "Move character under cursor one column to the left. (Swap/Shift character)",     mode = { "n" },     opts = opts },
+        -- Key:         Alt-Right           ( Normal )
+        { "<A-Right>",  "vd<Right><S-p>",   description = "Move character under cursor one column to the right. (Swap/Shift character)",    mode = { "n" },     opts = opts },
+
+        --=================================================================================
+        -- |> START - Macros                            ( STATE: Seems Good )           ===
+        --=================================================================================
+        -- Key:         ir                  ( Normal )
+        { "ir",         "q",                description = "Macro Operator. (Requires follow-up register.)",     mode = { "n"},      opts = opts },
+        -- Key:         Shift-q             ( Normal, Visual )
+        { "<S-q>",      "@q",               description = "Repeat 'q' macro.",                                  mode = { "n" },     opts = opts },
+        { "<S-q>",      ":normal @q<CR>",   description = "Repeat 'q' macro on each selected line.",            mode = { "x" },     opts = opts },
 
         --=================================================================
         -- |> START - Buffer Navigation     ( STATE: Okay )             ===
@@ -898,10 +905,10 @@ require("legendary").setup({
         --=================================================================
         -- |> START - Splits            ( STATE: TODO )                 ===
         --=================================================================
-        -- Key:         Ctrl-l          ( Normal )
-        { "<C-l>",      "<C-w><C-w>",   description = "[Aum/Splits] Cycle through splits/windows.",      mode = { "n" },     opts = opts },
-        -- Key:         <Leader> Shift-o                ( Normal )
-        { "<Leader><S-o>",  "<Cmd>close<CR>",   description = "[Aum/Splits] Close split window without deleting buffer.",    mode = { "n" },     opts = opts },
+        -- Key:         Ctrl-l                  ( Normal )
+        { "<C-l>",      "<C-w><C-w>",           description = "[Aum/Splits] Cycle through splits/windows.",                 mode = { "n" },     opts = opts },
+        -- Key:         <Leader> Shift-o        ( Normal )
+        { "<Leader><S-o>",  "<Cmd>close<CR>",   description = "[Aum/Splits] Close split window without deleting buffer.",   mode = { "n" },     opts = opts },
 
         --=================================================================
         -- |> START - Jumplist          ( STATE: Very Good )            ===
@@ -1111,16 +1118,20 @@ require("legendary").setup({
         { "zh",         "zo",               description = "Open fold.",                 mode = {"n", "o"},          opts = opts },
         -- Key:         zr (Open fold)      ( Normal, Operator )
         { "zr",         "zr",               description = "Reduce (Open) fold.",        mode = {"n", "o"},          opts = opts },
-        -- Key:         zR (Open all)       ( Normal, Operator )
-        { "z<S-r>",     "z<S-r>",           description = "Reduce (Open) all folds.",   mode = {"n", "o"},          opts = opts },
         -- Key:         zc (Close fold)     ( Normal, Operator )
         { "zc",         "zc",               description = "Close fold.",                mode = {"n", "o"},          opts = opts },
         -- Key:         zm (Close fold)     ( Normal, Operator )
         { "zm",         "zm",               description = "Close fold (More).",         mode = {"n", "o"},          opts = opts },
-        -- Key:         zM (Close all)      ( Normal, Operator )
-        { "z<S-m>",     "z<S-m>",           description = "Close all folds.",           mode = {"n", "o"},          opts = opts },
         -- Key:         zt (Toggle fold)    ( Normal, Operator )
         { "zt",         "za",               description = "Toggle folding.",            mode = {"n", "o"},          opts = opts },
+        -- Key:         x (Toggle fold)     ( Normal, Operator )
+        { "x",          "za",               description = "Toggle folding.",            mode = { "n", "o" },        opts = opts },
+
+        -- NOTE: Using the `nvim-ufo` versions of these.
+        -- Key:         z + Shift-r (Open all)       ( Normal, Operator )
+        -- { "z<S-r>",     "z<S-r>",           description = "Reduce (Open) all folds.",   mode = {"n", "o"},          opts = opts },
+        -- Key:         z + Shitf-m (Close all)      ( Normal, Operator )
+        -- { "z<S-m>",     "z<S-m>",           description = "Close all folds.",           mode = {"n", "o"},          opts = opts },
 
         --=========================================================================
         -- |> START - Telescope         ( STATE: Okay )                         ===
@@ -1140,21 +1151,43 @@ require("legendary").setup({
         -- Key:         Ctrl-Shift-s    ( Normal )
         { "<C-S-s>",                    "<Cmd>Telescope buffers<CR>",                       description = "Telescope: Fuzzy search (find) open buffers.",           mode = "n",     opts = opts },
         -- Key:         Ctrl-Shift-f    ( Normal )
-        { "<C-S-f>",                    "<Cmd>Telescope live_grep<CR>",                     description = "Telescope: Live grep.",                                  mode = "n",     opts = opts },
+        { "<C-S-f>",                    "<Cmd>Telescope live_grep<CR>",                     description = "Telescope: Live grep current folder.",                   mode = "n",     opts = opts },
+        -- Key:         Ctrl-Shift-d    ( Normal )
+        { "<C-S-d>",                    "<Cmd>Telescope diagnostics<CR>",                   description = "Telescope: List and search diagnostics.",                mode = "n",     opts = opts },
+        -- Key:         g + Shift-r     ( Normal )
+        { "g<S-r>",                     "<Cmd>Telescope grep_string<CR>",                   description = "Telescope: Grep for current word under cursor, and fuzzy search the results.",   mode = "n",     opts = opts },
         -- Key:         Leader-Tele*    ( Normal )
         { "<Leader><S-t>ele<S-h>i",     "<Cmd>Telescope highlights<CR>",                    description = "Telescope: List and search highlight groups.",           mode = "n",     opts = opts },
-        { "<Leader><S-t>ele<S-o>",      "<Cmd>TelescopeAumOldFiles<CR>",                    description = "Telescope: List and search previously visited files. (recent)",      mode = "n",     opts = opts },
-        { "<Leader><S-t>ele<S-g>",      "<Cmd>Telescope live_grep<CR>",                     description = "Telescope: Live (rip)grep current folder.",              mode = "n",     opts = opts },
+        { "<Leader>old",                "<Cmd>TelescopeAumOldFiles<CR>",                    description = "Telescope: List and search previously visited files. (recent)",          mode = "n",     opts = opts },
         { "<Leader><S-t>ele<S-h>e",     "<Cmd>Telescope help_tags<CR>",                     description = "Telescope: List and search help tags.",                  mode = "n",     opts = opts },
-        { "<Leader><S-t>eletreesitter", "<Cmd>Telescope treesitter<CR>",                    description = "Telescope: List and search treesitter symbols.",         mode = "n",     opts = opts },
-        -- Key:         Shift-k         ( Normal )
-        -- { "<S-k>",                      "<Cmd>Telescope lsp_document_symbols<CR>",          description = "Telescope: List and search lsp document symbols.",       mode = "n",     opts = opts },
+        { "<Leader><S-t>elesymbols",    "<Cmd>Telescope lsp_document_symbols<CR>",          description = "Telescope: List and search lsp symbols.",                mode = "n",     opts = opts },
+        -- Key:         Leader-sym      ( Normal )                                          ( Smol note: `Treesitter` symbols seems better than `LSP` symbols. )
+        { "<Leader>sym",                "<Cmd>Telescope treesitter<CR>",                    description = "Telescope: List and search treesitter symbols.",         mode = "n",     opts = opts },
+        -- Key:         Leader-grep     ( Normal )                                          ( Smol note: `Treesitter` symbols seems better than `LSP` symbols. )
+        { "<Leader>grep",               ':Telescope grep_string search=',                   description = "Telescope: Grep for specified string/pattern.",          mode = "n",     opts = opts },
+        -- Key:         Leader-fz       ( Normal )                                          ( Smol note: `Treesitter` symbols seems better than `LSP` symbols. )
+        { "<Leader>fz",                 function()
+            require("telescope.builtin").grep_string {
+                shorten_path = true,
+                word_match = "-w",
+                only_sort_text = true,
+                search = ""
+            }
+        end,    description = "Telescope: Fuzzy search over everything under current directory.",   mode = "n",     opts = opts },
 
         --=========================================================================
-        -- |> START - File Explorer     ( STATE: TODO )                         ===
+        -- |> START - File Explorer: `mini.files`       ( STATE: WIP )          ===
         --=========================================================================
 
-        -- Empty for now. Looking at `oil.nvim`, Telescope file explorer, dirvish, and friends. (Also Telescope Zoxide)
+        -- Key:         Ctrl-f
+        { "<C-f>",      "<Cmd>lua MiniFiles.open()<CR>",    description = "[mini.files]: Open file browser.",       mode = "n",     opts = opts_silent },
+
+        --=========================================================================
+        -- |> START - Alternate File                    ( STATE: WIP )          ===
+        --=========================================================================
+
+        -- Key:         Shift-e
+        { "<S-e>",      "<C-^>",    description = "[Vim/Aum]: Move to the Alternate File. Switch to previous file.",    mode = "n",     opts = opts_silent },
 
         --=========================================================================
         -- |> START - Expand-Region Selections (Wildfire)     ( STATE: Okay )   ===
@@ -1167,16 +1200,16 @@ require("legendary").setup({
         --=========================================================================
         -- |> START - Misc Commands     ( STATE: TODO )                         ===
         --=========================================================================
-        -- Key:         Leader-l-s-p
-        { "<Leader>lsp",                "<Cmd>AumLspStart<CR>",                    description = "Start Language Server.",                  mode = { "n" },                 opts = opts },
+        -- Key:         <Leader>lsp
+        { "<Leader>lsp",                "<Cmd>LspStartAum<CR>",     description = "[LSP] Start Language Servers based on current filetype.",                mode = { "n" },     opts = opts },
 
         -- Font Size                    ( STATE: Okay )
-        -- Key:         Leader-Leader-f-s
-        { "<Leader><Leader>fs",         ":set guifont=JetBrainsMono\\ Nerd\\ Font:h:b<Left><Left>",      description = "Set Font Size to desired value.",   mode = { 'n' },   opts = { noremap = true, silent = false } },
+        -- Key:         <Leader><Leader>font
+        { "<Leader><Leader>font",       ":set guifont=JetBrainsMono\\ Nerd\\ Font:h:b<Left><Left>",      description = "Set Font Size to desired value.",   mode = { 'n' },     opts = { noremap = true, silent = false } },
 
         -- Zen-Mode                     ( STATE: Fine ) ( NOTE: `true-zen.nvim` is worse than `zen-mode.nvim`. )
         -- Key:         <Leader>z
-        { "<Leader>z",                  "<Cmd>ZenMode<CR>",     description = "Toggle Zen-Mode.",       mode = { "n" },       opts = opts },
+        { "<Leader>z",                  "<Cmd>ZenMode<CR>",             description = "Toggle Zen-Mode.",       mode = { "n" },       opts = opts },
 
         -- Treesitter                   ( STATE: Fine )
         --  - TODO: Could create a function which actually disables the treesitter highlighting for the current filetype / buffer.
@@ -1200,14 +1233,35 @@ require("legendary").setup({
         { "<Leader>ipyexecuteall",      "<Cmd>call jukit#send#all()<CR>",                           description = "Execute all IPython cells and show output in IPython window.",   mode = {"n"},   opts = opts },
 
         -- Misc
-        { "g0",         "g0",           description = "Help file overview.",    mode = "n",     opts = opts },
-        { "g<C-g>",     "g<C-g>",       description = "Echo word count and other info.",    mode = { "n", "x" },   opts = opts },
+        -- Key:         g0              ( Normal )
+        { "g0",         "g0",           description = "Help file overview.",                mode = "n",             opts = opts },
+        -- Key:         g<C-g>          ( Normal, Visual )
+        { "g<C-g>",     "g<C-g>",       description = "Echo word count and other info.",    mode = { "n", "x" },    opts = opts },
+        -- Key:         g<S-a>          ( Normal, Visual, Operator )
+        { "g<S-a>",     "ga",           description = "[Vim] Display ASCII values of character under cursor.",                      mode = { "n", "x", "o" },   opts = opts },
 
         -- `leap.nvim`
         -- Key:         d
         -- NOTE:        Configured in the `lazy.nvim` plugin spec: `plugins/navigation.lua`.
         -- { "d",          "<Plug>(leap-forward-to)",      description = "Leap.nvim: Jump forward.",   mode = { "n", "x", "o" },   opts = opts },
 
+        -- Key:         Ctrl-g
+        { "<C-g>",     ":%!grep ",      description = "Grep in current buffer/file, replacing all the buffer contents with the results.",       mode = { "n", "x" },    opts = opts },
+
+        -- Spell Check                  (Spelling)
+        -- Key:         z=
+        { "z=",         "z=",           description = "Fix spelling mistake.",              mode = { "n", "o" },    opts = opts },
+        -- Key:         zg
+        { "zg",         "zg",           description = "Add word under cursor to spell file, as a `correct` word.",      mode = { "n", "o" },    opts = opts },
+        -- Key:         zw
+        { "zw",         "zw",           description = "Add word under cursor to spell file, as a `wrong` word.",        mode = { "n", "o" },    opts = opts },
+        -- Key:         [s
+        { "[s",         "[s",           description = "Move to next spelling mistake",      mode = { "n", "o" },    opts = opts },
+        -- Key:         ]s
+        { "]s",         "]s",           description = "Move to previous spelling mistake",  mode = { "n", "o" },    opts = opts },
+
+        -- Key:         <Leader>man
+        { "<Leader>man",    ":tab Man ",    description = "Open man-page in a tab.",        mode = { "n" },     opts = opts },
 
         --=============================================================================================
         -- |> START - Anonymous bindings documenting basic Vim Keybindings      ( STATE: TODO )     ===
@@ -1229,10 +1283,10 @@ require("legendary").setup({
         -- Key:         Ctrl-u          ( Normal, Visual, Operator )
         { "<C-u>",      description = "[Vim/Inactive] Default binding to scroll the screen `up` by `scroll` number of lines.",      mode = { "n", "x", "o" },   opts = opts },
 
-        -- Key:         gg              ( Normal, Visual, Operator )
-        { "gg",         "gg0",           description = "[Vim/Motion] Move cursor to the first line in the current file/buffer.",    mode = { "n", "x", "o" },   opts = opts },
-        -- Key:         Shift-g         ( Normal, Visual, Operator )
-        { "<S-g>",      "<S-g>0zz",      description = "[Vim/Motion] Move cursor to the last line in the current file/buffer.",     mode = { "n", "x", "o" },   opts = opts },
+        -- -- Key:         gg              ( Normal, Visual, Operator )
+        -- { "gg",         "gg0",           description = "[Vim/Motion] Move cursor to the first line in the current file/buffer.",    mode = { "n", "x", "o" },   opts = opts },
+        -- -- Key:         Shift-g         ( Normal, Visual, Operator )
+        -- { "<S-g>",      "<S-g>0zz",      description = "[Vim/Motion] Move cursor to the last line in the current file/buffer.",     mode = { "n", "x", "o" },   opts = opts },
 
         -- Key:         g<C-a>          ( Normal )
         { "+",          "<C-a>",        description = "[Vim/Increment] Increment operator.",                    mode = { "n", "o" },    opts },
@@ -1242,6 +1296,25 @@ require("legendary").setup({
         { "g<C-a>",     "g<C-a>",       description = "[Vim/Increment] Increment visually selected numbers.",   mode = { "x" },     opts },
         -- Key:         g<C-x>          ( Visual )
         { "g<C-x>",     "g<C-x>",       description = "[Vim/Decrement] Decrement visually selected numbers.",   mode = { "x" },     opts },
+
+        --=========================================================================================
+        -- |> START - Anonymous bindings documenting plugin Keybindings     ( STATE: TODO )     ===
+        --=========================================================================================
+
+        -- Key:     gsa             ( Normal, Visual )
+        { "gsa",    description = "[Aum/Mini/Surround] Add surrounding characters.",            mode = { "n", "x" },   opts = opts },
+        -- Key:     gsd             ( Normal, Visual )
+        { "gsd",    description = "[Aum/Mini/Surround] Delete surrounding characters.",         mode = { "n", "x" },   opts = opts },
+        -- Key:     gsn             ( Normal, Visual )
+        { "gsn",    description = "[Aum/Mini/Surround] Find surrounding characters to the right. (Forwards)",   mode = { "n", "x" },   opts = opts },
+        -- Key:     gso             ( Normal, Visual )
+        { "gso",    description = "[Aum/Mini/Surround] Find surrounding characters to the left. (Backwards)",   mode = { "n", "x" },   opts = opts },
+        -- Key:     gsh             ( Normal, Visual )
+        { "gsh",    description = "[Aum/Mini/Surround] Highlight surrounding characters.",      mode = { "n", "x" },   opts = opts },
+        -- Key:     gsr             ( Normal, Visual )
+        { "gsr",    description = "[Aum/Mini/Surround] Replace surrounding characters.",        mode = { "n", "x" },   opts = opts },
+        -- Key:     gsl             ( Normal, Visual )
+        { "gsl",    description = "[Aum/Mini/Surround] Update number of lines within which to search for surrounding characters.",      mode = { "n", "x" },   opts = opts },
 
         --=================================
         -- |> END - Legendary Bindings  ===
@@ -1272,6 +1345,20 @@ require("legendary").setup({
                 vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/rust.snippets" } }, {})
             end,
             description = "Edit/Open `Rust` Snippets(file)."
+        },
+        {
+            "EditLuaSnippetsRust",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/rust.lua" } }, {})
+            end,
+            description = "Edit/Open `Rust` LuaSnippets(file)."
+        },
+        {
+            "EditLuaSnippetsToml",
+            function()
+                vim.api.nvim_cmd({ cmd = "edit", args = { "/home/aum/.config/nvim/snippets/toml.lua" } }, {})
+            end,
+            description = "Edit/Open `Toml` LuaSnippets(file)."
         },
         {
             "EditSnippetsLua",
@@ -1399,58 +1486,50 @@ require("legendary").setup({
             end,
             description = "Edit/Open `Typst` LuaSnippets(file)."
         },
-        -- LSP
-        -- {
-        --     "AumLspSetupRust",
-        --     function()
-        --         vim.api.nvim_cmd({ cmd = "LspSetupRust" },  {})
-        --     end,
-        --     description = "Setup Rust Language Server. (Rust-Analyzer)"
-        -- },
-        -- {
-        --     "AumLspSetupTypescript",
-        --     function()
-        --         vim.api.nvim_cmd({ cmd = "LspSetupTypescript" },  {})
-        --     end,
-        --     description = "Setup Typescript Language Server. (TS-Server)"
-        -- },
-        -- {
-        --     "AumLspSetupSvelte",
-        --     function()
-        --         vim.api.nvim_cmd({ cmd = "LspSetupSvelte" },  {})
-        --     end,
-        --     description = "Setup Svelte Language Server."
-        -- },
         {
-            "AumLspStart",
+            "LspStartAum",
             function()
+                -- Setup only the relevant LangServer.
                 if vim.bo.filetype == "rust" then
                     vim.api.nvim_cmd({ cmd = "LspSetupRust" },  {})
+                elseif vim.bo.filetype == "slint" then
+                    vim.api.nvim_cmd({ cmd = "LspSetupSlint" },  {})
+                elseif vim.bo.filetype == "glsl" then
+                    vim.api.nvim_cmd({ cmd = "LspSetupGlsl" },  {})
                 elseif vim.bo.filetype == "typescript" or vim.bo.filetype == "javascript" then
                     vim.api.nvim_cmd({ cmd = "LspSetupTypescript" },  {})
                 elseif vim.bo.filetype == "svelte" then
                     vim.api.nvim_cmd({ cmd = "LspSetupSvelte" },  {})
-                    -- vim.api.nvim_cmd({ cmd = "LspSetupUnoCSS" },  {})    -- Fuck this
-                    -- TODO: Add TailwindCSS LS here.
+                    vim.api.nvim_cmd({ cmd = "LspSetupTailwindCSS" },  {})
+                    -- vim.api.nvim_cmd({ cmd = "LspSetupUnoCSS" },  {})        -- Fuck this langserver.
+                elseif vim.bo.filetype == "cs" then
+                    vim.api.nvim_cmd({ cmd = "LspSetupCSharpLS" },  {})
+                    -- vim.api.nvim_cmd({ cmd = "LspSetupOmniSharp" },  {})     -- Inactive right now, because it crashes easily.
+                elseif vim.bo.filetype == "gd" or vim.bo.filetype == "gdscript" then
+                    vim.api.nvim_cmd({ cmd = "LspSetupGodot" },  {})
                 end
+
+                -- Start the language server(s).
                 vim.api.nvim_cmd({ cmd = "LspStart" },  {})
             end,
-            description = "Start Language Servers based on Current Filetype."
+            description = "[LSP] Start Language Servers based on current filetype."
         },
-        {
-            "AumLspStop",
-            function()
-                vim.api.nvim_cmd({ cmd = "LspStop" },   {})
-            end,
-            description = "Stop Language Server."
-        },
-        {
-            "AumLspInfo",
-            function()
-                vim.api.nvim_cmd({ cmd = "LspInfo" },   {})
-            end,
-            description = "Show Language Server Info."
-        },
+        -- TODO: Add anon-bind for `LspStop` and remove this command.
+        -- {
+        --     "AumLspStop",
+        --     function()
+        --         vim.api.nvim_cmd({ cmd = "LspStop" },   {})
+        --     end,
+        --     description = "Stop Language Server."
+        -- },
+        -- TODO: Add anon-bind for `LspInfo` and remove this command.
+        -- {
+        --     "AumLspInfo",
+        --     function()
+        --         vim.api.nvim_cmd({ cmd = "LspInfo" },   {})
+        --     end,
+        --     description = "Show Language Server Info."
+        -- },
         {
             "EnableExtraOpts",
             function()
@@ -1492,11 +1571,14 @@ require("legendary").setup({
     funcs = {},
     autocmds = {},
 
-    which_key = {
-        auto_register = false,
-        mappings = {},
-        opts = {},
-        do_binding = true,  -- `true` => handled by legendary. `false` => handled by which_key. (I think.)
+    extensions = {
+        -- which_key = {
+        --     auto_register = false,
+        --     mappings = {},
+        --     opts = {},
+        --     do_binding = true,      -- `true` => handled by legendary. `false` => handled by which_key. (I think.)
+        --     use_groups = true,
+        -- },
     },
 
     -- Settings for the `:LegendaryScratch` command.

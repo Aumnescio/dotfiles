@@ -1,0 +1,26 @@
+# Use long format, including metadata and attributes
+# --long
+
+# Show root node at top, not bottom.
+--layout inverted
+
+# List directories first.
+--dir-order first
+
+# Remove empty directories.
+--prune
+
+# Enable color.
+--color auto
+
+# Show icons.
+--icons
+
+# Sort based on size.
+--sort size
+
+# Show physical disk usage.
+--disk-usage physical
+
+# Show sizes in human readable format.
+--human

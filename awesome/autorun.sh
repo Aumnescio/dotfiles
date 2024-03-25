@@ -11,7 +11,7 @@ function run() {
 
 #: Keyboard Setup
 setxkbmap us
-xset r rate 196 80
+xset r rate 186 112
 
 #: Audio Setup
 /usr/sbin/alsactl --file /home/aum/.config/alsa-store/asound.state restore
@@ -19,8 +19,8 @@ xset r rate 196 80
 #: Autostarts
 run sxhkd &
 run mpd &
-run xbanish & disown
-run picom --experimental-backends --daemon
+# run xbanish & disown              # `xbanish`: Hides cursor on keypress.
+# run picom --experimental-backends --daemon
 
 #: Start `Kitty Terminal` as Single Instance to launch new terminals faster.
 #: NOTE: Problem: The font size for each view is no longer independent.
