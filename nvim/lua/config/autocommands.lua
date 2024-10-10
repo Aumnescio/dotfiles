@@ -46,6 +46,13 @@ vim.api.nvim_create_autocmd("BufEnter", {
     group = writer_aumgroup
 })
 
+-- Testing formatprg for `typ` files.
+vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = { "*.md", "*.tex", "*.org", "*.norg", "*.typ" },
+    command = "lua vim.opt.formatprg = \"fmt --width 84\"",
+    group = writer_aumgroup
+})
+
 -- |> Some indent fixing thing, maybe.
 vim.api.nvim_create_autocmd("BufEnter", {
     pattern = { "*.md", "*.tex" },
@@ -243,7 +250,89 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
         vim.cmd("setlocal comments=://")
         vim.cmd("setlocal commentstring=//\\ %s")
     end,
-    group = autoindent_aumgroup
+    group = slint_ftdetect_aumgroup
+})
+
+-- `rusty-tags` things
+local rusty_tags_aumgroup = vim.api.nvim_create_augroup("MyRustyTags", { clear = true })
+vim.api.nvim_create_autocmd({ "BufRead" }, {
+    pattern = { '*.rs' },
+    callback = function()
+        vim.api.nvim_cmd({ cmd = "setlocal", args = { "tags=./rusty-tags.vi;/" }}, {})
+
+        -- NOTE: The Rust Source clutters too much and is not really useful.
+        -- vim.api.nvim_cmd({ cmd = "setlocal", args = { "tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi" }}, {})
+    end,
+    group = rusty_tags_aumgroup
+})
+
+-- Testing nuking Treesitter highlighting for lua files.
+--  - NOTE: This works. I would like for the builtin disable functions to work though, too.
+--  - NOTE: However, lua highlighting is quite sad without Treesitter. (Though performance is 5000x of Treesitter.)
+--  - NOTE: Added: `euclidianAce/BetterLua.vim` for use with this.
+local lua_treesitter_highlight_aumgroup = vim.api.nvim_create_augroup("AumLuaTreesitterHighlightDisable", { clear = true })
+vim.api.nvim_create_autocmd("BufRead", {
+    pattern = { '*.lua' },
+    callback = function()
+        vim.treesitter.stop()
+    end,
+    group = lua_treesitter_highlight_aumgroup
+})
+
+-- `get_rust_analyzer_client_id`
+local function get_rust_analyzer_client_id()
+    local lsp_clients = vim.lsp.get_clients()
+
+    if lsp_clients == nil then
+        return
+    end
+
+    for _, client in ipairs(lsp_clients) do
+        if client.name == "rust-analyzer" then
+            return true, client.id
+        end
+    end
+
+    return false, 0
+end
+
+-- |> LSP: `Rustaceanvim` and `Rust-Analyzer` attaching to buffers.
+-- TODO: Test if this works.
+local rustanceanvim_lsp_aumgroup = vim.api.nvim_create_augroup("RustaceanvimLspAumGroup", { clear = true })
+vim.api.nvim_create_autocmd("BufRead", {
+    pattern = { '*.rs' },
+    callback = function()
+        -- Get the current `bufnr`. (Not sure if this works, but looks like it does.)
+        local bufnr = vim.fn.bufnr()
+        -- local found_rust_analyzer = false
+        -- local rust_analyzer_id = 0
+
+        -- |> Get the `rust-analyzer` LS client ID.  (Early exit if can't find it.)
+        local found_rust_analyzer, rust_analyzer_id = get_rust_analyzer_client_id()
+
+        if not found_rust_analyzer then
+            return
+        end
+
+
+        -- |> Early exit if client is already attached to the buffer.
+        local is_attached_already = vim.lsp.buf_is_attached(bufnr, rust_analyzer_id)
+
+        if is_attached_already then
+            return
+        end
+
+
+        -- |> Otherwise, attach `rust-analyzer` client to the buffer.
+        local success = vim.lsp.buf_attach_client(bufnr, rust_analyzer_id)
+
+        if success then
+            print("Attached `rust-analyzer` to buffer.")
+        else
+            print("Failed to attach `rust-analyzer` to buffer.")
+        end
+    end,
+    group = rustanceanvim_lsp_aumgroup
 })
 
 -- End of File

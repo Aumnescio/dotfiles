@@ -34,221 +34,221 @@ return {
         fmt(
             [[
                 [lints.rust]
-                nonstandard_style                           = "deny"
-                absolute_paths_not_starting_with_crate      = "forbid"
-                macro_use_extern_crate                      = "forbid"
-                redundant_semicolons                        = "forbid"
-                keyword_idents                              = "forbid"
-                non_ascii_idents                            = "forbid"
-                let_underscore_drop                         = "forbid"
-                unreachable_patterns                        = "forbid"
-                rust_2018_idioms                            = "warn"
-                rust_2021_prelude_collisions                = "warn"
-                future_incompatible                         = "warn"
-                variant_size_differences                    = "warn"
-                semicolon_in_expressions_from_macros        = "warn"
-                explicit_outlives_requirements              = "warn"
-                single_use_lifetimes                        = "warn"
-                trivial_casts                               = "warn"
-                trivial_numeric_casts                       = "warn"
-                unused_lifetimes                            = "warn"
-                unused_qualifications                       = "warn"
-                unused_import_braces                        = "allow"
-                unused_crate_dependencies                   = "allow"
-                unused_variables                            = "allow"
-                unused_mut                                  = "allow"
-                unused_assignments                          = "allow"
-                unused_imports                              = "allow"
-                unused_macros                               = "allow"
-                unused_macro_rules                          = "allow"
-                unused_results                              = "allow"
-                unreachable_pub                             = "allow"
-                missing_docs                                = "allow"
-                missing_debug_implementations               = "allow"
-                missing_copy_implementations                = "allow"
-                box_pointers                                = "allow"
-                dead_code                                   = "allow"
-                elided_lifetimes_in_paths                   = "allow"
+                nonstandard_style                           = {{ level = "deny", priority = -1 }}
+                absolute_paths_not_starting_with_crate      = {{ level = "forbid", priority = 0 }}
+                macro_use_extern_crate                      = {{ level = "forbid", priority = 0 }}
+                redundant_semicolons                        = {{ level = "forbid", priority = 0 }}
+                keyword_idents                              = {{ level = "forbid", priority = -1 }}
+                non_ascii_idents                            = {{ level = "forbid", priority = 0 }}
+                let_underscore_drop                         = {{ level = "forbid", priority = 0 }}
+                unreachable_patterns                        = {{ level = "forbid", priority = 0 }}
+                rust_2018_idioms                            = {{ level = "warn", priority = -1 }}
+                rust_2021_prelude_collisions                = {{ level = "warn", priority = 0 }}
+                future_incompatible                         = {{ level = "warn", priority = -1 }}
+                variant_size_differences                    = {{ level = "warn", priority = 0 }}
+                semicolon_in_expressions_from_macros        = {{ level = "warn", priority = 0 }}
+                explicit_outlives_requirements              = {{ level = "warn", priority = 0 }}
+                single_use_lifetimes                        = {{ level = "warn", priority = 0 }}
+                trivial_casts                               = {{ level = "warn", priority = 0 }}
+                trivial_numeric_casts                       = {{ level = "warn", priority = 0 }}
+                unused_lifetimes                            = {{ level = "warn", priority = 0 }}
+                unused_qualifications                       = {{ level = "warn", priority = 0 }}
+                unused_import_braces                        = {{ level = "allow", priority = 0 }}
+                unused_crate_dependencies                   = {{ level = "allow", priority = 0 }}
+                unused_variables                            = {{ level = "allow", priority = 0 }}
+                unused_mut                                  = {{ level = "allow", priority = 0 }}
+                unused_assignments                          = {{ level = "allow", priority = 0 }}
+                unused_imports                              = {{ level = "allow", priority = 0 }}
+                unused_macros                               = {{ level = "allow", priority = 0 }}
+                unused_macro_rules                          = {{ level = "allow", priority = 0 }}
+                unused_results                              = {{ level = "allow", priority = 0 }}
+                unreachable_pub                             = {{ level = "allow", priority = 0 }}
+                missing_docs                                = {{ level = "allow", priority = 0 }}
+                missing_debug_implementations               = {{ level = "allow", priority = 0 }}
+                missing_copy_implementations                = {{ level = "allow", priority = 0 }}
+                dead_code                                   = {{ level = "allow", priority = 0 }}
+                elided_lifetimes_in_paths                   = {{ level = "allow", priority = 0 }}
 
                 [lints.clippy]
-                all                                         = "deny"
-                nursery                                     = "deny"
-                perf                                        = "forbid"
-                unwrap_used                                 = "forbid"
+                all                                         = {{ level = "deny", priority = -1 }}
+                nursery                                     = {{ level = "deny", priority = -1 }}
+                perf                                        = {{ level = "forbid", priority = -1 }}
+                suspicious                                  = {{ level = "forbid", priority = -1 }}
+                complexity                                  = {{ level = "forbid", priority = -1 }}
+                unwrap_used                                 = {{ level = "forbid", priority = 0 }}
                 # Too bothersome to have active by default, but could be used to find where `expect`'s have been used.
                 # expect_used                                 = "forbid"
-                manual_try_fold                             = "forbid"
-                tuple_array_conversions                     = "forbid"
-                redundant_at_rest_pattern                   = "forbid"
-                redundant_allocation                        = "forbid"
-                redundant_clone                             = "forbid"
-                redundant_closure                           = "forbid"
-                redundant_closure_call                      = "forbid"
-                redundant_pattern                           = "forbid"
-                redundant_slicing                           = "forbid"
-                redundant_field_names                       = "forbid"
-                redundant_pattern_matching                  = "forbid"
-                needless_if                                 = "forbid"
-                needless_bool                               = "forbid"
-                needless_borrow                             = "forbid"
-                needless_return                             = "forbid"
-                needless_collect                            = "forbid"
-                needless_pub_self                           = "forbid"
-                needless_raw_strings                        = "forbid"
-                needless_raw_string_hashes                  = "forbid"
-                unnecessary_cast                            = "forbid"
-                unnecessary_fold                            = "forbid"
-                unnecessary_operation                       = "forbid"
-                unnecessary_to_owned                        = "forbid"
-                unnecessary_mut_passed                      = "forbid"
-                unnecessary_literal_unwrap                  = "forbid"
-                module_inception                            = "forbid"
-                manual_range_patterns                       = "forbid"
-                large_stack_frames                          = "forbid"
-                single_range_in_vec_init                    = "forbid"
-                drain_collect                               = "forbid"
-                absurd_extreme_comparisons                  = "forbid"
-                suspicious                                  = "forbid"
-                complexity                                  = "forbid"
-                as_ptr_cast_mut                             = "forbid"
-                await_holding_lock                          = "forbid"
-                bool_to_int_with_if                         = "forbid"
-                char_lit_as_u8                              = "forbid"
-                checked_conversions                         = "forbid"
-                clear_with_drain                            = "forbid"
-                cloned_instead_of_copied                    = "forbid"
-                dbg_macro                                   = "forbid"
-                debug_assert_with_mut_call                  = "forbid"
-                disallowed_macros                           = "forbid"
-                disallowed_methods                          = "forbid"
-                disallowed_names                            = "forbid"
-                disallowed_script_idents                    = "forbid"
-                disallowed_types                            = "forbid"
-                doc_link_with_quotes                        = "forbid"
-                doc_markdown                                = "forbid"
-                empty_enum                                  = "forbid"
-                enum_glob_use                               = "forbid"
-                equatable_if_let                            = "forbid"
-                exit                                        = "forbid"
-                expl_impl_clone_on_copy                     = "forbid"
-                explicit_into_iter_loop                     = "forbid"
-                fallible_impl_from                          = "forbid"
-                filter_map_next                             = "forbid"
-                flat_map_option                             = "forbid"
-                fn_params_excessive_bools                   = "forbid"
-                fn_to_numeric_cast_any                      = "forbid"
-                from_iter_instead_of_collect                = "forbid"
-                get_unwrap                                  = "forbid"
-                if_let_mutex                                = "forbid"
-                if_not_else                                 = "forbid"
-                implicit_clone                              = "forbid"
-                imprecise_flops                             = "forbid"
-                index_refutable_slice                       = "forbid"
-                inefficient_to_string                       = "forbid"
-                invalid_upcast_comparisons                  = "forbid"
-                iter_not_returning_iterator                 = "forbid"
-                iter_on_empty_collections                   = "forbid"
-                iter_on_single_items                        = "forbid"
-                large_digit_groups                          = "forbid"
-                large_include_file                          = "forbid"
-                large_stack_arrays                          = "forbid"
-                large_types_passed_by_value                 = "forbid"
-                let_unit_value                              = "forbid"
-                linkedlist                                  = "forbid"
-                lossy_float_literal                         = "forbid"
-                macro_use_imports                           = "forbid"
-                manual_assert                               = "forbid"
-                manual_clamp                                = "forbid"
-                manual_instant_elapsed                      = "forbid"
-                manual_let_else                             = "forbid"
-                manual_ok_or                                = "forbid"
-                manual_string_new                           = "forbid"
-                map_err_ignore                              = "forbid"
-                map_flatten                                 = "forbid"
-                map_unwrap_or                               = "forbid"
-                match_on_vec_items                          = "forbid"
-                match_same_arms                             = "forbid"
-                match_wild_err_arm                          = "forbid"
-                match_wildcard_for_single_variants          = "forbid"
-                mismatched_target_os                        = "forbid"
-                mismatching_type_param_order                = "forbid"
-                missing_enforced_import_renames             = "forbid"
-                missing_safety_doc                          = "forbid"
-                mut_mut                                     = "forbid"
-                mutex_integer                               = "forbid"
-                needless_continue                           = "forbid"
-                needless_for_each                           = "forbid"
-                needless_pass_by_ref_mut                    = "forbid"
-                negative_feature_names                      = "forbid"
-                nonstandard_macro_braces                    = "forbid"
-                option_option                               = "forbid"
-                path_buf_push_overwrite                     = "forbid"
-                ptr_as_ptr                                  = "forbid"
-                ptr_cast_constness                          = "forbid"
-                rc_mutex                                    = "forbid"
-                ref_option_ref                              = "forbid"
-                rest_pat_in_fully_bound_structs             = "forbid"
-                same_functions_in_if_condition              = "forbid"
-                semicolon_if_nothing_returned               = "forbid"
-                significant_drop_tightening                 = "forbid"
-                single_match_else                           = "forbid"
-                str_to_string                               = "forbid"
-                string_add                                  = "forbid"
-                string_add_assign                           = "forbid"
-                string_lit_as_bytes                         = "forbid"
-                string_to_string                            = "forbid"
-                suspicious_command_arg_space                = "forbid"
-                suspicious_xor_used_as_pow                  = "forbid"
-                trailing_empty_array                        = "forbid"
-                trait_duplication_in_bounds                 = "forbid"
-                unchecked_duration_subtraction              = "forbid"
-                undocumented_unsafe_blocks                  = "forbid"
-                unnecessary_box_returns                     = "forbid"
-                unnecessary_safety_doc                      = "forbid"
-                unnecessary_struct_initialization           = "forbid"
-                unnecessary_wraps                           = "forbid"
-                unnested_or_patterns                        = "forbid"
-                unused_peekable                             = "forbid"
-                unused_rounding                             = "forbid"
-                useless_transmute                           = "forbid"
-                verbose_file_reads                          = "forbid"
-                wildcard_dependencies                       = "forbid"
-                wildcard_imports                            = "forbid"
-                zero_sized_map_values                       = "forbid"
-                as_underscore                               = "forbid"
-                clone_on_ref_ptr                            = "forbid"
+                manual_try_fold                             = {{ level = "forbid", priority = 0 }}
+                tuple_array_conversions                     = {{ level = "forbid", priority = 0 }}
+                redundant_at_rest_pattern                   = {{ level = "forbid", priority = 0 }}
+                redundant_allocation                        = {{ level = "forbid", priority = 0 }}
+                redundant_clone                             = {{ level = "forbid", priority = 0 }}
+                redundant_closure                           = {{ level = "forbid", priority = 0 }}
+                redundant_closure_call                      = {{ level = "forbid", priority = 0 }}
+                redundant_pattern                           = {{ level = "forbid", priority = 0 }}
+                redundant_slicing                           = {{ level = "forbid", priority = 0 }}
+                redundant_field_names                       = {{ level = "forbid", priority = 0 }}
+                redundant_pattern_matching                  = {{ level = "forbid", priority = 0 }}
+                needless_if                                 = {{ level = "forbid", priority = 0 }}
+                needless_bool                               = {{ level = "forbid", priority = 0 }}
+                needless_borrow                             = {{ level = "forbid", priority = 0 }}
+                needless_return                             = {{ level = "forbid", priority = 0 }}
+                needless_collect                            = {{ level = "forbid", priority = 0 }}
+                needless_pub_self                           = {{ level = "forbid", priority = 0 }}
+                needless_raw_strings                        = {{ level = "forbid", priority = 0 }}
+                needless_raw_string_hashes                  = {{ level = "forbid", priority = 0 }}
+                module_inception                            = {{ level = "forbid", priority = 0 }}
+                manual_range_patterns                       = {{ level = "forbid", priority = 0 }}
+                large_stack_frames                          = {{ level = "forbid", priority = 0 }}
+                single_range_in_vec_init                    = {{ level = "forbid", priority = 0 }}
+                drain_collect                               = {{ level = "forbid", priority = 0 }}
+                absurd_extreme_comparisons                  = {{ level = "forbid", priority = 0 }}
+                as_ptr_cast_mut                             = {{ level = "forbid", priority = 0 }}
+                await_holding_lock                          = {{ level = "forbid", priority = 0 }}
+                bool_to_int_with_if                         = {{ level = "forbid", priority = 0 }}
+                char_lit_as_u8                              = {{ level = "forbid", priority = 0 }}
+                checked_conversions                         = {{ level = "forbid", priority = 0 }}
+                clear_with_drain                            = {{ level = "forbid", priority = 0 }}
+                cloned_instead_of_copied                    = {{ level = "forbid", priority = 0 }}
+                dbg_macro                                   = {{ level = "forbid", priority = 0 }}
+                debug_assert_with_mut_call                  = {{ level = "forbid", priority = 0 }}
+                disallowed_macros                           = {{ level = "forbid", priority = 0 }}
+                disallowed_methods                          = {{ level = "forbid", priority = 0 }}
+                disallowed_names                            = {{ level = "forbid", priority = 0 }}
+                disallowed_script_idents                    = {{ level = "forbid", priority = 0 }}
+                disallowed_types                            = {{ level = "forbid", priority = 0 }}
+                doc_link_with_quotes                        = {{ level = "forbid", priority = 0 }}
+                doc_markdown                                = {{ level = "forbid", priority = 0 }}
+                empty_enum                                  = {{ level = "forbid", priority = 0 }}
+                enum_glob_use                               = {{ level = "forbid", priority = 0 }}
+                equatable_if_let                            = {{ level = "forbid", priority = 0 }}
+                exit                                        = {{ level = "forbid", priority = 0 }}
+                expl_impl_clone_on_copy                     = {{ level = "forbid", priority = 0 }}
+                explicit_into_iter_loop                     = {{ level = "forbid", priority = 0 }}
+                fallible_impl_from                          = {{ level = "forbid", priority = 0 }}
+                filter_map_next                             = {{ level = "forbid", priority = 0 }}
+                flat_map_option                             = {{ level = "forbid", priority = 0 }}
+                fn_params_excessive_bools                   = {{ level = "forbid", priority = 0 }}
+                fn_to_numeric_cast_any                      = {{ level = "forbid", priority = 0 }}
+                from_iter_instead_of_collect                = {{ level = "forbid", priority = 0 }}
+                get_unwrap                                  = {{ level = "forbid", priority = 0 }}
+                if_let_mutex                                = {{ level = "forbid", priority = 0 }}
+                if_not_else                                 = {{ level = "forbid", priority = 0 }}
+                implicit_clone                              = {{ level = "forbid", priority = 0 }}
+                imprecise_flops                             = {{ level = "forbid", priority = 0 }}
+                index_refutable_slice                       = {{ level = "forbid", priority = 0 }}
+                inefficient_to_string                       = {{ level = "forbid", priority = 0 }}
+                invalid_upcast_comparisons                  = {{ level = "forbid", priority = 0 }}
+                iter_not_returning_iterator                 = {{ level = "forbid", priority = 0 }}
+                iter_on_empty_collections                   = {{ level = "forbid", priority = 0 }}
+                iter_on_single_items                        = {{ level = "forbid", priority = 0 }}
+                large_digit_groups                          = {{ level = "forbid", priority = 0 }}
+                large_include_file                          = {{ level = "forbid", priority = 0 }}
+                large_stack_arrays                          = {{ level = "forbid", priority = 0 }}
+                large_types_passed_by_value                 = {{ level = "forbid", priority = 0 }}
+                let_unit_value                              = {{ level = "forbid", priority = 0 }}
+                linkedlist                                  = {{ level = "forbid", priority = 0 }}
+                lossy_float_literal                         = {{ level = "forbid", priority = 0 }}
+                macro_use_imports                           = {{ level = "forbid", priority = 0 }}
+                manual_assert                               = {{ level = "forbid", priority = 0 }}
+                manual_clamp                                = {{ level = "forbid", priority = 0 }}
+                manual_instant_elapsed                      = {{ level = "forbid", priority = 0 }}
+                manual_let_else                             = {{ level = "forbid", priority = 0 }}
+                manual_ok_or                                = {{ level = "forbid", priority = 0 }}
+                manual_string_new                           = {{ level = "forbid", priority = 0 }}
+                map_err_ignore                              = {{ level = "forbid", priority = 0 }}
+                map_flatten                                 = {{ level = "forbid", priority = 0 }}
+                map_unwrap_or                               = {{ level = "forbid", priority = 0 }}
+                match_on_vec_items                          = {{ level = "forbid", priority = 0 }}
+                match_same_arms                             = {{ level = "forbid", priority = 0 }}
+                match_wild_err_arm                          = {{ level = "forbid", priority = 0 }}
+                match_wildcard_for_single_variants          = {{ level = "forbid", priority = 0 }}
+                mismatched_target_os                        = {{ level = "forbid", priority = 0 }}
+                mismatching_type_param_order                = {{ level = "forbid", priority = 0 }}
+                missing_enforced_import_renames             = {{ level = "forbid", priority = 0 }}
+                missing_safety_doc                          = {{ level = "forbid", priority = 0 }}
+                mut_mut                                     = {{ level = "forbid", priority = 0 }}
+                mutex_integer                               = {{ level = "forbid", priority = 0 }}
+                needless_continue                           = {{ level = "forbid", priority = 0 }}
+                needless_for_each                           = {{ level = "forbid", priority = 0 }}
+                needless_pass_by_ref_mut                    = {{ level = "forbid", priority = 0 }}
+                negative_feature_names                      = {{ level = "forbid", priority = 0 }}
+                nonstandard_macro_braces                    = {{ level = "forbid", priority = 0 }}
+                option_option                               = {{ level = "forbid", priority = 0 }}
+                path_buf_push_overwrite                     = {{ level = "forbid", priority = 0 }}
+                ptr_as_ptr                                  = {{ level = "forbid", priority = 0 }}
+                ptr_cast_constness                          = {{ level = "forbid", priority = 0 }}
+                rc_mutex                                    = {{ level = "forbid", priority = 0 }}
+                ref_option_ref                              = {{ level = "forbid", priority = 0 }}
+                rest_pat_in_fully_bound_structs             = {{ level = "forbid", priority = 0 }}
+                same_functions_in_if_condition              = {{ level = "forbid", priority = 0 }}
+                semicolon_if_nothing_returned               = {{ level = "forbid", priority = 0 }}
+                significant_drop_tightening                 = {{ level = "forbid", priority = 0 }}
+                str_to_string                               = {{ level = "forbid", priority = 0 }}
+                string_add                                  = {{ level = "forbid", priority = 0 }}
+                string_add_assign                           = {{ level = "forbid", priority = 0 }}
+                string_lit_as_bytes                         = {{ level = "forbid", priority = 0 }}
+                string_to_string                            = {{ level = "forbid", priority = 0 }}
+                suspicious_command_arg_space                = {{ level = "forbid", priority = 0 }}
+                suspicious_xor_used_as_pow                  = {{ level = "forbid", priority = 0 }}
+                trailing_empty_array                        = {{ level = "forbid", priority = 0 }}
+                trait_duplication_in_bounds                 = {{ level = "forbid", priority = 0 }}
+                unchecked_duration_subtraction              = {{ level = "forbid", priority = 0 }}
+                undocumented_unsafe_blocks                  = {{ level = "forbid", priority = 0 }}
+                unnecessary_box_returns                     = {{ level = "forbid", priority = 0 }}
+                unnecessary_safety_doc                      = {{ level = "forbid", priority = 0 }}
+                unnecessary_struct_initialization           = {{ level = "forbid", priority = 0 }}
+                unnecessary_wraps                           = {{ level = "forbid", priority = 0 }}
+                unnested_or_patterns                        = {{ level = "forbid", priority = 0 }}
+                unused_peekable                             = {{ level = "forbid", priority = 0 }}
+                unused_rounding                             = {{ level = "forbid", priority = 0 }}
+                useless_transmute                           = {{ level = "forbid", priority = 0 }}
+                verbose_file_reads                          = {{ level = "forbid", priority = 0 }}
+                wildcard_dependencies                       = {{ level = "forbid", priority = 0 }}
+                wildcard_imports                            = {{ level = "forbid", priority = 0 }}
+                zero_sized_map_values                       = {{ level = "forbid", priority = 0 }}
+                as_underscore                               = {{ level = "forbid", priority = 0 }}
+                clone_on_ref_ptr                            = {{ level = "forbid", priority = 0 }}
                 # as_conversions                              = "warn"          # Too bothersome
                 # arithmetic_side_effects                     = "warn"          # Too bothersome
                 # integer_division                            = "warn"          # Too bothersome
                 # indexing_slicing                            = "warn"          # Too bothersome (Maybe kind of false positive on EnumMap)
-                assertions_on_result_states                 = "warn"
-                single_char_lifetime_names                  = "warn"
-                struct_excessive_bools                      = "warn"
-                type_repetition_in_bounds                   = "warn"
-                unneeded_field_pattern                      = "warn"
-                unreadable_literal                          = "warn"
-                empty_structs_with_brackets                 = "warn"
-                empty_line_after_doc_comments               = "warn"
-                derive_partial_eq_without_eq                = "warn"
-                default_trait_access                        = "warn"
-                decimal_literal_representation              = "warn"
-                create_dir                                  = "warn"
-                copy_iterator                               = "warn"
-                cognitive_complexity                        = "warn"
-                cast_lossless                               = "warn"
-                cast_possible_wrap                          = "warn"
-                cast_ptr_alignment                          = "warn"
-                case_sensitive_file_extension_comparisons   = "warn"
-                branches_sharing_code                       = "warn"
-                todo                                        = "warn"
-                unimplemented                               = "warn"
-                min_ident_chars                             = "warn"
-                collection_is_never_read                    = "warn"
-                filetype_is_file                            = "warn"
-                float_cmp                                   = "warn"
-                float_cmp_const                             = "warn"
-                inconsistent_struct_constructor             = "warn"
-                pedantic                                    = "warn"
+                unnecessary_cast                            = {{ level = "warn", priority = 0 }}
+                unnecessary_fold                            = {{ level = "warn", priority = 0 }}
+                unnecessary_operation                       = {{ level = "warn", priority = 0 }}
+                unnecessary_to_owned                        = {{ level = "warn", priority = 0 }}
+                unnecessary_mut_passed                      = {{ level = "warn", priority = 0 }}
+                unnecessary_literal_unwrap                  = {{ level = "warn", priority = 0 }}
+                assertions_on_result_states                 = {{ level = "warn", priority = 0 }}
+                single_char_lifetime_names                  = {{ level = "warn", priority = 0 }}
+                struct_excessive_bools                      = {{ level = "warn", priority = 0 }}
+                type_repetition_in_bounds                   = {{ level = "warn", priority = 0 }}
+                unneeded_field_pattern                      = {{ level = "warn", priority = 0 }}
+                unreadable_literal                          = {{ level = "warn", priority = 0 }}
+                empty_structs_with_brackets                 = {{ level = "warn", priority = 0 }}
+                empty_line_after_doc_comments               = {{ level = "warn", priority = 0 }}
+                derive_partial_eq_without_eq                = {{ level = "warn", priority = 0 }}
+                default_trait_access                        = {{ level = "warn", priority = 0 }}
+                decimal_literal_representation              = {{ level = "warn", priority = 0 }}
+                create_dir                                  = {{ level = "warn", priority = 0 }}
+                copy_iterator                               = {{ level = "warn", priority = 0 }}
+                cognitive_complexity                        = {{ level = "warn", priority = 0 }}
+                cast_lossless                               = {{ level = "warn", priority = 0 }}
+                cast_possible_wrap                          = {{ level = "warn", priority = 0 }}
+                cast_ptr_alignment                          = {{ level = "warn", priority = 0 }}
+                case_sensitive_file_extension_comparisons   = {{ level = "warn", priority = 0 }}
+                branches_sharing_code                       = {{ level = "warn", priority = 0 }}
+                todo                                        = {{ level = "warn", priority = 0 }}
+                unimplemented                               = {{ level = "warn", priority = 0 }}
+                collection_is_never_read                    = {{ level = "warn", priority = 0 }}
+                filetype_is_file                            = {{ level = "warn", priority = 0 }}
+                float_cmp                                   = {{ level = "warn", priority = 0 }}
+                float_cmp_const                             = {{ level = "warn", priority = 0 }}
+                inconsistent_struct_constructor             = {{ level = "warn", priority = 0 }}
+                pedantic                                    = {{ level = "warn", priority = -1 }}
+                option_if_let_else                          = {{ level = "allow", priority = 10 }}
+                single_match_else                           = {{ level = "allow", priority = 10 }}
+                min_ident_chars                             = {{ level = "allow", priority = 10 }}
                 unused_self                                 = {{ level = "allow", priority = 10 }}
                 too_many_lines                              = {{ level = "allow", priority = 10 }}    # The lint is too gigantic. I'll keep number of lines small myself.
                 let_and_return                              = {{ level = "allow", priority = 10 }}
@@ -276,6 +276,7 @@ return {
                 module_name_repetitions                     = {{ level = "allow", priority = 10 }}
                 struct_field_names                          = {{ level = "allow", priority = 10 }}
                 use_self                                    = {{ level = "allow", priority = 10 }}
+                missing_const_for_fn                        = {{ level = "allow", priority = 10 }}    # Too annoying, probably not very relevant.
                 future_not_send                             = {{ level = "allow", priority = 10 }}    # Apparently breaks when using `Macroquad`.
                 mem_forget                                  = {{ level = "allow", priority = 10 }}    # I don't quite understand what this is. Having this on `forbid` breaks `EnumMap`'s.
                 {}

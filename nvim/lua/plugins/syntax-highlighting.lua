@@ -244,7 +244,7 @@ return {
         end,
     },
 
-    {   -- HTML Syntax Matchgroups                         ( STATE: Works, but very WIP )
+    {   -- HTML Syntax Matchgroups                              ( STATE: Works, but very WIP )
         --  - NOTE: Built-in html indentation is relatively good, when configured with the variables.
         --          - See `:help html-indent`.
         --  - TODO: Fetch some base syntax from `html.vim`, `html5.vim` or some such.
@@ -258,7 +258,7 @@ return {
         end,
     },
 
-    -- {   -- Typst Syntax Matchgroups                         ( STATE: Somewhat functional, but Treesitter might have made enough progress to be better. )
+    -- {   -- Typst Syntax Matchgroups                          ( STATE: Somewhat functional, but Treesitter might have made enough progress to be better. )
     --     "Aumnescio/typst-syntax.nvim",
     --     lazy = true,
     --     dev = true,
@@ -288,37 +288,37 @@ return {
     --     end,
     -- },
 
-    {   -- RON | Rusty Object Notation              ( STATE: Probably fine. )
+    {   -- RON | Rusty Object Notation                          ( STATE: Probably fine. )
         "ron-rs/ron.vim",
         lazy = true,
         ft = "ron",
     },
 
-    {   -- Rainbow CSV Syntax Highlighting          ( STATE: Maybe fine. )
+    {   -- Rainbow CSV Syntax Highlighting                      ( STATE: Maybe fine. )
         "mechatroner/rainbow_csv",
         lazy = true,
         ft = "csv",
     },
 
-    {   -- For C# / C-Sharp indenting               ( STATE: Dunno. )
+    {   -- For C# / C-Sharp indenting                           ( STATE: Dunno. )
         "jlcrochet/vim-cs",
         lazy = true,
         ft = "cs",
     },
 
-    {   -- `just` / justfiles                       ( STATE: Maybe fine. )
+    {   -- `just` / justfiles                                   ( STATE: Maybe fine. )
         "NoahTheDuke/vim-just",
         lazy = true,
         ft = "just",
     },
 
-    {   -- `Slint`                                  ( STATE: Testing. )
+    {   -- `Slint`                                              ( STATE: Testing. )
         "slint-ui/vim-slint",
         lazy = true,
         ft = "slint",
     },
 
-    -- {   -- `Svelte`                                 ( STATE: Testing. )
+    -- {   -- `Svelte`                                          ( STATE: Testing. )
     --     -- - Not great.
     --     -- - The things that don't work in Treesitter do work with this, but overall this might still be worse.
     --     -- - These plugins are also years old and might not be receiving updates.
@@ -330,6 +330,12 @@ return {
     --         "pangloss/vim-javascript",
     --     },
     -- },
+
+    {   -- Lua syntax highlighting without Treesitter.          ( STATE: Testing )
+        "euclidianAce/BetterLua.vim",
+        lazy = true,
+        ft = "lua",
+    },
 }
 
 -- End of File

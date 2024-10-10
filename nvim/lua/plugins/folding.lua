@@ -5,11 +5,17 @@
 --  -> nvim-ufo
 
 return {
-    {   -- Almost good, but having issues,                                  ( STATE: Meh. )
+    {   -- An attempt at good folding for nvim.                             ( STATE: Decent, quite good. )
         "kevinhwang91/nvim-ufo",
         enabled = true,                             -- `true` to enable.
-        lazy = false,                               -- TODO: Config some lazy-loading maybe.
+        lazy = true,                                -- TODO: Config some lazy-loading maybe.
         version = false,
+
+        ft = {
+            "norg",
+            "lua",
+            "rust",
+        },
 
         dependencies = {
             "kevinhwang91/promise-async",

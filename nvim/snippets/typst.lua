@@ -108,6 +108,17 @@ return {
             }
         )
     ),
+    snippet({ trig = "link", name = "Typst Function: `link()`", dscr = "Snippet for the Typst Function: `link()`"},
+        fmt(
+            [[
+                #link("{}")[#underline("{}")]
+            ]],
+            {
+                insert(1, "<url>"),
+                insert(0, "<display-text>"),
+            }
+        )
+    ),
 }
 
 -- End of File

@@ -7,6 +7,7 @@ return {
         "mrjones2014/legendary.nvim",
         cond = true,            -- Overwrite VS-Code condition. Allow in VS-Code, because legendary sets keymaps.
         lazy = false,           -- Setting to `true` doesn't really do anything, because binds are required quite early.
+        priority = 1005,
         version = "*",          -- Should be fine.
         dependencies = {
             "kkharji/sqlite.lua",

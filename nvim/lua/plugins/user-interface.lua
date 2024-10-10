@@ -391,16 +391,20 @@ return {
                 -- Options for fzf selector
                 fzf = {
                     window = {
-                        width = 0.86,
-                        height = 0.66,
+                        width = 0.94,
+                        height = 0.82,
+                        -- width = 0.86,
+                        -- height = 0.66,
                     },
                 },
 
                 -- Options for fzf_lua selector
                 fzf_lua = {
                     winopts = {
-                        width = 0.86,
-                        height = 0.66,
+                        width = 0.94,
+                        height = 0.82,
+                        -- width = 0.86,
+                        -- height = 0.66,
                     },
                 },
 
@@ -473,13 +477,15 @@ return {
                 -- see :help dressing_get_config
                 -- get_config = nil
                 get_config = function(opts)
+                    -- TAG: Legendary floating window size/dimensions.
+                    -- Potential TODO: Move from `telescope` to fzf or fzf-lua.
                     if opts.kind == "legendary.nvim" then
                         return {
                             backend = 'telescope',
 
                             telescope = {
-                                width = 0.86,
-                                height = 0.76,
+                                width = 0.94,
+                                height = 0.82,
                             },
 
                             fzf = {

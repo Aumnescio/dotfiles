@@ -13,12 +13,12 @@ function Module.setup()
 
     -- NOTE: This contains 2 SQL Language Servers, maybe just use one of them and comment the other one out.
 
-    -- |> SQL LSP (`SQLS`) Setup                                ( STATE: Maybe okay )
+    -- |> SQL LSP (`SQLS`) Setup                                ( STATE: Maybe okay'ish )
     nvim_lsp.sqls.setup({
         cmd = { "sqls" },
         filetypes = { "sql", "mysql" },
 
-        autostart               = true,
+        autostart               = false,                                -- With `true`, it starts up in `.typ` files.
         flags                   = lsp_prefs.lsp_default_flags,
         handlers                = lsp_prefs.lsp_default_handlers,
         capabilities            = lsp_prefs.lsp_default_capabilities,

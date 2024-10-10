@@ -22,7 +22,7 @@ return {
         --  - This setup allows good lazy-loading of Telescope, without errors or awkwardness, even when Legendary is configured at startup.
         keys = function()
             local ret = {}
-            for _, key in ipairs({ "<C-p>", "<C-s>", "<C-S-p>" }) do
+            for _, key in ipairs({ "<C-p>", "<C-s>" }) do
                 ret[#ret + 1] = { key, mode = "n", opts = { noremap = true } }
             end
             return ret
@@ -140,10 +140,10 @@ return {
 
                 extensions = {
                     fzf = {
-                        fuzzy = true,                    -- `false` will only do exact matching.
-                        override_generic_sorter = true,  -- Override the generic sorter.
-                        override_file_sorter = true,     -- Override the file sorter.
-                        case_mode = "smart_case",        -- `smart_case` | `ignore_case` | `respect_case`
+                        fuzzy = true,                       -- `false` will only do exact matching.
+                        override_generic_sorter = true,     -- Override the generic sorter.
+                        override_file_sorter = true,        -- Override the file sorter.
+                        case_mode = "smart_case",           -- `smart_case` | `ignore_case` | `respect_case`
                     },
                     -- `ui-select`: NOTE: These are changing how Legendary looks.
                     --  - Might be too widely scoped right now.
@@ -169,9 +169,11 @@ return {
             -- |> Re-creating my normal bindings, which got overwritten by the activation `keys` table.
             --  - Very happy that this seems to work well.
             require("legendary").keymaps({
-                { "<C-p>",      "<Cmd>Legendary<CR>",                           description = "Legendary: Search/Find Keymaps/Commands/Autocommands",   mode = "n", opts = { noremap = true } },
-                { "<C-S-p>",    "<Cmd>Telescope find_files<CR>",                description = "Telescope: Search/Find Files",                           mode = "n", opts = { noremap = true } },
                 { "<C-s>",      "<Cmd>Telescope current_buffer_fuzzy_find<CR>", description = "Telescope: Fuzzy Search/Find Text in Current Buffer",    mode = "n", opts = { noremap = true } },
+                { "<C-p>",      "<Cmd>Legendary<CR>",                           description = "Legendary: Search/Find Keymaps/Commands/Autocommands",   mode = "n", opts = { noremap = true } },
+
+                -- Using `fzf.vim` instead for this.
+                -- { "<C-S-p>",    "<Cmd>Telescope find_files<CR>",                description = "Telescope: Search/Find Files",                           mode = "n", opts = { noremap = true } },
             })
         end,    --> END `config` function
     },
@@ -191,6 +193,7 @@ return {
 
     {   -- Telescope `TailwindCSS` Extension            ( STATE: Testing )
         "danielvolchek/tailiscope.nvim",
+        enabled = false,
         lazy = true,
         ft = "svelte",
 

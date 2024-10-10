@@ -73,7 +73,7 @@ return {
         },
     },
 
-    {   -- Neovim API Development                               ( STATE: Unknown | Probably Good )
+    {   -- Neovim API Development                               ( STATE: TODO: Update to `lazydev`? )
         "folke/neodev.nvim",
         lazy = true,
         -- TODO: Move opts to module file.
@@ -136,13 +136,13 @@ return {
         -- Unless this takes like 0.5ms.
         lazy = true,
         version = false,
-        event = "VeryLazy",         -- TODO: Could be loaded more lazily.
+        event = "VeryLazy",         -- TODO: Could be loaded more lazily. ( Though this takes only 5'ish ms. )
 
         config = function(_, opts)
             -- |> mini-bufremove            ( Maybe looking for something better and more multipurpose. )
             require("mini.bufremove").setup()
 
-            -- |> AroundIn                                      ( STATE: Some issues )
+            -- |> AroundIn                                      ( STATE: Some issues / WIP )
             require("mini.ai").setup({
                 -- Table with textobject id as fields, textobject specification as values.
                 -- Also use this to disable builtin textobjects. See |MiniAi.config|.
@@ -152,14 +152,14 @@ return {
                 -- NOTE: These bindings are for Visual Mode.
                 mappings = {
                     -- Main textobject prefixes
-                    around = "a",
-                    inside = "zi",
+                    around = "a",       -- Should be fine?
+                    inside = "i",       -- Should be fine?
 
                     -- Next/last textobjects
                     around_next = "an",
-                    inside_next = "zn",
-                    around_last = "ao",
-                    inside_last = "zo",
+                    inside_next = "in",
+                    around_last = "al",
+                    inside_last = "il",
 
                     -- Move cursor to corresponding edge of `a` textobject
                     goto_left = "g[",
@@ -216,7 +216,7 @@ return {
             local miniclue = require("mini.clue")               -- ( STATE: Extremely Good )
             miniclue.setup({
                 -- To config these triggers, I think I need to understand the way my keys have been setup.
-                -- I use the following keys as `Leader-like` keys: '\', '<Space>', `g`, 'z', 'i', 'm'
+                -- I use the following keys as `Leader-like` keys: '\', '<Space>', `g`, 'z', 'i'.
                 triggers = {
                     -- Leader triggers
                     { mode = 'n', keys = '<Leader>' },
@@ -229,8 +229,8 @@ return {
                     { mode = 'x', keys = 'z' },
                     { mode = 'n', keys = 'i' },
                     { mode = 'x', keys = 'i' },
-                    { mode = 'n', keys = 'm' },
-                    { mode = 'x', keys = 'm' },
+                    -- { mode = 'n', keys = 'm' },
+                    -- { mode = 'x', keys = 'm' },
 
                     -- Window commands
                     { mode = 'n', keys = '<C-w>' },
@@ -264,16 +264,17 @@ return {
                 },
 
                 window = {
-                    delay = 420,
+                    delay = 500,    -- I kind of rarely need the clues, so somewhat high delay is preferred.
 
                     config = {
                         border = "rounded",
                         width = "auto",
                     },
 
-                    -- I'm not sure if these binds will work, might want to figure out better ones.
-                    scroll_down = '<C-d>',
-                    scroll_down = '<C-u>',
+                    -- Don't think these bindings work. (TODO: Fix)
+                    --  - NOTE: Not that high prio though.
+                    scroll_down = "<C-d>",
+                    scroll_down = "<C-u>",
                 }
             })
 
@@ -349,10 +350,10 @@ return {
         end,
     },
 
-    {   -- Fix Scrolloff near end of file.                      ( STATE: Meh until fixed )
-        --  - Has issues -> Not quite useable yet.
+    {   -- Fix Scrolloff near end of file.                      ( STATE: Maybe fine. )
         "Aasim-A/scrollEOF.nvim",
-        cond = false,
+        branch = "pr/large-scrolloff-support",
+        -- cond = false,
         lazy = true,
         version = false,
         event = "VeryLazy",

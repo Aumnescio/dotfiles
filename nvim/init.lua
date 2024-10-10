@@ -2,29 +2,6 @@
 -- === - Aumnescio's Neovim Configuration - === --|
 --==============================================--+
 
--- |> Testing these filetype thingies, but they don't feel like they do a lot.
---  - I did get my indentation things to break a bit when disabling all these things.
--- vim.g.do_filetype = 0
--- vim.cmd([[:autocmd BufReadPre,BufNewFile * let b:did_ftplugin = 1]])
-
--- Not sure about this. Probably enabled by default in Neovim.
---  - These might have a tendency to overwrite my own settings.
---  - Testing `off` for improved performance.
--- vim.cmd([[filetype plugin indent off]])
-
--- Not really too relevant.
-vim.g.editorconfig = false
-
--- PHP indentation settings (TODO: Move somewhere else.)
-vim.g.PHP_default_indenting = 1
-vim.g.PHP_BracesAtCodeLevel = 0
-
--- Disabling SQL omnicompletion.
---  - It was bugging me in files where it really should not be active.
-vim.g.omni_sql_no_default_maps = 1
-vim.cmd([[let $omnifunc = '']])
-vim.g.loaded_sql_completion = 1
-
 -- => Core Vim/Neovim opts
 require("config/core-options")
 
@@ -140,23 +117,21 @@ local lazy_opts = {
         browser = nil,  ---@type string?
         throttle = 20,  -- How frequently should the UI process render events.
 
+        -- I want to configure the keybindings inside of the `lazy.nvim` UI,
+        -- but I do not quite understand how.
         custom_keys = {
-            -- you can define custom key maps here.
-            -- To disable one of the defaults, set it to false
+            -- You can define custom keymaps here.
+            -- To disable one of the defaults, set it to `false`
 
-            -- Open lazygit log.
-            -- ["<localleader>l"] = function(plugin)
-                -- require("lazy.util").float_term({ "lazygit", "log" }, {
-                    -- cwd = plugin.dir,
-                -- })
-            -- end,
+            -- This binding should only be active inside of the Lazy UI window.
+            -- NOTE: This does not work anywhere.
+            ["<S-t>"] = function()
+                require("lazy").home()
+            end,
 
-            -- Open a terminal for the plugin dir.
-            -- ["<localleader>t"] = function(plugin)
-                -- require("lazy.util").float_term(nil, {
-                    -- cwd = plugin.dir,
-                -- })
-            -- end,
+            -- NOTE: If these are not set to false, they are created by default, even if the keybindings are commented out.
+            ["<localleader>l"] = false,
+            ["<localleader>t"] = false,
         },
     },
 
@@ -207,7 +182,7 @@ local lazy_opts = {
                 "zipPlugin",
                 "tarPlugin",
                 "gzip",
-                "tohtml",        -- I mean this is kind of cute, but it does not seem to work with treesitter colors.
+                "tohtml",        -- This is kind of cute, but it does not seem to work with treesitter colors.
                 "tutor",
             },
         },
@@ -1448,6 +1423,7 @@ require("config/autocommands")
 --==============================================================================================--+
 
 -- NOTE: Loading binds using `Legendary` takes about 5ms on startup.
+-- `legendary.setup()` is called when requiring `good-binds`.
 require("keybindings/good-binds")
 
 --==========================================================================================--+
@@ -1458,19 +1434,7 @@ require("keybindings/good-binds")
 -- === START - 10. Custom Commands - START === --|
 --=============================================--+
 
--- NOTE: Creating custom commands in `legendary.nvim`.
--- Legendary setup is called when requiring `good-binds`.
-
--- TODO: Move these to Lua and `legendary.nvim`.
--- vim.cmd([[command! -nargs=0 AumConfig edit /home/aum/.config/nvim/init.lua]])
--- vim.cmd([[command! -nargs=0 AumBinds edit /home/aum/.config/nvim/lua/keybindings/good-binds.lua]])
--- vim.cmd([[command! -nargs=0 AumLines edit /home/aum/.config/nvim/lua/heirline/aumneline.lua]])
--- vim.cmd([[command! -nargs=0 FishConfig edit /home/aum/.config/fish/config.fish]])
--- vim.cmd([[command! -nargs=0 KittyConfig edit /home/aum/.config/kitty/kitty.conf]])
--- vim.cmd([[command! -nargs=0 AwesomeConfig edit /home/aum/.config/awesome/rc.lua]])
-
--- NOTE: The theme is no longer here.
--- vim.cmd([[command! -nargs=0 AumTheme edit /home/aum/.config/nvim/colors/aumnechroma.lua]])
+require("config/rust-fzf-rg")
 
 --=========================================--+
 -- === END - 10. Custom Commands - END === --|

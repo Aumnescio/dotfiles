@@ -1,57 +1,40 @@
 -- File:                `nvim/lua/plugins/neorg.lua`
 -- Purpose:             `lazy.nvim` Plugin Specification    ( Neorg )
 
--- NOTE: This plugin has *extremely* bad startup performance.
---  - Loading the plugin takes 150ms to 1000ms.      ( Which is 3 to 40 times the base startup time. )
---  - Recent version are even worse. The startup time doubled in v4.5.0.    ( In my current config, not so much in a minimal config. )
-
--- NOTE: The concealer is also relatively broken, and does not start up properly if this is lazy-loaded.
-
--- STATE: Problems with Neorg itself, but this config should be mostly okay.
--- Some things are still WIP, like the completion module.
---  - But if I use the completion module, the startuptime will increase even more.
-
--- This is a dummy command which can be used as an event to lazy-load Neorg.
--- vim.api.nvim_create_user_command("StartNeorg", '', {})
+-- NOTE: The concealer at least used to be relatively broken, and did not start up properly if Neorg was lazy-loaded.
+-- NOTE: Neorg has often had issues with very large startup times. (Hopefully latest versions properly configured are okay'ish.)
 
 return {
-    {   -- Knowledge management and organization.
-        --  - Tested some versions, and I think the startup time is around 500 ms for all versions from 3.0.0 to 4.4.1, but 4.5.0+ doubles that startuptime.
-        --  - NOTE: Posted issue in the github about this: "https://github.com/nvim-neorg/neorg/issues/898"
-        --  - But, there is something hidden and weird going on, since in a
-        --    very minimal setup, the startup time is noticeably better,
-        --    even if still not very good.
+    {   -- Neorg | Knowledge management and organization.
         "nvim-neorg/neorg",
         enabled = true,
         lazy = true,
-
-        -- Commonly issues with versions and Neorg's stability.
-        version = "7.0.0",
+        version = "*",
 
         -- Filetype lazy-loading does not work great with Neorg.
-        -- Neorg fails to activate concealer properly when lazy-loaded with this.
+        -- - Neorg sometimes fails to activate concealer properly when lazy-loaded with this.
         ft = "norg",
 
         cmd = {
             "Neorg",
         },
 
-        build = ":Neorg sync-parsers",
-
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
         },
 
+        -- |> Old config which almost certainly will not work with latest version.
         opts = {
             load = {
                 -- `defaults`: Loads default behaviour.
-                [ "core.defaults" ] = {},
+                ["core.defaults"] = {},
 
-                -- TODO: Configure code-block conceal.
+                -- Attempting to load the basic exporting functionality.
+                ["core.export"] = {},
 
                 -- `concealer`: Adds pretty icons to your documents.    ( TODO: Config this to work with new Neorg. )
-                [ "core.concealer" ] = {
+                ["core.concealer"] = {
                     config = {
                         -- NOTE: `diamond` is the best preset.
                         --  - This overwrites custom icons, so can't use this.
@@ -77,12 +60,18 @@ return {
                             -- `code_block`: STATE: No idea / TODO.
                             code_block = {
                                 conceal = true,
-                            },  -- `code_block`
+                            },
+
                         },  -- `icons`
+
+                        -- No idea if this does anything. Also not quite sure if this is correct location, should be though.
+                        --  - NOTE: There is a very decent likelyhood that this is better to disable when using `nvim-ufo`.
+                        folds = false,
+                        init_open_folds = "never",
                     },  -- `config`
                 },  -- `core.concealer`
 
-                [ "core.dirman" ] = {      -- Manages Neorg workspaces.
+                ["core.dirman"] = {      -- Manages Neorg workspaces.
                     config = {
                         workspaces = {
                             vault = "~/Secondbrain/Vault",
@@ -90,13 +79,11 @@ return {
                         default_workspace = "vault"
                     },
                 },  -- End `core.dirman`
-            },
+            }
         },
 
         config = function(_, opts)
             local neorg = require("neorg")
-
-            -- |> Setup, and config icons after. (TODO'ish)
             neorg.setup(opts)
         end,
     },

@@ -27,14 +27,6 @@ vim.api.nvim_create_autocmd("BufReadPre", {
     group = treesitter_aumgroup,
 })
 
--- |> Enable `Treesitter` for `svelte` files.
---  - Haven't found better alternative so far.
-vim.api.nvim_create_autocmd("BufReadPre", {
-    pattern = { "*.svelte" },
-    command = "TSEnable highlight svelte",
-    group = treesitter_aumgroup,
-})
-
 -- |> Enable `Treesitter` for `typst` files.
 --  - Testing...
 vim.api.nvim_create_autocmd("BufReadPre", {
@@ -64,10 +56,18 @@ vim.api.nvim_create_autocmd("BufReadPre", {
     group = treesitter_aumgroup,
 })
 
--- |> Enable `Treesitter` for `javascript` files.
+-- |> Enable `Treesitter` for `typescript` files.
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.ts" },
     command = "TSEnable highlight typescript",
+    group = treesitter_aumgroup,
+})
+
+-- |> Enable `Treesitter` for `svelte` files.
+--  - Haven't found better alternative so far.
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.svelte" },
+    command = "TSEnable highlight svelte",
     group = treesitter_aumgroup,
 })
 
@@ -86,10 +86,24 @@ vim.api.nvim_create_autocmd("BufReadPre", {
     group = treesitter_aumgroup,
 })
 
+-- |> Enable `Treesitter` for `fish` files.
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.fish" },
+    command = "TSEnable highlight fish",
+    group = treesitter_aumgroup,
+})
+
 -- |> Enable `Treesitter` for `json` files.
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.json" },
     command = "TSEnable highlight json",
+    group = treesitter_aumgroup,
+})
+
+-- |> Enable `Treesitter` for `yaml` files.
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.yml", "*.yaml" },
+    command = "TSEnable highlight yaml",
     group = treesitter_aumgroup,
 })
 
@@ -152,7 +166,7 @@ return {
         opts = function()
             -- Function for situationally disabling `Treesitter Highlighting`.
             -- STATE: Seems to work.
-            local function ts_disable(lang, bufnr)
+            local function ts_disable(lang, buf)
                 -- Filetypes which have been caused very noticeable slowdowns for me:
                 --  - `lua`         ( 3000 lines long file, really slow. )
 
@@ -175,14 +189,19 @@ return {
                 end
 
                 -- Disable if file has too many lines.
-                if vim.api.nvim_buf_line_count(bufnr) > 5000 then
+                local max_filesize = 50 * 1024 -- 50 KB
+                local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+
+                if ok and stats and stats.size > max_filesize then
                     return true
-                else
-                    return false
                 end
+
+                return false
             end
 
             return {
+                -- NOTE: `norg` and `norg_meta` installed through `:Neorg sync-parsers` command. (OUTDATED Info)
+                -- - Presumably, `Neorg` still handles the installation of the `norg` TS parsers and stuff.
                 ensure_installed = {
                     "bash", "fish", "c", "cpp", "cmake", "make", "rust", "go", "python",
                     "css", "scss", "html", "javascript", "typescript", "vue", "svelte",
@@ -190,7 +209,7 @@ return {
                     "jsonc", "glsl", "java", "kotlin", "tsx", "regex", "elm", "latex",
                     "query", "commonlisp", "v", "markdown_inline", "vimdoc", "php",
                     "ron", "c_sharp", "slint", "typst", "scheme", "nix", "gdscript", "gdshader"
-                },  -- NOTE: `norg` and `norg_meta` installed through `:Neorg sync-parsers` command.
+                },  
 
                 auto_install = false,
 
@@ -199,9 +218,12 @@ return {
 
                     -- Parser speeds apparently vary quite a lot.
                     -- Disable `Treesitter` for any filetype where it causes noticeable lag.
-                    disable = function(lang, bufnr)
-                        return ts_disable(lang, bufnr)
+                    --  - NOTE: For some reason this does not seem to be working as it should.
+                    disable = function(lang, buf)
+                        return ts_disable(lang, buf)
                     end,
+
+                    -- disable = ts_disable(lang, bufnr),
 
                     additional_vim_regex_highlighting = false,
                 },

@@ -87,10 +87,14 @@ return {
         end,
     },
 
-    {   -- Autocompletion                               ( STATE: Good )
-        "hrsh7th/nvim-cmp",
+    {   -- `nvim-cmp`: Autocompletion                   ( STATE: Good )
+        -- "hrsh7th/nvim-cmp",      -- Original
+        "yioneko/nvim-cmp",         -- Performance fork
+        -- enabled = false,
+        branch = "perf",
+        commit = "6c3d595f3223c1ae7392d4fde1626355439af6c1",
         lazy = true,
-        version = false,        -- `nvim-cmp` does not release often, so fetch from master should be good.
+        -- version = false,        -- `nvim-cmp` does not release often, so fetch from master should be good.
 
         event = {
             "InsertEnter",
@@ -562,6 +566,16 @@ return {
                     }
                 },
 
+                -- Testing some new things.
+                view = {
+                    docs = {
+                        auto_open = true,
+                    },
+                    entries = {
+                        follow_cursor = false,
+                    },
+                },
+
                 -- `nvim-cmp`: Completion Sources   ( STATE: Very Good )
                 --  - NOTE: Larger priority value is placed higher in sorting.
                 sources = cmp.config.sources({
@@ -664,9 +678,9 @@ return {
         --     return require("lazy.core.config").plugins["nvim-cmp"] ~= nil
         -- end,
         lazy = true,
-        dependencies = {
-            "hrsh7th/nvim-cmp",
-        },
+        -- dependencies = {
+        --     "yioneko/nvim-cmp",
+        -- },
     },
 
     {   -- LuaSnip: ChoiceNodes source for `nvim-cmp`.              ( STATE: TODO: Make it work. )
@@ -674,9 +688,9 @@ return {
         lazy = true,
         dev = true,
         -- version = false,
-        dependencies = {
-            "hrsh7th/nvim-cmp",
-        },
+        -- dependencies = {
+        --     "yioneko/nvim-cmp",
+        -- },
         config = function()
             require("cmp_luasnip_choice").setup()
         end,

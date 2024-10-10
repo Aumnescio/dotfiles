@@ -41,6 +41,9 @@ g.loaded_matchit        = 1
 -- Disable `netrw`.
 g.loaded_netrwPlugin    = 1
 
+-- `editor-config` file support. (I don't use these so `false` for now.)
+g.editorconfig = false
+
 -- -- |> START => `vim-matchup` config
 -- g.matchup_enabled                           = 1         -- `0` to disable the plugin.
 -- g.matchup_motion_enabled                    = 1         -- `0` to disable the module.
@@ -74,7 +77,12 @@ opt.swapfile        = false     -- Not exactly sure what this is. Default is 'tr
 opt.backup          = false     -- `false` is default.
 opt.writebackup     = true      -- `true` is default. Not having this seemed unsafe.
 opt.autoread        = true      -- Automatically read changed file.
+
+-- This should be fine. (Also should be same as default.)
+-- NOTE: The environment variables need to be manually expanded using some function, a plain string causes problems.
+opt.undodir         = vim.fs.normalize("$XDG_STATE_HOME/nvim/undo/")
 opt.undofile        = true      -- Save undo history for all files.
+opt.undolevels      = 2000      -- Number of undo-steps to save. (Affects the `undofiles`.)
 
 -- |> Error Bell settings.
 opt.visualbell      = false     -- Don't flash my screen.
@@ -114,7 +122,11 @@ opt.clipboard:append("unnamedplus")     -- Enable System-clipboard functionality
 opt.grepprg         = [[rg --vimgrep --no-heading --smart-case]]    -- Use ripgrep.
 opt.grepformat      = "%f:%l:%c:%m,%f:%l:%m"                        -- Grep format.
 g.python3_host_prog = "/usr/bin/python3"    -- Path to Python3.
+
+-- NOTE: The `nvim_rocks` plugin had an interaction with these, and did not work with fish shell by default. But I made it work with Fish for now.
 opt.shell           = "/usr/bin/fish"       -- Set default shell to fish.   ( Might cause issues with some stuff so be a tad aware. )
+-- opt.shell           = "/bin/sh"             -- Set default shell to sh.   ( Does this work fine when I'm using `fish`? )
+
 g.tex_flavor        = "latex"               -- Set LaTeX flavor.            ( Changes syntax highlighting. )
 opt.formatprg       = "fmt --width 84"
 opt.equalprg        = ""                    -- NOTE: I want something else here prolly. Dunno where to find formatter that works on all filetypes.
@@ -172,7 +184,7 @@ opt.updatetime      = 28        -- Some update-rate thing to help smoothness.
 opt.listchars       = "eol:↵,tab:»›,trail:~,extends:❯,precedes:❮,leadmultispace:▎   "   -- No listchar for spaces.
 -- `End of Buffer` and `FoldColumn` display characters:
 opt.fillchars       = "eob:⏐,fold:·,foldopen:󰍴,foldclose:,foldsep:|"       -- `eob` could be better.
-opt.list            = false     -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
+opt.list            = true      -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
 
 -- |> Command line settings.
 opt.showmode        = false     -- Normal/Insert/Visual Mode command line visiblity toggle.     ( Custom version enabled in `heirline.nvim`. )
@@ -356,7 +368,7 @@ opt.scroll          = 3      -- Number of lines to scroll when using `<C-u>` and
 --  - but `scrolloff` also causes flicker, which I despise.     ( Some plugins might be causing worse flicker. )
 --  - NOTE: I can't really get nvim to flicker when run with `nvim --clean`.
 --  - NOTE: But still, as of `Oct 9 2023`, flicker is unbearable.
-opt.scrolloff       = 0         -- Vertical scroll offset.      ( 0-20'ish )
+opt.scrolloff       = 8         -- Vertical scroll offset.      ( 0-20'ish )
 opt.sidescrolloff   = 12        -- Horizontal scroll offset.    ( 0-20'ish )
 opt.sidescroll      = 32        -- Number of columns to jump for each `horizontal scroll`.  ( Low values can cause extreme lag. )
 
@@ -368,8 +380,8 @@ opt.splitbelow      = true      -- Split direction below instead of above.
 opt.wrap            = false     -- Virtual Text-wrapping.   ( I dislike the look, words aren't being wrapped at good spots/borders/breakpoints. )
 opt.linebreak       = true      -- Stops words from being split in two. (And can do something else too.)
 opt.breakindent     = true      -- When wrapping, visually indent lines.
-opt.breakindentopt  = ""        -- `showbreak` - Options: "sbr" | ""
-opt.showbreak       = ""        -- Can make it more obvious when a line has been wrapped. (But looks annoying.)
+opt.breakindentopt  = "sbr"     -- Options: "sbr" | ""
+opt.showbreak       = "󰘍"       -- Can make it more obvious when a line has been wrapped. (But looks annoying.)
 -- opt.showbreak       = ""        -- Does not cause the awkward offset that is caused by the above setting.
 -- opt.textwidth = 80           -- Hard break column limit.      ( Enabled for `.md` and `.norg` in ./plugins/autocommands.lua. )
 
@@ -432,12 +444,16 @@ g.neovide_remember_window_size              = false
 g.neovide_input_use_logo                    = false
 g.neovide_cursor_antialiasing               = true
 
+-- |> Font/Text
+g.neovide_text_gamma = 0.0
+g.neovide_text_contrast = 0.5
+
 -- Seems to cause major lag at values larger than `165`.    ( Tested `330` )
 --  - But `165` is really smooth.
 g.neovide_refresh_rate                      = 165
 
 g.neovide_refresh_rate_idle                 = 30
-g.neovide_transparency                      = 0.85          -- Could be overwritten by Picom. (Compositor)
+g.neovide_transparency                      = 1.0          -- Could be overwritten by Picom. (Compositor)
 g.neovide_scale_factor                      = 1.0
 g.neovide_cursor_unfocused_outline_width    = 0.125
 g.neovide_confirm_quit                      = true
@@ -476,6 +492,40 @@ g.neovide_scroll_animation_length           = 0.25
 --===============================================--+
 -- === END - 7. Neovide Settings (GUI) - END === --|
 --===============================================--+
+
+-- PHP indentation settings (TODO: Move somewhere else.)
+vim.g.PHP_default_indenting = 1
+vim.g.PHP_BracesAtCodeLevel = 0
+
+-- Disabling SQL omnicompletion.
+--  - It was bugging me in files where it really should not be active.
+vim.g.omni_sql_no_default_maps = 1
+vim.cmd([[let $omnifunc = '']])
+vim.g.loaded_sql_completion = 1
+
+-- `fzf.vim` settings
+vim.g.fzf_layout = {
+    window = {
+        width = 0.98,
+        height = 0.9,
+    },
+}
+
+vim.g.fzf_colors = {
+    fg = { "fg", "Normal" },
+    bg = { "bg", "Normal" },
+    hl = { "fg", "Comment" },
+    ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
+    ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
+    ["hl+"] = { "fg", "Statement" },
+    info = { "fg", "PreProc" },
+    border = { "fg", "Ignore" },
+    prompt = { "fg", "Conditional" },
+    pointer = { "fg", "Exception" },
+    marker = { "fg", "Keyword" },
+    spinner = { "fg", "Label" },
+    header = { "fg", "Comment" },
+}
 
 -- TEMP FOLDING STUFF:
 -- - Don't even remember what this is about.

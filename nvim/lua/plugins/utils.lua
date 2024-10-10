@@ -12,14 +12,22 @@ return {
         lazy = false,
         version = false,
     },
+
     {   -- SQLite/LuaJIT Bindings                      ( STATE: Fine I suppose )
         --  - Dependency for some plugins.
         "kkharji/sqlite.lua",
         lazy = false,
         version = false,
     },
+
     {   -- Makes a number of plugins dot-repeatable.    ( STATE: Good, mostly. )
         "tpope/vim-repeat",
+        lazy = false,
+        version = false,
+    },
+
+    {   -- Some util functions.                         ( STATE: Testing. Probably fine. )
+        "tpope/vim-eunuch",
         lazy = false,
         version = false,
     },

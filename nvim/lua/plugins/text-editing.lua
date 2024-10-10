@@ -39,12 +39,19 @@ return {
         end,
     },
 
-    {   -- Select More / Expand Selection                       ( STATE: Better than nothing, but kind of weak. )
+    {   -- Select More / Expand Selection                       ( STATE: Sadly still the best one I've found. )
         --  - Looking for similar but better plugin.
+        --  - NOTE: The `tree_climber_rust.nvim` plugin accomplishes extremely good incremental selection, but only for Rust files.
+        --  - NOTE: Maybe name conflict with the other `wildfire`, so one of them has to be commented out.
         "Aumnescio/wildfire.nvim",
         enabled = true,
         lazy = true,
         dev = true,
+
+        -- Don't activate in `.rs` files.
+        cond = function()
+            return not string.match(vim.fn.fnamemodify(vim.fn.bufname("%"), ":t"), ".*%.rs")
+        end,
 
         keys = function()
             local ret = {}
@@ -58,11 +65,50 @@ return {
             local opts = { noremap = true, silent = true }
             require("legendary").keymaps({
                 -- Key:         Shift-l         ( Normal, Visual, Operator )
-                { "<S-l>",                      "<Plug>(wildfire-fuel)",                description = "Wildfire: Expand selection.",        mode = { "n", "x", "o" },       opts = opts },
+                { "<S-l>",      "<Plug>(wildfire-fuel)",    description = "[Aum/Selection] Wildfire: Expand incremental selection.",    mode = { "n", "x", "o" },   opts = opts },
                 -- Key:         Ctrl-l          ( Visual )
-                { "<C-l>",                      "<Plug>(wildfire-water)",               description = "Wildfire: Shrink selection.",        mode = { "x" },                 opts = opts },
+                { "<C-l>",      "<Plug>(wildfire-water)",   description = "[Aum/Selection] Wildfire: Shrink selection.",                mode = { "x" },             opts = opts },
             })
         end,
+    },
+
+    -- {   -- Incremental Selection: `wildfire.nvim`               ( STATE: I hate this. )
+    --     "sustech-data/wildfire.nvim",
+    --     enabled = false,
+    --     lazy = true,
+    --     event = "VeryLazy",
+    --
+    --     dependencies = {
+    --         "nvim-treesitter/nvim-treesitter",
+    --     },
+    --
+    --     opts = {
+    --         surrounds = {
+    --             { "(", ")" },
+    --             { "{", "}" },
+    --             { "<", ">" },
+    --             { "[", "]" },
+    --         },
+    --
+    --         keymaps = {
+    --             init_selection = "<S-l>",
+    --             node_incremental = "<S-l>",
+    --             node_decremental = "<C-l>",
+    --         },
+    --
+    --         filetype_exclude = { "qf" },  -- Keymaps will be unset in excluded filetypes.
+    --     },
+    --
+    --     config = function(_, opts)
+    --         require("wildfire").setup(opts)
+    --     end,
+    -- },
+
+    {
+        "adaszko/tree_climber_rust.nvim",
+        enabled = true,
+        lazy = true,
+        ft = { "rust" },
     },
 
     {

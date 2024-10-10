@@ -596,6 +596,28 @@ return {
             }
         )
     ),
+    snippet({ trig = "skipfmt", name = "Rust: `rustfmt::skip`", dscr = "Rust Snippet: `rustfmt::skip`"},
+        fmt(
+            [[
+                #[rustfmt::skip]{}
+            ]],
+            {
+                insert(0),
+            }
+        )
+    ),
+    snippet({ trig = "closure", name = "Rust: `closure`", dscr = "Rust Snippet: `closure`"},
+        fmt(
+            [[
+                |{}| {{ {} }}{}
+            ]],
+            {
+                insert(1, "arg"),
+                insert(2, "<function-body>"),
+                insert(0),
+            }
+        )
+    ),
 }
 
 -- End of File

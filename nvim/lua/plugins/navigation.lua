@@ -2,18 +2,29 @@
 -- Purpose:             `lazy.nvim` Plugin Specification    ( Plugins for faster and easier buffer-local navigation. )
 
 return {
-    {   -- Improved Word Motions.                       ( STATE: Very Good )
+    {   -- Improved Word Motions.                       ( STATE: Really good, but could potentially be better. )
         "chrisgrieser/nvim-spider",
         cond = true,        -- Allow in VS-Code.
         lazy = true,        -- Seems to be fine without further config.
+
         opts = {
             skipInsignificantPunctuation = true,
         },
+
+        -- |> Fixes UTF-8 issue, takes 200 ms to load. Unuseable.
+        -- dependencies = {
+    	   --  "theHamsta/nvim_rocks",
+    	   --  build = "pip3 install --user hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua",
+    	   --  config = function()
+    	   --      require("nvim_rocks").ensure_installed("luautf8")
+    	   --  end,
+        -- },
     },
 
     {   -- Quick search-type leap motion.
         "ggandor/leap.nvim",
         lazy = true,
+
         keys = function()
             local ret = {}
             for _, key in ipairs({ "d" }) do
@@ -21,6 +32,7 @@ return {
             end
             return ret
         end,
+
         config = function()
             -- Add leap binding using Legendary.
             require("legendary").keymaps({
