@@ -5,14 +5,13 @@
 -- |> START - Treesitter Toggles --|
 --===============================--+
 
--- NOTE:    These seem to work for loading treesitter completely lazily.
---          I couldn't get a disable condition to work.
-
 -- NOTE:    Neovim treesitter implementation is too slow for any file above 500-1000 lines.
 --          Which sucks a lot. ( Extra Note: Helix treesitter performance is hundreds of times more performant. )
 
 -- |> Enable `Treesitter` for `markdown` files.         ( If this causes noticeable lag, can disable. )
 local treesitter_aumgroup = vim.api.nvim_create_augroup("MyTreesitterFiletypes", { clear = true })
+
+-- TODO: Delete these autocmds from here if they are not required, and move these to `ftplugin` files.
 
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.md" },
@@ -78,18 +77,17 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 --     group = treesitter_aumgroup,
 -- })
 
--- |> Enable `Treesitter` for `rust` files.
--- NOTE: Causes lag in files with more than 1000 lines.
-vim.api.nvim_create_autocmd("BufReadPre", {
-    pattern = { "*.rs" },
-    command = "TSEnable highlight rust",
-    group = treesitter_aumgroup,
-})
-
 -- |> Enable `Treesitter` for `fish` files.
 vim.api.nvim_create_autocmd("BufReadPre", {
     pattern = { "*.fish" },
     command = "TSEnable highlight fish",
+    group = treesitter_aumgroup,
+})
+
+-- |> Enable `Treesitter` for `sh` files.
+vim.api.nvim_create_autocmd("BufReadPre", {
+    pattern = { "*.sh" },
+    command = "TSEnable highlight sh",
     group = treesitter_aumgroup,
 })
 
@@ -117,16 +115,17 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 -- |> Enable `Treesitter` for `<insert-filetype-here>` files.
 -- TODO
 
-
 --=============================--+
 -- |> END - Treesitter Toggles --|
 --=============================--+
 
 return {
-    {   -- Treesitter                                   ( STATE: Meh )
+    {   -- Treesitter                                   ( STATE: Config quite fine. TS itself quite weak. )
         --  - Occasionally useful for highlighting. Common optional dependency for many plugins.
         --  - But gets very laggy, very easily.
         "nvim-treesitter/nvim-treesitter",
+        enabled = true,
+        cond = vim.g.aum_plugin_treesitter_enabled,
         lazy = true,
         version = false,
 
@@ -143,6 +142,8 @@ return {
         dependencies = {
             {
                 "nvim-treesitter/nvim-treesitter-textobjects",
+                enabled = true,
+                cond = vim.g.aum_plugin_treesitter_textobjects_enabled,
                 init = function()
                     -- PERF: No need to load the plugin, if we only need its queries for `mini.ai`.
                     local plugin = require("lazy.core.config").spec.plugins["nvim-treesitter"]
@@ -173,6 +174,9 @@ return {
                 local languages = {
                     "lua",          -- Lua's `Treesitter Highlighting` has very bad performance. ( Causes input latency. )
                     "php",          -- Testing...
+                    "toml",         -- `toml` is fine without treesitter.
+                    "go",           -- Either might be fine.
+                    "python",       -- Either might be fine.
                     -- "rust",      -- Treesitter lags very easily...
                     -- "html",      -- Not sure which highlighting I want.
                     -- "css",       -- Not sure which highlighting I want.
@@ -218,7 +222,7 @@ return {
 
                     -- Parser speeds apparently vary quite a lot.
                     -- Disable `Treesitter` for any filetype where it causes noticeable lag.
-                    --  - NOTE: For some reason this does not seem to be working as it should.
+                    --  - NOTE: This should work. Though I might have had some issues with it not working at some point.
                     disable = function(lang, buf)
                         return ts_disable(lang, buf)
                     end,
@@ -360,6 +364,8 @@ return {
 
     {
         "haringsrob/nvim_context_vt",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_context_vt_enabled,
         lazy = true,
         version = false,
 

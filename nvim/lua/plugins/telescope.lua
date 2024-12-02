@@ -8,6 +8,8 @@
 return {
     {   -- Telescope: Fuzzy Search UI                   ( STATE: Good )     ( Dependency for a number of plugins. )
         "nvim-telescope/telescope.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_telescope_enabled,
         lazy = true,
         version = false,        -- Telescope releases are very out of date.
 

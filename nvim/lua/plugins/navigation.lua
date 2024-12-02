@@ -4,25 +4,28 @@
 return {
     {   -- Improved Word Motions.                       ( STATE: Really good, but could potentially be better. )
         "chrisgrieser/nvim-spider",
-        cond = true,        -- Allow in VS-Code.
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_spider_enabled,
         lazy = true,        -- Seems to be fine without further config.
 
         opts = {
             skipInsignificantPunctuation = true,
         },
 
-        -- |> Fixes UTF-8 issue, takes 200 ms to load. Unuseable.
+        -- -- |> Fixes UTF-8 issue, takes 200 ms to load. Unuseable.
         -- dependencies = {
-    	   --  "theHamsta/nvim_rocks",
-    	   --  build = "pip3 install --user hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua",
-    	   --  config = function()
-    	   --      require("nvim_rocks").ensure_installed("luautf8")
-    	   --  end,
+        --      "theHamsta/nvim_rocks",
+        --     build = "pip3 install --user hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua",
+        --     config = function()
+        --         require("nvim_rocks").ensure_installed("luautf8")
+        --     end,
         -- },
     },
 
     {   -- Quick search-type leap motion.
         "ggandor/leap.nvim",
+        enabled = false,
+        cond = vim.g.aum_plugin_leap_enabled,
         lazy = true,
 
         keys = function()
@@ -43,6 +46,8 @@ return {
 
     {   -- Enhanced `f` and `t` motions for `leap.nvim`.
         "ggandor/flit.nvim",
+        enabled = false,
+        cond = vim.g.aum_plugin_flit_enabled,
         -- TODO/NOTE: Configured acceptably, but these keys haven't/can't be added to the
         -- core bindings file, or `legendary.nvim`, unless I configure the config function
         -- to bind Legendary Keys using the `flit.nvim` API. (Which im not sure if it offers.)

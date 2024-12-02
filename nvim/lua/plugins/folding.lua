@@ -7,14 +7,17 @@
 return {
     {   -- An attempt at good folding for nvim.                             ( STATE: Decent, quite good. )
         "kevinhwang91/nvim-ufo",
-        enabled = true,                             -- `true` to enable.
-        lazy = true,                                -- TODO: Config some lazy-loading maybe.
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_ufo_enabled,
+        lazy = true,                                -- Filetype-based lazy-loading is decent.
         version = false,
 
         ft = {
             "norg",
             "lua",
             "rust",
+            "typst",
+            "markdown",
         },
 
         dependencies = {

@@ -1,4 +1,5 @@
 -- |> Set scroll distance for `<C-u>` and `<C-d>`:
+
 --  - I suspect that this isn't working well.
 -- vim.api.nvim_create_autocmd("VimEnter,WinNew,WinEnter,WinResized,BufNew,BufEnterPost,BufWinEnter,VimResized", {
 --     pattern = "*",
@@ -15,7 +16,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
             timeout = 180,
             on_visual = false,
         })
-    ]]      -- `on_visual` seems to cause lingering highlights sometimes, so it's disabled.
+    ]]  -- `on_visual` seems to cause lingering highlights sometimes, so it's disabled.
 })
 
 -- |> Fix conceal in help files.
@@ -25,6 +26,7 @@ vim.api.nvim_create_autocmd("FileType", {
     command = 'lua vim.wo.concealcursor = ""',
     group = help_conceal_aumgroup
 })
+
 vim.api.nvim_create_autocmd("FileType", {
     pattern = { "help" },
     command = 'lua vim.wo.conceallevel = 0',
@@ -121,13 +123,13 @@ vim.api.nvim_create_autocmd("BufEnter", {
 -- })
 
 -- Enable `list` and `line numbers` in Rust files.
-vim.api.nvim_create_autocmd("Filetype", {
-    pattern = { "rust" },
-    callback = function()
-        vim.api.nvim_cmd({ cmd = "set", args = { "list" }}, {})
-        vim.api.nvim_cmd({ cmd = "set", args = { "nu" }}, {})
-    end,
-})
+-- vim.api.nvim_create_autocmd("Filetype", {
+--     pattern = { "rust" },
+--     callback = function()
+--         vim.api.nvim_cmd({ cmd = "set", args = { "list" }}, {})
+--         vim.api.nvim_cmd({ cmd = "set", args = { "nu" }}, {})
+--     end,
+-- })
 
 -- |> Search Highlight AutoCommands         ( Good, but can potentially cause lag. ( The highlight, not so much the autocmd itself. ) )
 local search_hl_aumgroup = vim.api.nvim_create_augroup("MySearchHL", { clear = true })
@@ -136,6 +138,7 @@ vim.api.nvim_create_autocmd("CmdlineEnter", {
     command = "set hlsearch",
     group = search_hl_aumgroup
 })
+
 vim.api.nvim_create_autocmd("CmdlineLeave", {
     pattern = {'/', '\\?'},
     command = "set nohlsearch",
@@ -161,8 +164,8 @@ vim.api.nvim_create_autocmd("BufEnter", {
 -- Autocommands to change "commentstring" for specific filetypes. (TODO: Create lua version.)
 -- |> Use "//" instead of "/* */" for 'C' and 'cpp' files.
 vim.cmd([[
-augroup set-commentstring-ag
-autocmd!
+    augroup set-commentstring-ag
+    autocmd!
     autocmd BufEnter *.c :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
     autocmd BufFilePost *.c :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
 
@@ -186,7 +189,7 @@ autocmd!
 
     autocmd BufEnter *.typ :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
     autocmd BufFilePost *.typ :lua vim.api.nvim_buf_set_option(0, "commentstring", "// %s")
-augroup END
+    augroup END
 ]])
 
 -- START => Trailing Whitespace Highlighting
@@ -209,12 +212,14 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     end,
     group = syntax_matching_aumgroup
 })
+
 vim.api.nvim_create_autocmd("InsertEnter", {
     callback = function()
         AumDisableTrailingWhitespaceHighlight()
     end,
     group = syntax_matching_aumgroup
 })
+
 -- END => Trailing Whitespace Highlighting
 
 -- |> Set tabstop/shiftwidth to `2` in HTML files.
@@ -266,19 +271,6 @@ vim.api.nvim_create_autocmd({ "BufRead" }, {
     group = rusty_tags_aumgroup
 })
 
--- Testing nuking Treesitter highlighting for lua files.
---  - NOTE: This works. I would like for the builtin disable functions to work though, too.
---  - NOTE: However, lua highlighting is quite sad without Treesitter. (Though performance is 5000x of Treesitter.)
---  - NOTE: Added: `euclidianAce/BetterLua.vim` for use with this.
-local lua_treesitter_highlight_aumgroup = vim.api.nvim_create_augroup("AumLuaTreesitterHighlightDisable", { clear = true })
-vim.api.nvim_create_autocmd("BufRead", {
-    pattern = { '*.lua' },
-    callback = function()
-        vim.treesitter.stop()
-    end,
-    group = lua_treesitter_highlight_aumgroup
-})
-
 -- `get_rust_analyzer_client_id`
 local function get_rust_analyzer_client_id()
     local lsp_clients = vim.lsp.get_clients()
@@ -302,11 +294,6 @@ local rustanceanvim_lsp_aumgroup = vim.api.nvim_create_augroup("RustaceanvimLspA
 vim.api.nvim_create_autocmd("BufRead", {
     pattern = { '*.rs' },
     callback = function()
-        -- Get the current `bufnr`. (Not sure if this works, but looks like it does.)
-        local bufnr = vim.fn.bufnr()
-        -- local found_rust_analyzer = false
-        -- local rust_analyzer_id = 0
-
         -- |> Get the `rust-analyzer` LS client ID.  (Early exit if can't find it.)
         local found_rust_analyzer, rust_analyzer_id = get_rust_analyzer_client_id()
 
@@ -316,6 +303,7 @@ vim.api.nvim_create_autocmd("BufRead", {
 
 
         -- |> Early exit if client is already attached to the buffer.
+        local bufnr = vim.fn.bufnr()
         local is_attached_already = vim.lsp.buf_is_attached(bufnr, rust_analyzer_id)
 
         if is_attached_already then
@@ -333,6 +321,25 @@ vim.api.nvim_create_autocmd("BufRead", {
         end
     end,
     group = rustanceanvim_lsp_aumgroup
+})
+
+-- |> This autocommand would fuck with `kitty-scrollback.nvim`, if not prevented from doing so.
+local terminal_helper_aumgroup = vim.api.nvim_create_augroup("AumTerminalHelperAuGroup", { clear = true })
+vim.api.nvim_create_autocmd("TermOpen", {
+    callback = function(event)
+        local buf_name = vim.api.nvim_buf_get_name(0)
+        local buf_name_contains_kitty = string.match(buf_name, "kitty")
+
+        if vim.bo.buftype == "terminal" and not buf_name_contains_kitty then
+            vim.cmd("setlocal nonumber")
+            vim.cmd("setlocal norelativenumber")
+            vim.cmd("setlocal signcolumn=no")
+            vim.cmd("startinsert!")
+            vim.cmd("set cmdheight=1")
+            vim.bo[event.buf].buflisted = false
+        end
+    end,
+    group = terminal_helper_aumgroup
 })
 
 -- End of File

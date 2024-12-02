@@ -4,8 +4,12 @@
 return {
     {   -- Trim nearby trailing whitespace on "InsertLeave".    ( STATE: Good )
         "Aumnescio/auto-trim-nearby-whitespace.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_auto_trim_nearby_whitespace_enabled,
         lazy = true,
+
         event = "InsertLeave",
+
         config = function()
             require("auto-trim-whitespace").setup()
         end,
@@ -15,6 +19,8 @@ return {
         --  - Written in Rust.
         --  - Extremely fast load-time and also performant actions.
         "willothy/moveline.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_moveline_enabled,
         lazy = true,
         version = "0.3.1",
         -- build = "make",      -- Ran it manually in the folder, and it worked better.
@@ -45,6 +51,7 @@ return {
         --  - NOTE: Maybe name conflict with the other `wildfire`, so one of them has to be commented out.
         "Aumnescio/wildfire.nvim",
         enabled = true,
+        cond = vim.g.aum_plugin_wildfire_enabled,
         lazy = true,
         dev = true,
 
@@ -107,12 +114,15 @@ return {
     {
         "adaszko/tree_climber_rust.nvim",
         enabled = true,
+        -- cond = vim.g.aum_plugin_tree_climber_rust_enabled,
         lazy = true,
         ft = { "rust" },
     },
 
     {
         "Vonr/align.nvim",
+        enabled = true,
+        -- cond = vim.g.aum_plugin_align_enabled,
         lazy = true,
         version = false,
 
@@ -156,13 +166,15 @@ return {
         end,
     },
 
-    -- NOTE/TODO: Might be looking to move to `mini.comment` or something.
     {   -- Comment Toggling                                     ( STATE: Generally been good. )
         -- - Having minor issue, `gcc` bind sometimes not working.
+        -- NOTE/TODO: Might be looking to move to `mini.comment` or something.
         "numToStr/Comment.nvim",
-        cond = true,        -- Allow in VS-Codium.
+        enabled = true,
+        -- cond = vim.g.aum_plugin_comment_enabled,
         lazy = true,
-        version = "0.8.0",
+        version = false,
+        -- version = "0.8.0",
 
         -- This might or might not work.
         keys = function()

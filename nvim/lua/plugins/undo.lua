@@ -4,6 +4,8 @@
 return {
     {
         "mbbill/undotree",
+        enabled = true,
+        cond = vim.g.aum_plugin_undotree_enabled,
         lazy = false,
 
         -- opts = {},

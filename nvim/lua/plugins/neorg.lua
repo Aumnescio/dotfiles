@@ -7,6 +7,7 @@
 return {
     {   -- Neorg | Knowledge management and organization.
         "nvim-neorg/neorg",
+        -- cond = false,               -- Temporary disable toggle.
         enabled = true,
         lazy = true,
         version = "*",
@@ -33,7 +34,7 @@ return {
                 -- Attempting to load the basic exporting functionality.
                 ["core.export"] = {},
 
-                -- `concealer`: Adds pretty icons to your documents.    ( TODO: Config this to work with new Neorg. )
+                -- `concealer`: Adds pretty icons to your documents.    ( TODO: Config this further. )
                 ["core.concealer"] = {
                     config = {
                         -- NOTE: `diamond` is the best preset.
@@ -57,15 +58,20 @@ return {
                                 },
                             },  -- `heading`
 
-                            -- `code_block`: STATE: No idea / TODO.
+                            -- `code_block`: STATE: Okay'ish. Maybe TODO.
                             code_block = {
-                                conceal = true,
+                                conceal = false,
+                                content_only = false,
+                                highlight = "@neorg.tags.ranged_verbatim.code_block",   -- The highlight-group name.
+                                padding = {
+                                    left = 2,
+                                    right = 2,
+                                },
                             },
-
                         },  -- `icons`
 
-                        -- No idea if this does anything. Also not quite sure if this is correct location, should be though.
-                        --  - NOTE: There is a very decent likelyhood that this is better to disable when using `nvim-ufo`.
+                        -- `folds` is not doing anything, but stuff is working fine.
+                        --  - NOTE: `nvim-ufo` stuff is handling most folding things.
                         folds = false,
                         init_open_folds = "never",
                     },  -- `config`

@@ -3,6 +3,8 @@
 return {
     {   -- Main Colorscheme / Theme                 ( STATE: Good )
         "Aumnescio/aumnechroma.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_aumnechroma_enabled,
         lazy = false,
         dev = true,
         priority = 1000,
@@ -14,7 +16,8 @@ return {
 
     {
         "catppuccin/nvim", name = "catppuccin",
-        enabled = false,        -- Not using catppuccin.
+        enabled = false,            -- Not using catppuccin. Using my own custom theme which is better.
+        cond = vim.g.aum_plugin_catppuccin_enabled,
         lazy = true,
         cmd = "LoadThemeCatppuccin",
 

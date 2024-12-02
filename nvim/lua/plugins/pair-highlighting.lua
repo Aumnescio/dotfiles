@@ -7,6 +7,8 @@ return {
         --  - At least okay performance. Much better feeling than `matchparen` or `matchup`.
         --      - For good performance, `delay` is still required.
         "utilyre/sentiment.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_sentiment_enabled,
         lazy = true,
         version = false,
 

@@ -82,21 +82,25 @@ return {
         --  - NOTE: Potentially causing some extra flicker, but I really probably do prefer having this.
         "rebelot/heirline.nvim",
         enabled = true,
+        cond = vim.g.aum_plugin_heirline_enabled,
         lazy = true,
-        event = "UiEnter",                  -- Load `heirline` on `UiEnter`.
+        event = "UiEnter",                      -- Load `heirline` on `UiEnter`.
 
         dependencies = {
+            "Aumnescio/aumnechroma.nvim",       -- Required because of my custom config.
             "nvim-tree/nvim-web-devicons",
         },
 
         config = function()
-            require("heirline/aumneline")   -- Load my config.
+            require("heirline/aumneline")       -- Load my config.
         end,
     },
 
     {   -- LSP Progresss UI
         "j-hui/fidget.nvim",
-        lazy = true,                        -- Loaded by `lspconfig`.
+        enabled = true,
+        cond = vim.g.aum_plugin_fidget_enabled,
+        lazy = true,                            -- Loaded by `lspconfig`.
         version = false,
 
         -- Related documentation: "https://github.com/j-hui/fidget.nvim/blob/main/doc/fidget.md"
@@ -215,6 +219,8 @@ return {
     {   -- Icons                                        ( STATE: Good )     ( Nice simple visual addition. Dependency for some plugins. )
         --  - NOTE: Dependency of `heirline.nvim`, bit awkward to disable this.
         "nvim-tree/nvim-web-devicons",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_web_devicons_enabled,
         lazy = false,
 
         opts = {
@@ -266,6 +272,7 @@ return {
         --  - Might cause additional minor flicker when used with scrolloff.
         "shellRaining/hlchunk.nvim",
         enabled = true,
+        cond = vim.g.aum_plugin_hlchunk_enabled,
         lazy = true,
         version = false,
 
@@ -310,7 +317,10 @@ return {
 
     {   -- UI Lib, better `vim.ui`                      ( STATE: Good )
         "stevearc/dressing.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_dressing_enabled,
         lazy = true,
+
         -- event = "VeryLazy",      -- As this is required by Legendary, this wouldn't really do anything.
 
         opts = {
@@ -518,6 +528,8 @@ return {
 
     {   -- UI Components Library                ( STATE: Good )
         "MunifTanjim/nui.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_nui_enabled,
         lazy = true,
     },
 
@@ -526,10 +538,12 @@ return {
         --  - I do feel like I want a scrollbar, but this is quite buggy right now.
         "petertriho/nvim-scrollbar",
         enabled = false,    -- TODO: Test simpler plugin for performance: "https://github.com/ojroques/nvim-scrollbar"
+        -- cond = vim.g.aum_plugin_nvim_scrollbar_enabled,
         lazy = true,
         version = false,
 
         cmd = "EnableScrollbar",
+
         ft = {
             "lua",
             "rust",
@@ -678,6 +692,7 @@ return {
     {   -- Another ScrollBar
         "dstein64/nvim-scrollview",
         enabled = true,
+        -- cond = vim.g.aum_plugin_nvim_scrollview_enabled,
         lazy = true,
         version = "*",
 

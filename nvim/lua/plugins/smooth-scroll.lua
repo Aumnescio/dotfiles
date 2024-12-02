@@ -8,12 +8,16 @@ return {
     {   -- Bad Smooth Scrolling                         ( STATE: Bad )
         "psliwka/vim-smoothie",
         enabled = false,            -- Disabled
+        -- cond = vim.g.aum_plugin_vim_smoothie_enabled,
         lazy = true,
         version = false,
+
         cmd = "EnableSmoothScroll",
+
         init = function()
             vim.g.smoothie_no_default_mappings = 1
         end,
+
         config = function()
             -- Bindings
             require("legendary").keymaps({
@@ -27,12 +31,16 @@ return {
             vim.api.nvim_create_user_command("EnableSmoothScroll", 'echo "Activated Cinnamon!"', {})
         end,
     },
+
     {   -- Bad Linear Smooth Scrolling.                     ( STATE: Bad )
         "declancm/cinnamon.nvim",
         enabled = false,            -- Disabled.
+        -- cond = vim.g.aum_plugin_cinnamon_enabled,
         lazy = true,
         version = false,
+
         cmd = "EnableSmoothScroll",
+
         opts = {
             -- |> OPTIONS:
             disabled            = false,    -- Disables the plugin.
@@ -57,6 +65,7 @@ return {
             extended_keymaps    = false,    -- Create extended keymaps.
             override_keymaps    = false,    -- The plugin keymaps will override any existing keymaps.
         },
+
         config = function(_, opts)
             -- Start Cinnamon
             require("cinnamon").setup()

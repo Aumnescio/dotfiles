@@ -40,8 +40,11 @@ return {
             -- end,
         },
     },
+
     {
         "f-person/git-blame.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_git_blame_enabled,
         lazy = true,
 
         -- TODO: Finish config. Test this.
@@ -49,18 +52,12 @@ return {
             "GitBlameToggle",
         },
 
-        keys = function()
-            ---@type LazyKeys[]
-            local ret = {}
-            -- TODO: Add proper keybind.
-            for _, key in ipairs({ "<Leader><Leader>gb" }) do
-                ret[#ret + 1] = { key, mode = "n" }
-            end
-            return ret
-        end,
+        keys = {
+            { "<Leader><Leader>gb", "<Cmd>GitBlameToggle<CR>", desc = "[Aum/lazy] Toggle Git Blame." },
+        }
 
         -- config = function(_, opts)
-        --     -- do legendary mapping
+        --     -- TODO: Legendary binds
         -- end,
     },
 }

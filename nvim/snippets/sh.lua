@@ -5,7 +5,7 @@ local snippet_node          = luasnip.snippet_node
 local indent_snippet_node   = luasnip.indent_snippet_node
 
 local text                  = luasnip.text_node                                 -- For text nodes.
-local insert                = luasnip.insert_node                               -- For insert nodes.    ( This inserts text and enters select mode with the text selected. )
+local insert                = luasnip.insert_node                               -- For insert nodes.        ( This inserts text and enters select mode with the text selected. )
 local func                  = luasnip.function_node                             -- For func nodes.
 local choice                = luasnip.choice_node                               -- For choice nodes.        ( TODO: How to open the choices in nvim-cmp properly? )
 local dyn                   = luasnip.dynamic_node                              -- For dynamic nodes.
@@ -29,55 +29,29 @@ local postfix               = require("luasnip.extras.postfix").postfix
 local types                 = require("luasnip.util.types")
 local parse                 = require("luasnip.util.parser").parse_snippet
 
+local replace_capitalized = function(index)
+    return func(function(arg)
+        local str = arg[1][1]
+        return (str:gsub("^%l", string.upper))       -- This seems to work, not sure if there are issues with it.
+    end, { index })
+end
+
+-- WIP/Testing
+local filename_without_ext = function()
+    return func(function()
+        -- `:t` -> `tail` -> last path component only
+        -- `:r` -> without extension
+        return vim.fn.expand("%:t:r")
+    end)
+end
+
 return {
-    snippet({ trig = "date", name = "Insert Date", dscr = "Snippet for inserting the current date."},
+    snippet({ trig = "#!shebang", name = "Bash `Shebang`", dscr = "Bash shebang"},
         fmt(
             [[
-                {}
+                #!/usr/bin/env bash{}
             ]],
             {
-                partial(os.date, "`%d/%m/%Y`")
-            }
-        )
-    ),
-    snippet({ trig = "time_now", name = "Insert current time", dscr = "Snippet for inserting the current time."},
-        fmt(
-            [[
-                {}
-            ]],
-            {
-                partial(os.date, "`%H:%M`")
-            }
-        )
-    ),
-    snippet({ trig = "schedule-day", name = "Daily Schedule", dscr = "Snippet Daily Schedule."},
-        fmt(
-            [[
-                *** {}
-                **** `03:00 - 05:00`
-                     todo
-
-                **** `05:00 - 07:00`
-                     todo
-
-                **** `07:00 - 09:00`
-                     todo
-
-                **** `09:00 - 11:00`
-                     todo
-
-                **** `11:00 - 13:00`
-                     todo
-
-                **** `13:00 - 15:00`
-                     todo
-
-                **** `15:00 - 17:00`
-                     todo
-                {}
-            ]],
-            {
-                partial(os.date, "`%d/%m/%Y`"),
                 insert(0)
             }
         )

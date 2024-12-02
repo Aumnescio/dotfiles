@@ -5,10 +5,12 @@ return {
     {   -- `Keymap Manager` and `Command Palette`.      ( STATE: Extremely Good )
         --  - NOTE: Needed to configure things in Telescope Spec for all lazy-loading to work without errors.
         "mrjones2014/legendary.nvim",
-        cond = true,            -- Overwrite VS-Code condition. Allow in VS-Code, because legendary sets keymaps.
+        enabled = true,
+        cond = vim.g.aum_plugin_legendary_enabled,
         lazy = false,           -- Setting to `true` doesn't really do anything, because binds are required quite early.
         priority = 1005,
         version = "*",          -- Should be fine.
+
         dependencies = {
             "kkharji/sqlite.lua",
             "stevearc/dressing.nvim",

@@ -21,6 +21,8 @@ vim.api.nvim_create_user_command("LspSetupGodot", 'echo "Setting up `Godot-LS`."
 return {
     {   -- LangServerProtocol Configs                   ( STATE: Good'ish )
         "neovim/nvim-lspconfig",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_lspconfig_enabled,
         lazy = true,
         version = "*",          -- Latest commits have issues => using latest release instead.
 
@@ -32,7 +34,7 @@ return {
 
         dependencies = {
             -- Very possible that `NeoDev` should only be loaded for Lua files.
-            "folke/neoconf.nvim",       -- Still not really sure what this does.
+            -- "folke/neoconf.nvim",       -- Still not really sure what this does.
             -- "folke/neodev.nvim",        -- This might make `lua_ls` heavier. (Latency in completion)    -- TODO: This has some updated alternative plugin: `lazydev`
             "j-hui/fidget.nvim",        -- Generally, I really like `fidget`, but I don't want it to display constant spam messages.
             "hrsh7th/cmp-nvim-lsp",     -- LSP Source for `nvim-cmp`. Important. Some servers are laggy.
@@ -123,6 +125,8 @@ return {
 
     {   -- Rust LangServer++                            ( STATE: Prolly good, but WIP. )
         "mrcjkb/rustaceanvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_rustaceanvim_enabled,
         version = "^5",
 
         lazy = true,
@@ -273,24 +277,33 @@ return {
 
     {   -- TypeScript LangServer++                      ( STATE: Testing )
         "pmizio/typescript-tools.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_typescript_tools_enabled,
         lazy = true,
+
         dependencies = {
             "nvim-lua/plenary.nvim",
             "neovim/nvim-lspconfig",
         },
+
         opts = {},
     },
 
     {   -- C / C++ LangServer++                         ( STATE: Okay )
         --  - TODO: Might need reconfiguration
         "ranjithshegde/ccls.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_ccls_enabled,
         lazy = true,
     },
 
     {   -- Global LanguageServer preferences            ( STATE: Good )
         "Aumnescio/langserver-prefs.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_langserver_prefs_enabled,
         lazy = true,        -- Required by the setups.
         dev = true,
+
         dependencies = {
             "yioneko/nvim-cmp",
             "hrsh7th/cmp-nvim-lsp",
@@ -323,6 +336,8 @@ return {
 
     {   -- Setup Config for Slint-LS                    ( STATE: Fine )
         "Aumnescio/slint-langserver-setup.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_slint_langserver_setup_enabled,
         lazy = true,
         dev = true,
 
@@ -604,6 +619,7 @@ return {
     {   -- Setup Config for Godot-LS                    ( STATE: Testing. )
         "Aumnescio/godot-langserver-setup.nvim",
         enabled = true,
+        cond = vim.g.aum_plugin_godot_langserver_setup_enabled,
         lazy = true,
         dev = true,
 
@@ -625,24 +641,27 @@ return {
 
     {   -- EoL Inlay Hints                          ( STATE: Good )
         "chrisgrieser/nvim-lsp-endhints",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_lsp_endhints_enabled,
+
         event = "LspAttach",
 
         opts = {},
 
         config = function(_, opts)
             require("lsp-endhints").setup({
-	            icons = {
-		            type = "󰜁 ",
-		            parameter = "󰏪 ",
-		            offspec = " ",         -- hint kind not defined in official LSP spec
-		            unknown = " ",         -- hint kind is nil
-	            },
-	            label = {
-		            padding = 1,
-		            marginLeft = 0,
-		            bracketedParameters = true,
-	            },
-	            autoEnableHints = true,
+                icons = {
+                    type = "󰜁 ",
+                    parameter = "󰏪 ",
+                    offspec = " ",         -- hint kind not defined in official LSP spec
+                    unknown = " ",         -- hint kind is nil
+                },
+                label = {
+                    padding = 1,
+                    marginLeft = 0,
+                    bracketedParameters = true,
+                },
+                autoEnableHints = true,
             })
         end,
     },

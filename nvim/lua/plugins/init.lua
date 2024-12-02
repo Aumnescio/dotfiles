@@ -19,10 +19,14 @@
 --  - urlview.nvim:     TODO?
 
 return {
-    {   -- Neovim Config                                        ( STATE: Unknown )
+    {   -- Neovim Config                                            ( STATE: Unknown )
         "folke/neoconf.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_neoconf_enabled,
         lazy = true,
+
         cmd = "Neoconf",
+
         -- TODO/NOTE: Supposed to be `setup` before `lua_ls`.
         -- TODO: Move opts to module file.
         opts = {
@@ -73,8 +77,10 @@ return {
         },
     },
 
-    {   -- Neovim API Development                               ( STATE: TODO: Update to `lazydev`? )
+    {   -- Neovim API Development                                   ( STATE: TODO: Update to `lazydev`? )
         "folke/neodev.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_neodev_enabled,
         lazy = true,
         -- TODO: Move opts to module file.
         opts = {
@@ -109,233 +115,38 @@ return {
         },
     },
 
-    {   -- DebuggerAdapterProtocol                              ( STATE: Unknown )
+    {   -- DebuggerAdapterProtocol                                  ( STATE: Unknown )
         --  - TODO: Test and configure.
         "mfussenegger/nvim-dap",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_dap_enabled,
         lazy = true,
+
         dependencies = {
             "rcarriga/nvim-dap-ui",
         },
     },
 
-    {   -- Debugger UI                                          ( STATE: Unknown )
+    {   -- Debugger UI                                              ( STATE: Unknown )
         --  - TODO: Test and configure.
         "rcarriga/nvim-dap-ui",
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_dap_ui_enabled,
         lazy = true,
     },
 
-    {   -- Diagnostic Viewer                                    ( STATE: Good )
+    {   -- Diagnostic Viewer                                        ( STATE: Good )
         --  - TODO: Test and config more.
         "folke/trouble.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_trouble_enabled,
         lazy = true,
     },
 
-    {   -- Surround operations, text objects, and more.         ( STATE: Good )
-        "echasnovski/mini.nvim",
-        -- TODO: Add `keys` function and Legendary Binding Creation in `config` function, to lazy-load this.
-        -- Unless this takes like 0.5ms.
-        lazy = true,
-        version = false,
-        event = "VeryLazy",         -- TODO: Could be loaded more lazily. ( Though this takes only 5'ish ms. )
-
-        config = function(_, opts)
-            -- |> mini-bufremove            ( Maybe looking for something better and more multipurpose. )
-            require("mini.bufremove").setup()
-
-            -- |> AroundIn                                      ( STATE: Some issues / WIP )
-            require("mini.ai").setup({
-                -- Table with textobject id as fields, textobject specification as values.
-                -- Also use this to disable builtin textobjects. See |MiniAi.config|.
-                custom_textobjects = nil,
-
-                -- Module mappings. Use `''` (empty string) to disable one.
-                -- NOTE: These bindings are for Visual Mode.
-                mappings = {
-                    -- Main textobject prefixes
-                    around = "a",       -- Should be fine?
-                    inside = "i",       -- Should be fine?
-
-                    -- Next/last textobjects
-                    around_next = "an",
-                    inside_next = "in",
-                    around_last = "al",
-                    inside_last = "il",
-
-                    -- Move cursor to corresponding edge of `a` textobject
-                    goto_left = "g[",
-                    goto_right = "g]",
-                },
-
-                -- Number of lines within which textobject is searched
-                n_lines = 32,
-
-                -- How to search for object (first inside current line, then inside
-                -- neighborhood). One of 'cover', 'cover_or_next', 'cover_or_prev',
-                -- 'cover_or_nearest', 'next', 'prev', 'nearest'.
-                search_method = 'cover_or_next',
-
-                -- Whether to disable showing non-error feedback
-                silent = false,
-            })
-
-            -- |> Surround Operations                           ( STATE: Good )
-            require("mini.surround").setup({
-                -- Add custom surroundings to be used on top of builtin ones. For more
-                -- information with examples, see `:h MiniSurround.config`.
-                custom_surroundings = nil,
-
-                -- Duration (in ms) of highlight when calling `MiniSurround.highlight()`
-                highlight_duration = 360,
-
-                -- Module mappings. Use `''` (empty string) to disable one.
-                mappings = {
-                    add = "gsa",                -- Add surrounding in Normal and Visual mode.
-                    delete = "gsd",             -- Delete surrounding.
-                    find = "gsn",               -- Find surrounding (to the right).
-                    find_left = "gso",          -- Find surrounding (to the left).
-                    highlight = "gsh",          -- Highlight surrounding.
-                    replace = "gsr",            -- Replace surrounding.
-                    update_n_lines = "gsl",     -- Update `n_lines`.
-
-                    suffix_next = "b",          -- Suffix to search with `next` method.
-                    suffix_last = "B",          -- Suffix to search with `prev` method.
-                },
-
-                -- Number of lines within which surrounding is searched.
-                n_lines = 12,
-
-                -- How to search for surrounding (first inside current line, then inside
-                -- neighborhood). One of `cover`, `cover_or_next`, `cover_or_prev`,
-                -- `cover_or_nearest`, `next`, `prev`, `nearest`. For more details,
-                -- see `:h MiniSurround.config`.
-                search_method = "cover_or_next",
-            })
-
-            -- NOTE: Basically like `which-key` functionality, but extremely good, requiring no config.
-            --  - Reads descriptions set in `Legendary.nvim` keybinds.
-            local miniclue = require("mini.clue")               -- ( STATE: Extremely Good )
-            miniclue.setup({
-                -- To config these triggers, I think I need to understand the way my keys have been setup.
-                -- I use the following keys as `Leader-like` keys: '\', '<Space>', `g`, 'z', 'i'.
-                triggers = {
-                    -- Leader triggers
-                    { mode = 'n', keys = '<Leader>' },
-                    { mode = 'x', keys = '<Leader>' },
-                    { mode = 'n', keys = '<Space>' },
-                    { mode = 'x', keys = '<Space>' },
-                    { mode = 'n', keys = 'g' },
-                    { mode = 'x', keys = 'g' },
-                    { mode = 'n', keys = 'z' },
-                    { mode = 'x', keys = 'z' },
-                    { mode = 'n', keys = 'i' },
-                    { mode = 'x', keys = 'i' },
-                    -- { mode = 'n', keys = 'm' },
-                    -- { mode = 'x', keys = 'm' },
-
-                    -- Window commands
-                    { mode = 'n', keys = '<C-w>' },
-
-                    -- |> Built-in completion
-                    --  - NOTE: I think I have this disabled, so it's not really relevant.
-                    -- { mode = 'i', keys = '<C-x>' },
-
-                    -- -- |> Marks
-                    -- { mode = 'n', keys = "'" },
-                    -- { mode = 'n', keys = '`' },
-                    -- { mode = 'x', keys = "'" },
-                    -- { mode = 'x', keys = '`' },
-
-                    -- -- |> Registers
-                    -- { mode = 'n', keys = '"' },
-                    -- { mode = 'x', keys = '"' },
-                    -- { mode = 'i', keys = '<C-r>' },
-                    -- { mode = 'c', keys = '<C-r>' },
-                },
-
-                -- I'm not quite sure what these are so I'm gonna test mostly without these.
-                --  - Enhance this by adding descriptions for `<Leader>` mapping groups. (?)
-                clues = {
-                    miniclue.gen_clues.windows(),
-                    -- miniclue.gen_clues.builtin_completion(),
-                    -- miniclue.gen_clues.marks(),
-                    -- miniclue.gen_clues.registers(),
-                    -- miniclue.gen_clues.g(),
-                    -- miniclue.gen_clues.z(),
-                },
-
-                window = {
-                    delay = 500,    -- I kind of rarely need the clues, so somewhat high delay is preferred.
-
-                    config = {
-                        border = "rounded",
-                        width = "auto",
-                    },
-
-                    -- Don't think these bindings work. (TODO: Fix)
-                    --  - NOTE: Not that high prio though.
-                    scroll_down = "<C-d>",
-                    scroll_down = "<C-u>",
-                }
-            })
-
-            -- NOTE: File browser/management plugin.
-            local minifiles = require("mini.files")             -- ( STATE: Extremely Good )
-            minifiles.setup({
-                -- TODO: Config the opts.
-
-                -- Customization of shown content.
-                content = {
-                    -- Predicate for which file system entries to show.
-                    filter = nil,
-                    -- What prefix to show to the left of file system entry.
-                    prefix = nil,
-                    -- In which order to show file system entries.
-                    sort = nil,
-                },
-
-                -- Module mappings created only inside explorer.
-                -- Use `''` (empty string) to not create one.
-                mappings = {
-                    close       = '<C-q>',
-                    go_in       = 'e',
-                    go_in_plus  = 'E',
-                    go_out      = 'q',
-                    go_out_plus = 'Q',      -- NOTE: This overwrites the macro running key.
-                    reset       = '<BS>',
-                    reveal_cwd  = '@',
-                    show_help   = 'g?',
-                    synchronize = '=',
-                    trim_left   = '<',
-                    trim_right  = '>',
-                },
-
-                -- General options.
-                options = {
-                    -- Whether to delete permanently or move into module-specific trash.
-                    permanent_delete = true,
-                    -- Whether to use for editing directories.
-                    use_as_default_explorer = true,
-                },
-
-                -- Customization of explorer windows.
-                windows = {
-                    -- Maximum number of windows to show side by side.
-                    max_number = math.huge,
-                    -- Whether to show preview of file/directory under cursor.
-                    preview = false,                     -- TODO: Test this.
-                    -- Width of focused window.
-                    width_focus = 50,
-                    -- Width of non-focused window.
-                    width_nofocus = 15,
-                    -- Width of preview window.
-                    width_preview = 25,
-                }
-            })
-        end,
-    },
-
-    {   -- Live preview for `normal` command.                   ( STATE: Fine, but meh. )
+    {   -- Live preview for `normal` command.                       ( STATE: Fine, but meh. )
         "smjonas/live-command.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_live_command_enabled,
         lazy = true,
         version = false,
 
@@ -350,12 +161,14 @@ return {
         end,
     },
 
-    {   -- Fix Scrolloff near end of file.                      ( STATE: Maybe fine. )
+    {   -- Fix Scrolloff near end of file.                          ( STATE: Maybe fine. )
         "Aasim-A/scrollEOF.nvim",
         branch = "pr/large-scrolloff-support",
-        -- cond = false,
+        enabled = true,
+        cond = vim.g.aum_plugin_scrolleof_enabled,
         lazy = true,
         version = false,
+
         event = "VeryLazy",
 
         opts = {
@@ -383,14 +196,18 @@ return {
 
     {   -- Multiple Cursors. Configured in source code.
         --  - Fuck the way this plugin does keybindings...
+        --  - Disabled.
         "Aumnescio/vim-visual-multi",
-        cond = false,           -- TODO: Config and make this work proper.
+        enabled = false,
+        cond = vim.g.aum_plugin_vim_visual_multi_enabled,           -- Temporary disable toggle.
         lazy = false,
         dev = true,
     },
 
     {
         "axieax/urlview.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_urlview_enabled,
         lazy = true,
         version = false,
 
@@ -420,11 +237,27 @@ return {
         end,
     },
 
-    {   -- Expand-region selections.                            ( STATE: Does not do what I want )
+    {   -- Expand-region selections.                                ( STATE: Does not do what I want. (Disabled) )
         --  - Would have to extract the good parts and modify the bad parts for this to be useable.
         "olambo/vi-viz",
         enabled = false,
+        cond = vim.g.aum_plugin_vi_viz_enabled,
         lazy = true,
+    },
+
+    {   -- Browse keybindings and find free ones.                   ( STATE: Useable. )
+        --  - Can be very useful.
+        --  - Implementation seems good.
+        --  - NOTE/TODO: Would be good to fork this and make the the keyboard layout match mine.
+        --  - NOTE: Does not show `<Space>` bindings.
+        "meznaric/key-analyzer.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_key_analyzer_enabled,
+        lazy = true,            -- Lazy is good.
+
+        cmd = "KeyAnalyzer",
+
+        opts = {},
     },
 }
 

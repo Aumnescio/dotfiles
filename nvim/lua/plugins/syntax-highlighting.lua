@@ -39,21 +39,23 @@ return {
     {   -- Rust Syntax Highlighting                         ( STATE: At least okay )
         --  - Hurts performance: Input latency and delay in saving files.
         "rust-lang/rust.vim",
-        lazy = true,            -- TODO: I don't think this is loaded at all right now.
+        lazy = true,
         version = false,
-        -- ft = {
-        --     "rust",
-        -- },
+        cond = vim.opt.syntax ~= "",
+        ft = {
+            "rust",
+        },
     },
 
     {   -- Rust Syntax Highlighting Extension               ( STATE: Okay )
         --  - Hurts performance: Input latency and delay in saving files.
         "arzg/vim-rust-syntax-ext",
-        lazy = true,            -- TODO: I don't think this is loaded at all right now.
+        lazy = true,
         version = false,
-        -- ft = {
-        --     "rust",
-        -- },
+        cond = vim.opt.syntax ~= "",
+        ft = {
+            "rust",
+        },
         dependencies = {
             "rust-lang/rust.vim",
         },
@@ -251,6 +253,7 @@ return {
         "Aumnescio/html-syntax.nvim",
         lazy = true,
         dev = true,
+        cond = vim.opt.syntax ~= "",
         ft = "html",
         config = function()
             require("html-syntax").setup()
@@ -273,10 +276,11 @@ return {
     -- },
 
     {   -- Typst Filetype Detection                             ( STATE: I think this works, and even Treesitter needs this. )
+        -- - Just a simple `autocmd`.
         "Aumnescio/typst-ftdetect.nvim",
         lazy = true,
         dev = true,
-        event = "BufReadPre *.typ",
+        event = "BufReadPre *.typ",     -- Better than `VeryLazy`? Seems to work.
     },
 
     -- {   -- Custom Typst Indentation Rules
@@ -291,6 +295,7 @@ return {
     {   -- RON | Rusty Object Notation                          ( STATE: Probably fine. )
         "ron-rs/ron.vim",
         lazy = true,
+        cond = vim.opt.syntax ~= "",
         ft = "ron",
     },
 
@@ -303,18 +308,21 @@ return {
     {   -- For C# / C-Sharp indenting                           ( STATE: Dunno. )
         "jlcrochet/vim-cs",
         lazy = true,
+        cond = vim.opt.syntax ~= "",
         ft = "cs",
     },
 
     {   -- `just` / justfiles                                   ( STATE: Maybe fine. )
         "NoahTheDuke/vim-just",
         lazy = true,
+        cond = vim.opt.syntax ~= "",
         ft = "just",
     },
 
     {   -- `Slint`                                              ( STATE: Testing. )
         "slint-ui/vim-slint",
         lazy = true,
+        cond = vim.opt.syntax ~= "",
         ft = "slint",
     },
 
@@ -331,10 +339,24 @@ return {
     --     },
     -- },
 
-    {   -- Lua syntax highlighting without Treesitter.          ( STATE: Testing )
+    {   -- `Lua` syntax highlighting without Treesitter.          ( STATE: Colors fine. Performance problem. )
+        --  - Causes lag.
         "euclidianAce/BetterLua.vim",
+        enabled = true,
+        cond = false,                       -- Temporary disable toggle.
+        -- cond = vim.opt.syntax ~= "",
         lazy = true,
         ft = "lua",
+    },
+
+    {   -- `Go` syntax highlighting without Treesitter.          ( STATE: Testing )
+        "charlespascoe/vim-go-syntax",
+        lazy = true,
+        cond = vim.opt.syntax ~= "",
+        ft = "go",
+
+        -- TODO: Config opts.
+        -- - [Github](https://github.com/charlespascoe/vim-go-syntax)
     },
 }
 

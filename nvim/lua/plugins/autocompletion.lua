@@ -13,8 +13,10 @@ return {
     {   -- Snippet Support                              ( STATE: Very Good )
         -- Just a bit bad startup time.
         "L3MON4D3/LuaSnip",
+        enabled = true,
+        cond = vim.g.aum_plugin_luasnip_enabled,
         lazy = true,
-        version = "v2.1.0",            -- Releases are rare.
+        version = "v2.3.0",             -- Releases are rare.
 
         event = {
             "InsertEnter",
@@ -90,9 +92,12 @@ return {
     {   -- `nvim-cmp`: Autocompletion                   ( STATE: Good )
         -- "hrsh7th/nvim-cmp",      -- Original
         "yioneko/nvim-cmp",         -- Performance fork
-        -- enabled = false,
         branch = "perf",
         commit = "6c3d595f3223c1ae7392d4fde1626355439af6c1",
+
+        enabled = true,
+        cond = vim.g.aum_plugin_nvim_cmp_enabled,
+
         lazy = true,
         -- version = false,        -- `nvim-cmp` does not release often, so fetch from master should be good.
 
@@ -673,11 +678,16 @@ return {
 
     {   -- `Language Server` source for `nvim-cmp`.
         "hrsh7th/cmp-nvim-lsp",
+        enabled = true,
+        cond = vim.g.aum_plugin_cmp_nvim_lsp_enabled,
+
         -- NOTE: The way conds work was changed and now this cond does not work anymore.
         -- cond = function()
         --     return require("lazy.core.config").plugins["nvim-cmp"] ~= nil
         -- end,
+
         lazy = true,
+
         -- dependencies = {
         --     "yioneko/nvim-cmp",
         -- },
@@ -685,12 +695,17 @@ return {
 
     {   -- LuaSnip: ChoiceNodes source for `nvim-cmp`.              ( STATE: TODO: Make it work. )
         "Aumnescio/cmp-luasnip-choice",
+        enabled = true,
+        cond = vim.g.aum_plugin_cmp_luasnip_choice_enabled,
         lazy = true,
         dev = true,
+
         -- version = false,
+
         -- dependencies = {
         --     "yioneko/nvim-cmp",
         -- },
+
         config = function()
             require("cmp_luasnip_choice").setup()
         end,
@@ -698,8 +713,11 @@ return {
 
     {   -- `nvim-cmp` completion source for fuzzy matching buffer contents.     ( STATE: Really Good )
         "tzachar/cmp-fuzzy-buffer",
+        enabled = true,
+        cond = vim.g.aum_plugin_cmp_fuzzy_buffer_enabled,
         lazy = true,
         version = false,
+
         dependencies = {
             "tzachar/fuzzy.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
@@ -708,8 +726,11 @@ return {
 
     {   -- Nvim `fzf` wrapper                           ( STATE: Good )     ( Dependency for `cmp-fuzzy-buffer`. )
         "tzachar/fuzzy.nvim",
+        enabled = true,
+        cond = vim.g.aum_plugin_fuzzy_enabled,
         lazy = true,
         version = false,
+
         dependencies = {
             "nvim-telescope/telescope-fzf-native.nvim",
         },
@@ -717,6 +738,9 @@ return {
 
     {   -- Codeium AI Autocompletion                    ( STATE: Testing )
         "Exafunction/codeium.vim",
+        enabled = true,
+        -- cond = vim.g.aum_plugin_codeium_enabled,
+
         -- I want to load it only manually.
         lazy = true,
         version = false,

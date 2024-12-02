@@ -155,7 +155,7 @@ opt.spelllang       = "en"      -- Languages to spellcheck. "en_us"
 -- opt.ttimeout        = false      -- Makes leaving Insert mode using <Esc> faster, so keys don't fuckup.
 -- opt.ttimeoutlen     = 0
 
--- |> `wf.nvim` seemingly requires `timeout` enabled and `timeoutlen` above zero to work properly.
+-- NOTE: `wf.nvim` seemingly requires `timeout` enabled and `timeoutlen` above zero to work properly. (Not using it.)
 opt.timeout         = false          -- I really strongly prefer this at `false`.
 
 -- `timeoutlen`: Requires `timeout=true` to do anything.
@@ -165,8 +165,9 @@ opt.timeout         = false          -- I really strongly prefer this at `false`
 --  - Canceling a <Leader> chord also activates `wf.nvim`, which is awkward.
 opt.timeoutlen      = 420
 
-opt.ttimeout        = false          -- I suppose this is fine at false, though not quite sure if needed. (Testing...)
-opt.ttimeoutlen     = 5000
+-- NOTE / CRITICAL: This on `false` causes issue with `Neovim Nightly` + `Kitty Terminal`.
+opt.ttimeout        = true      -- This was fine at `false`, though not quite sure if needed. (Now `true` kind of required.)
+opt.ttimeoutlen     = 9999      -- `9999` should be much like `ttimeout` being `false`. (But things work better, apparently.)
 
 
 -- |> Having `lazyredraw = true` is a large performance increase when running macros.
@@ -181,13 +182,19 @@ opt.updatetime      = 28        -- Some update-rate thing to help smoothness.
 --          So I want `updatetime` to be larger than ~20ms, at least, so when holding down a key, the highlight won't flicker.
 
 -- |> Virtual characters.
-opt.listchars       = "eol:↵,tab:»›,trail:~,extends:❯,precedes:❮,leadmultispace:▎   "   -- No listchar for spaces.
+opt.listchars       = "space:·,eol:↵,tab:»›,trail:~,extends:❯,precedes:❮,leadmultispace:▎   "   -- Includes listchar for spaces.
+-- opt.listchars       = "eol:↵,tab:»›,trail:~,extends:❯,precedes:❮,leadmultispace:▎   "   -- No listchar for spaces.
+
 -- `End of Buffer` and `FoldColumn` display characters:
 opt.fillchars       = "eob:⏐,fold:·,foldopen:󰍴,foldclose:,foldsep:|"       -- `eob` could be better.
-opt.list            = true      -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
+
+-- |> Can be enabled per-file using `ftplugin/<filetype>.lua` files.
+opt.list            = false      -- To toggle: ":set list" and ":set nolist".    ( Might have minor performance impact when `true`. )
 
 -- |> Command line settings.
 opt.showmode        = false     -- Normal/Insert/Visual Mode command line visiblity toggle.     ( Custom version enabled in `heirline.nvim`. )
+
+-- TODO: NOTE: Temporary testing `true` for `showcmd`.
 
 -- NOTE:    If the `silent` option is configured properly in bindings, this isn't completely horrible.
 --          - Super flickery. Potentially hurts performance.
@@ -395,8 +402,9 @@ opt.showbreak       = "󰘍"       -- Can make it more obvious when a line has b
 
 -- => STATE: Good
 
+-- `syntax` can be enabled for filetypes/buffers invidiually when desired.
 opt.syntax              = "on"          -- Syntax highlighting.             ( Non-treesitter syntax highlighting | Not required to set this opt. )
-opt.synmaxcol           = 256           -- Max syntax highlight column.     ( Improves performance. )
+opt.synmaxcol           = 256           -- Max syntax highlight column.     ( Having this low'ish improves performance by a lot. )
 opt.cursorline          = true          -- Visual Line-highlight Toggle.    ( `true` can negatively impact performance. )
 opt.cursorcolumn        = false         -- Visual column-highlight toggle   ( `true` can negatively impact performance. )
 -- opt.number              = false         -- Line Numbers.                    ( `true` can negatively impact performance. )
@@ -435,11 +443,11 @@ opt.guicursor = "n-v-ve-sm:block,i-c-ci:ver25,r-cr-o:hor20"  -- Cursor Settings
 -- |> Set Neovide Font:
 -- vim.o.guifont = "JetBrainsMono Nerd Font:h18:b"
 -- vim.o.guifont = "JetBrainsMono Nerd Font:h18:b:#e-antialias:h-normal"
-opt.linespace = 0  -- This (above 0) seems to add space to the bottom of lines, making the line spacing uneven.
+opt.linespace = 0  -- When above 0, seems to add space to the bottom of lines, making the line spacing uneven.
 
 -- |> Settings: Fullscreen / AA / Refresh Rate, etc.
-g.neovide_no_idle                           = false
-g.neovide_fullscreen                        = false
+g.neovide_no_idle                           = true
+g.neovide_fullscreen                        = true
 g.neovide_remember_window_size              = false
 g.neovide_input_use_logo                    = false
 g.neovide_cursor_antialiasing               = true
@@ -448,24 +456,24 @@ g.neovide_cursor_antialiasing               = true
 g.neovide_text_gamma = 0.0
 g.neovide_text_contrast = 0.5
 
--- Seems to cause major lag at values larger than `165`.    ( Tested `330` )
---  - But `165` is really smooth.
+-- `fps` | `frame-rate`
+-- - This setting is only effective when not using vsync, for example by passing `--no-vsync` on the commandline.
 g.neovide_refresh_rate                      = 165
 
-g.neovide_refresh_rate_idle                 = 30
+g.neovide_refresh_rate_idle                 = 165
 g.neovide_transparency                      = 1.0          -- Could be overwritten by Picom. (Compositor)
 g.neovide_scale_factor                      = 1.0
 g.neovide_cursor_unfocused_outline_width    = 0.125
 g.neovide_confirm_quit                      = true
 g.neovide_hide_mouse_when_typing            = true
 g.neovide_underline_automatic_scaling       = false
-g.neovide_profiler                          = false
+g.neovide_profiler                          = true
 
 -- |> Padding
 g.neovide_padding_top                       = 0
 g.neovide_padding_bottom                    = 0
-g.neovide_padding_right                     = 48
-g.neovide_padding_left                      = 48
+g.neovide_padding_right                     = 8
+g.neovide_padding_left                      = 8
 
 -- |> Cursor Effects
 g.neovide_cursor_animation_length           = 0.00825
@@ -519,7 +527,7 @@ vim.g.fzf_colors = {
     ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
     ["hl+"] = { "fg", "Statement" },
     info = { "fg", "PreProc" },
-    border = { "fg", "Ignore" },
+    border = { "fg", "AumType" },
     prompt = { "fg", "Conditional" },
     pointer = { "fg", "Exception" },
     marker = { "fg", "Keyword" },
