@@ -11,9 +11,9 @@ set -gx XDG_DATA_HOME "$HOME/.local/share"
 #: Editor
 set -gx EDITOR nvim
 # set -gx MOAR '-colors=16M -style dracula -no-statusbar -no-linenumbers'
-#: Looking for better pager.
-set -gx PAGER less
-set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+set -gx PAGER "less --RAW-CONTROL-CHARS"
+set -gx MANPAGER "nvim +Man!"
+# set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 set -gx BAT_PAGER "less -R"
 
 #: Askpass helper program path.
@@ -69,8 +69,8 @@ fish_add_path /home/aum/.go/bin
 # set -gx PATH '/home/aum/.local/share/nvim/lazy/nvim_rocks/bin' $PATH
 
 #: `fzf` defaults configuration.
-set -gx FZF_DEFAULT_COMMAND 'fd --type f --follow --exclude ".git" --exclude node_modules --exclude ".ccls-cache" --exclude ".output"'
-set -gx FZF_DEFAULT_OPTS '--height 62% --layout=reverse --border=rounded --tiebreak=length,begin,chunk,index'
+set -gx FZF_DEFAULT_COMMAND 'fd --type f --follow --hidden --exclude ".git" --exclude ".github" --exclude ".jukit" --exclude node_modules --exclude ".ccls-cache" --exclude ".output"'
+set -gx FZF_DEFAULT_OPTS '--height 62% --layout=reverse --border=rounded --tiebreak=length,begin,chunk,index --bind ctrl-h:preview-down,ctrl-t:preview-up --color=bg+:#0a090f,border:#bc96f9,spinner:#989cf9,hl:#7c6cac,fg:#c9d2fe,pointer:#ffb9d4,info:#b4adfd,header:#7c6cac,marker:#ffdbb3,fg+:#c9d2fe,prompt:#b18cfb,hl+:#7ad0f0'
 set -gx FZF_ALT_C_COMMAND 'fd -H -t d'
 
 #: `ripgrep` configuration file location.
@@ -106,8 +106,13 @@ if status is-interactive
     abbr --add --global et 'erd'
     abbr --add --global ssh 'kitty +kitten ssh'
 
+    abbr --add --global fzview 'fzf --preview "bat --color=always {}"'
+
     abbr --add --global xcolor 'xcolor --format HEX | xclip -sel clip'
     abbr --add --global nukeclipboard 'echo "word" | xclip -sel clip && echo "word" | xclip -sel primary'
+
+    # Mounting helpers
+    abbr --add --global mount-aum-nvme1 'sudo -A mount --source /dev/disk/by-uuid/6c8ed1ed-0e2e-4aa9-80a1-9809b28219b4 --target /media/nvme1'
 
     # START - Navigating back to parent directories.
     abbr --add --global '...' '../..'
@@ -121,8 +126,8 @@ if status is-interactive
     abbr --add --global nv 'nvim'
     abbr --add --global nvmini 'NVIM_APPNAME=nvim_minimal nvim'
     abbr --add --global nvrepro 'NVIM_APPNAME=nvim_repro nvim'
-    abbr --add --global nvs 'nvim ./(fzf)'
-    abbr --add --global nds 'neovide --fork ./(fzf)'
+    # abbr --add --global nvs 'nvim ./(fzf)'                # Swapped to function instead.
+    # abbr --add --global nds 'neovide --fork ./(fzf)'      # Swapped to function instead.
     abbr --add --global codi 'codium'
     abbr --add --global notes 'nvim /home/aum/Secondbrain/Vault/mind-tracking-fleeting-notes.norg'
     # END - Code Editor
@@ -140,6 +145,7 @@ if status is-interactive
 
     #: Screen Recording
     abbr --add --global aumrec 'aum-record-region'
+    abbr --add --global aumrec-165 '/home/aum/Secondbrain/programming/scripts/aum-record-region/aum-record-region-165.bash'
 
     #: Setting keyboard repeat rate easily, because it tends to reset sometimes.
     abbr --add --global setkeyboardrepeatrate 'xset r rate 186 112'
@@ -166,13 +172,13 @@ if status is-interactive
     #: END => Web Development
 
     #: TODO: Probably remove these and `kb`.
-    abbr --add --global kbl 'kb list'
-    abbr --add --global kbe 'kb edit'
-    abbr --add --global kba 'kb add --title'
-    abbr --add --global kbv 'kb view'
-    abbr --add --global kbd 'kb delete --id'
-    abbr --add --global kbg 'kb grep -ivm'
-    abbr --add --global kbt 'kb list --tags'
+    # abbr --add --global kbl 'kb list'
+    # abbr --add --global kbe 'kb edit'
+    # abbr --add --global kba 'kb add --title'
+    # abbr --add --global kbv 'kb view'
+    # abbr --add --global kbd 'kb delete --id'
+    # abbr --add --global kbg 'kb grep -ivm'
+    # abbr --add --global kbt 'kb list --tags'
 
     #: START => LaTeX
     #: Compiling a `.tex` LaTeX file using `lualatex`. (into `.output` dir)
@@ -204,10 +210,10 @@ if status is-interactive
     #: DocLink: "https://fishshell.com/docs/current/cmds/bind.html?highlight=keybindings"
 
     bind --mode default e forward-single-char
-    bind --mode default q backward-single-char
+    bind --mode default q backward-char
 
-    bind --mode default n forward-bigword
-    bind --mode default o backward-bigword
+    bind --mode default n forward-word
+    bind --mode default o backward-word
 
     bind --mode default sn kill-bigword
     bind --mode default ss kill-whole-line
@@ -218,10 +224,11 @@ if status is-interactive
     bind --mode visual e forward-char
     bind --mode visual q backward-char
 
-    bind --mode visual n forward-bigword
-    bind --mode visual o backward-bigword
+    bind --mode visual n forward-word
+    bind --mode visual o backward-word
 
     bind --mode visual --sets-mode default s kill-selection end-selection
+    bind --mode visual --sets-mode insert k kill-selection end-selection
 
     bind --mode default u undo
     bind --mode default r redo
@@ -275,13 +282,17 @@ if status is-interactive
     #     eza --all --grid --classify --icons --group-directories-first $argv
     # end
 
-    #: I mistype `ls` to `s` decently often, so might aswell alias this.
+    #: I mistype `ls` to `s` decently often, so might as well alias this.
     function s
         eza --all --grid --group-directories-first $argv
     end
 
     function lsr
         eza | rg "$argv"
+    end
+
+    function fdr
+        fd . --type file | rg "$argv"
     end
 
     function lt
@@ -296,6 +307,22 @@ if status is-interactive
         neovide --fork $argv
     end
 
+    function nvs
+        set -l file (fzf)
+
+        if test -n "$file"
+            nvim "$file"
+        end
+    end
+
+    function nds
+        set -l file (fzf)
+
+        if test -n "$file"
+            neovide --fork "$file"
+        end
+    end
+
     function cap
         tee /tmp/capture.out
     end
@@ -304,10 +331,11 @@ if status is-interactive
         cat /tmp/capture.out
     end
 
+    # `fd` video files, `fzf` over results, play selected file using `mpv`.
     function fplay
         set -l finds (fd --type file -e mp4 -e mov -e mkv --max-depth 3)
 
-        if [ -z "$finds" ] 
+        if [ -z "$finds" ]
             return 0
         end
 
